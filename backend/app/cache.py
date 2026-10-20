@@ -39,7 +39,7 @@ class Cache:
         if db is not None:
             self._load()
 
-    # -- persistence -----------------------------------------------------
+    # ---- persistence
     def _load(self) -> None:
         assert self.db is not None
         for row in self.db.fetchall("SELECT key, payload, fetched_at, status, error, source FROM cache"):
@@ -70,7 +70,7 @@ class Cache:
         except Exception as exc:  # never let persistence break a refresh
             log.warning("could not persist cache for %s: %s", entry.module, exc)
 
-    # -- writes ----------------------------------------------------------
+    # ---- writes
     def _entry(self, module: str) -> Entry:
         if module not in self._entries:
             self._entries[module] = Entry(module=module)
@@ -137,7 +137,7 @@ class Cache:
         e.fetched_at = None
         e.last_attempt = utcnow()
 
-    # -- reads -----------------------------------------------------------
+    # ---- reads
     def get(self, module: str) -> Entry | None:
         return self._entries.get(module)
 

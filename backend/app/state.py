@@ -34,7 +34,7 @@ class AppState:
         self._benefits_memo: dict[tuple, dict] = {}
         self._overrides_version = 0
 
-    # -- firefly derived -------------------------------------------------
+    # ---- firefly derived
     def firefly_data(self) -> dict | None:
         return self.cache.data("firefly")
 

@@ -70,7 +70,7 @@ class Database:
             self._conn.execute("ALTER TABLE cache ADD COLUMN source TEXT")
             self._conn.commit()
 
-    # -- generic helpers -------------------------------------------------
+    # ---- generic helpers
     def execute(self, sql: str, params: Iterable[Any] = ()) -> sqlite3.Cursor:
         with self._lock:
             cur = self._conn.execute(sql, tuple(params))
@@ -85,7 +85,7 @@ class Database:
         with self._lock:
             return self._conn.execute(sql, tuple(params)).fetchone()
 
-    # -- settings --------------------------------------------------------
+    # ---- settings
     def get_setting(self, key: str, default: str | None = None) -> str | None:
         row = self.fetchone("SELECT value FROM settings WHERE key = ?", (key,))
         return row["value"] if row else default
