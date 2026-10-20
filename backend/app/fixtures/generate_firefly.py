@@ -195,6 +195,10 @@ def build() -> dict:
     add(date(2026, 10, 17), "withdrawal", "18.20", "GRUBHUB", src=GOLD, dst="Grubhub", category="Dining", budget="Dining")
     add(date(2026, 10, 2), "withdrawal", "4.85", "DUNKIN #341209", src=GOLD, dst="Dunkin", category="Dining", budget="Dining")
     add(date(2026, 10, 5), "deposit", "4.85", "DUNKIN CREDIT", src="American Express", dst=GOLD, category="Statement credit")
+    # Fresh card activity so the mock never looks stale
+    add(date(2026, 10, 20), "withdrawal", "47.18", "WAWA 8120", src=PLAT, dst="Wawa", category="Gas", budget="Gas")
+    add(date(2026, 10, 19), "withdrawal", "6.45", "STARBUCKS 09821", src=GOLD, dst="Starbucks", category="Dining", budget="Dining")
+    add(date(2026, 10, 19), "withdrawal", "31.70", "TARGET 00021", src=DISC, dst="Target", category="Shopping", budget="Shopping")
     # Gold Resy H1
     add(date(2026, 3, 9), "deposit", "50.00", "GOLD RESY CREDIT", src="American Express", dst=GOLD, category="Statement credit")
 

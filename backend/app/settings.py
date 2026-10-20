@@ -7,7 +7,7 @@ from functools import lru_cache
 from pathlib import Path
 
 from dotenv import load_dotenv
-from pydantic import Field
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # backend/app/settings.py -> app -> backend -> repository root
@@ -81,6 +81,20 @@ class Settings(BaseSettings):
     config_dir: Path = Field(default_factory=lambda: _first_existing(ROOT / "config", Path("config")))
     data_dir: Path = Field(default_factory=lambda: ROOT / "data")
     static_dir: Path = Field(default_factory=lambda: _first_existing(ROOT / "static", ROOT / "frontend" / "dist"))
+
+    @model_validator(mode="before")
+    @classmethod
+    def _empty_means_default(cls, values):
+        """An empty value in .env (MOCK_PLEX=) means "use the default", not an empty string."""
+        if not isinstance(values, dict):
+            return values
+        string_fields = {name for name, field in cls.model_fields.items() if field.annotation is str}
+        cleaned = {}
+        for key, value in values.items():
+            if isinstance(value, str) and value.strip() == "" and key.lower() not in string_fields:
+                continue
+            cleaned[key] = value
+        return cleaned
 
     # ------------------------------------------------------------------
     def is_mocked(self, integration: str) -> bool:

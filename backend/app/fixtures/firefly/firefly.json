@@ -135,9 +135,9 @@
   "spent-in-USD": {
    "key": "spent-in-USD",
    "title": "Spent in USD",
-   "monetary_value": "-2933.29",
+   "monetary_value": "-3018.62",
    "currency_code": "USD",
-   "value_parsed": "-$2,933.29"
+   "value_parsed": "-$3,018.62"
   },
   "earned-in-USD": {
    "key": "earned-in-USD",
@@ -156,7 +156,7 @@
   "left-to-spend-in-USD": {
    "key": "left-to-spend-in-USD",
    "title": "Left to spend",
-   "monetary_value": "651.59",
+   "monetary_value": "566.26",
    "currency_code": "USD",
    "value_parsed": ""
   }
@@ -7440,7 +7440,7 @@
      "transactions": [
       {
        "user": "1",
-       "transaction_journal_id": "1463",
+       "transaction_journal_id": "1466",
        "type": "deposit",
        "date": "2026-03-09T00:00:00-04:00",
        "order": 0,
@@ -7462,7 +7462,7 @@
        "category_name": "Statement credit",
        "tags": [],
        "notes": null,
-       "external_id": "simplefin-1463",
+       "external_id": "simplefin-1466",
        "reconciled": false
       }
      ]
@@ -19571,6 +19571,90 @@
     "type": "transactions",
     "id": "5462",
     "attributes": {
+     "created_at": "2026-10-19T00:00:00-04:00",
+     "updated_at": "2026-10-19T00:00:00-04:00",
+     "user": "1",
+     "group_title": null,
+     "transactions": [
+      {
+       "user": "1",
+       "transaction_journal_id": "1464",
+       "type": "withdrawal",
+       "date": "2026-10-19T00:00:00-04:00",
+       "order": 0,
+       "currency_id": "1",
+       "currency_code": "USD",
+       "currency_symbol": "$",
+       "currency_decimal_places": 2,
+       "amount": "6.450000",
+       "description": "STARBUCKS 09821",
+       "source_id": "4",
+       "source_name": "Amex Gold",
+       "source_type": "Asset account",
+       "destination_id": "123",
+       "destination_name": "Starbucks",
+       "destination_type": "Expense account",
+       "budget_id": null,
+       "budget_name": "Dining",
+       "category_id": null,
+       "category_name": "Dining",
+       "tags": [],
+       "notes": null,
+       "external_id": "simplefin-1464",
+       "reconciled": false
+      }
+     ]
+    },
+    "links": {
+     "self": "/api/v1/transactions/5462"
+    }
+   },
+   {
+    "type": "transactions",
+    "id": "5463",
+    "attributes": {
+     "created_at": "2026-10-19T00:00:00-04:00",
+     "updated_at": "2026-10-19T00:00:00-04:00",
+     "user": "1",
+     "group_title": null,
+     "transactions": [
+      {
+       "user": "1",
+       "transaction_journal_id": "1465",
+       "type": "withdrawal",
+       "date": "2026-10-19T00:00:00-04:00",
+       "order": 0,
+       "currency_id": "1",
+       "currency_code": "USD",
+       "currency_symbol": "$",
+       "currency_decimal_places": 2,
+       "amount": "31.700000",
+       "description": "TARGET 00021",
+       "source_id": "5",
+       "source_name": "Discover It",
+       "source_type": "Asset account",
+       "destination_id": "116",
+       "destination_name": "Target",
+       "destination_type": "Expense account",
+       "budget_id": null,
+       "budget_name": "Shopping",
+       "category_id": null,
+       "category_name": "Shopping",
+       "tags": [],
+       "notes": null,
+       "external_id": "simplefin-1465",
+       "reconciled": false
+      }
+     ]
+    },
+    "links": {
+     "self": "/api/v1/transactions/5463"
+    }
+   },
+   {
+    "type": "transactions",
+    "id": "5464",
+    "attributes": {
      "created_at": "2026-10-20T00:00:00-04:00",
      "updated_at": "2026-10-20T00:00:00-04:00",
      "user": "1",
@@ -19606,14 +19690,56 @@
      ]
     },
     "links": {
-     "self": "/api/v1/transactions/5462"
+     "self": "/api/v1/transactions/5464"
+    }
+   },
+   {
+    "type": "transactions",
+    "id": "5465",
+    "attributes": {
+     "created_at": "2026-10-20T00:00:00-04:00",
+     "updated_at": "2026-10-20T00:00:00-04:00",
+     "user": "1",
+     "group_title": null,
+     "transactions": [
+      {
+       "user": "1",
+       "transaction_journal_id": "1463",
+       "type": "withdrawal",
+       "date": "2026-10-20T00:00:00-04:00",
+       "order": 0,
+       "currency_id": "1",
+       "currency_code": "USD",
+       "currency_symbol": "$",
+       "currency_decimal_places": 2,
+       "amount": "47.180000",
+       "description": "WAWA 8120",
+       "source_id": "3",
+       "source_name": "Amex Platinum",
+       "source_type": "Asset account",
+       "destination_id": "115",
+       "destination_name": "Wawa",
+       "destination_type": "Expense account",
+       "budget_id": null,
+       "budget_name": "Gas",
+       "category_id": null,
+       "category_name": "Gas",
+       "tags": [],
+       "notes": null,
+       "external_id": "simplefin-1463",
+       "reconciled": false
+      }
+     ]
+    },
+    "links": {
+     "self": "/api/v1/transactions/5465"
     }
    }
   ],
   "meta": {
    "pagination": {
-    "total": 463,
-    "count": 463,
+    "total": 466,
+    "count": 466,
     "per_page": 1000,
     "current_page": 1,
     "total_pages": 1
@@ -19640,8 +19766,8 @@
   {
    "id": "3",
    "name": "Dining",
-   "difference": "-193.71",
-   "difference_float": -193.71,
+   "difference": "-200.16",
+   "difference_float": -200.16,
    "currency_id": "1",
    "currency_code": "USD"
   },
@@ -19664,16 +19790,16 @@
   {
    "id": "6",
    "name": "Shopping",
-   "difference": "-85.48",
-   "difference_float": -85.48,
+   "difference": "-117.18",
+   "difference_float": -117.18,
    "currency_id": "1",
    "currency_code": "USD"
   },
   {
    "id": "7",
    "name": "Gas",
-   "difference": "-55.93",
-   "difference_float": -55.93,
+   "difference": "-103.11",
+   "difference_float": -103.11,
    "currency_id": "1",
    "currency_code": "USD"
   },
@@ -19736,6 +19862,14 @@
    "currency_code": "USD"
   },
   {
+   "id": "115",
+   "name": "Wawa",
+   "difference": "-103.11",
+   "difference_float": -103.11,
+   "currency_id": "1",
+   "currency_code": "USD"
+  },
+  {
    "id": "101",
    "name": "JCP&L",
    "difference": "-94.60",
@@ -19752,18 +19886,10 @@
    "currency_code": "USD"
   },
   {
-   "id": "115",
-   "name": "Wawa",
-   "difference": "-55.93",
-   "difference_float": -55.93,
-   "currency_id": "1",
-   "currency_code": "USD"
-  },
-  {
    "id": "116",
    "name": "Target",
-   "difference": "-43.85",
-   "difference_float": -43.85,
+   "difference": "-75.55",
+   "difference_float": -75.55,
    "currency_id": "1",
    "currency_code": "USD"
   },
@@ -19812,6 +19938,14 @@
    "name": "Uber",
    "difference": "-9.99",
    "difference_float": -9.99,
+   "currency_id": "1",
+   "currency_code": "USD"
+  },
+  {
+   "id": "123",
+   "name": "Starbucks",
+   "difference": "-6.45",
+   "difference_float": -6.45,
    "currency_id": "1",
    "currency_code": "USD"
   },
@@ -19906,7 +20040,7 @@
      "start": "2026-10-01",
      "end": "2026-10-28",
      "amount": "400.00",
-     "spent": "-193.71",
+     "spent": "-200.16",
      "currency_code": "USD"
     }
    }
@@ -19920,7 +20054,7 @@
      "start": "2026-10-01",
      "end": "2026-10-28",
      "amount": "200.00",
-     "spent": "-55.93",
+     "spent": "-103.11",
      "currency_code": "USD"
     }
    }
@@ -19934,7 +20068,7 @@
      "start": "2026-10-01",
      "end": "2026-10-28",
      "amount": "300.00",
-     "spent": "-205.48",
+     "spent": "-237.18",
      "currency_code": "USD"
     }
    }
