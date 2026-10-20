@@ -1,0 +1,10 @@
+{"MediaContainer": {"size": 8, "Metadata": [
+ {"ratingKey": "61001", "type": "movie", "title": "Dune: Part Two", "year": 2024, "thumb": "/library/metadata/61001/thumb/1760000010", "addedAt": 1760900000},
+ {"ratingKey": "61002", "type": "season", "title": "Season 2", "parentTitle": "Severance", "parentThumb": "/library/metadata/61050/thumb/1760000011", "thumb": "/library/metadata/61002/thumb/1760000011", "addedAt": 1760850000},
+ {"ratingKey": "61003", "type": "movie", "title": "The Holdovers", "year": 2023, "thumb": "/library/metadata/61003/thumb/1760000012", "addedAt": 1760800000},
+ {"ratingKey": "61004", "type": "episode", "title": "Pilot", "grandparentTitle": "Slow Horses", "parentIndex": 4, "index": 1, "grandparentThumb": "/library/metadata/61060/thumb/1760000013", "thumb": "/library/metadata/61004/thumb/1760000013", "addedAt": 1760750000},
+ {"ratingKey": "61005", "type": "movie", "title": "Oppenheimer", "year": 2023, "thumb": "/library/metadata/61005/thumb/1760000014", "addedAt": 1760700000},
+ {"ratingKey": "61006", "type": "movie", "title": "Past Lives", "year": 2023, "thumb": "/library/metadata/61006/thumb/1760000015", "addedAt": 1760650000},
+ {"ratingKey": "61007", "type": "season", "title": "Season 1", "parentTitle": "Shogun", "parentThumb": "/library/metadata/61070/thumb/1760000016", "thumb": "/library/metadata/61007/thumb/1760000016", "addedAt": 1760600000},
+ {"ratingKey": "61008", "type": "movie", "title": "Anatomy of a Fall", "year": 2023, "thumb": "/library/metadata/61008/thumb/1760000017", "addedAt": 1760550000}
+]}}

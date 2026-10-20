@@ -1,0 +1,6 @@
+{"MediaContainer": {"size": 4, "Metadata": [
+ {"ratingKey": "40122", "type": "episode", "title": "Mhysa", "grandparentTitle": "Game of Thrones", "parentIndex": 3, "index": 10, "grandparentThumb": "/library/metadata/40001/thumb/1760000002", "thumb": "/library/metadata/40122/thumb/1760000020", "viewOffset": 0, "duration": 3800000},
+ {"ratingKey": "61004", "type": "episode", "title": "Pilot", "grandparentTitle": "Slow Horses", "parentIndex": 4, "index": 1, "grandparentThumb": "/library/metadata/61060/thumb/1760000013", "thumb": "/library/metadata/61004/thumb/1760000013", "viewOffset": 900000, "duration": 2900000},
+ {"ratingKey": "50233", "type": "movie", "title": "Blade Runner 2049", "year": 2017, "thumb": "/library/metadata/50233/thumb/1760000003", "viewOffset": 2210000, "duration": 9840000},
+ {"ratingKey": "61009", "type": "episode", "title": "Hello, Ms. Cobel", "grandparentTitle": "Severance", "parentIndex": 2, "index": 1, "grandparentThumb": "/library/metadata/61050/thumb/1760000011", "thumb": "/library/metadata/61009/thumb/1760000021", "viewOffset": 300000, "duration": 3300000}
+]}}
