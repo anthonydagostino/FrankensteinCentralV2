@@ -27,7 +27,8 @@ class Scheduler:
 
     def register(self, integration: BaseIntegration) -> None:
         self.integrations[integration.name] = integration
-        self.cache.configure(integration.name, integration.interval_seconds, integration.is_configured() or integration.is_mocked(), integration.setup_hint())
+        mocked = integration.is_mocked()
+        self.cache.configure(integration.name, integration.interval_seconds, integration.is_configured() or mocked, integration.setup_hint(), source="mock" if mocked else "live")
 
     def on_success(self, name: str, callback: Callable[[], Awaitable[None] | None]) -> None:
         self.after_success.setdefault(name, []).append(callback)
@@ -63,15 +64,16 @@ class Scheduler:
             self.cache.set_disabled(name, integration.setup_hint())
             return False
         try:
+            source = "mock" if mocked else "live"
             if mocked:
                 data = integration.mock()
             else:
                 data = await integration.fetch()
-            self.cache.set_ok(name, data)
+            self.cache.set_ok(name, data, source=source)
             await self._run_callbacks(name)
             return True
         except Degraded as deg:
-            self.cache.set_degraded(name, deg.data, deg.message)
+            self.cache.set_degraded(name, deg.data, deg.message, source="mock" if mocked else "live")
             log.warning("%s degraded: %s", name, redact_text(deg.message))
             await self._run_callbacks(name)
             return True

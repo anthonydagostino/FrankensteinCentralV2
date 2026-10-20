@@ -13,3 +13,19 @@ One line per choice the spec left open, in the order they were made.
 - Login rate limiting is an in-memory sliding window per client IP (5 per minute), reset on restart.
 - Password hashing uses `bcrypt` directly.
 - Finance pace compares month-to-date spend with last month's spend through the same day number, as the spec says; when last month's value is zero the pace is reported as `null`.
+- The benefits engine was built before the frontend (spec Phase 4 before Phase 3) so the UI could be written against the final API shape; commit history reflects that order.
+- A card account is an asset account with role `ccAsset` (balance negative when owed) or a liability of type debt or credit card; "owed" is the absolute value, and a credit balance on a ccAsset shows as zero owed.
+- Generic credit markers (credit, amex, american express, platinum, stmt cr) are matched only against the description and notes, never against account names, because the card's own account name ("Amex Platinum") would otherwise turn every refund into a statement credit. Merchant and credit patterns match description, notes, and the counterparty name.
+- A withdrawal counts as a clawback only when it matches a credit pattern and also contains credit, reversal, adjustment, rev, or clawback; otherwise loose credit patterns such as `fhr` would flag the hotel prepayment itself as a clawback.
+- Once a period's attributed credits reach the cap, the leftover unmatched amounts of its purchases are zeroed, so later credits attach to purchases in later periods (monthly benefits with purchases above the cap would otherwise cascade credits into the wrong month).
+- A credit that matches no purchase (attributed by credit date) still consumes unmatched eligible spend in that period, so pending and missing credit stay honest for benefits that credit a monthly sum (Dunkin').
+- Future periods (start after today) are left out of `history`; the year view shows the current period and the periods that already started, plus last year's periods that still have evidence.
+- `expiring_soon` requires at least $1.00 remaining, so a $0.19 rounding leftover (Walmart+ cap 14.00 vs 13.81 charged) does not raise an attention item.
+- Manual benefits with no entry keep status `manual` even after the period ends (spec scenario 12); their missing cap still counts as left on the table.
+- The cache mirror records whether an entry came from mock or live mode; on startup an entry from the other mode is discarded so mock data is never shown as "last good" live data.
+- An empty value in `.env` for a non-string setting (for example `MOCK_PLEX=`) means "use the default".
+- Attention items for benefits are blurred along with other amounts when privacy blur is on, since their titles contain dollar amounts.
+- Chart animations are disabled so the kiosk does not animate on every poll.
+- Hourly day or night icons are derived from the daily sunrise and sunset because the hourly `is_day` field is not requested.
+- Plex deep links use the formats in the spec; they could not be tested against a live server here, so if an item link fails open the server link instead.
+- No live service and no Docker daemon were reachable from the build environment, so Phases 5 and 6 were verified with respx against recorded fixtures only; `docker compose config` and a wheel build of the backend were verified, `docker compose build` was not.

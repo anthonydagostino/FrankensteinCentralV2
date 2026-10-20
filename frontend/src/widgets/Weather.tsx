@@ -85,8 +85,8 @@ export function WeatherBody({ data, kiosk }: { data: WeatherData; kiosk?: boolea
             <YAxis yAxisId="t" domain={["dataMin - 5", "dataMax + 5"]} tick={{ fill: "#6b7a71", fontSize: 10 }} axisLine={false} tickLine={false} />
             <YAxis yAxisId="p" orientation="right" domain={[0, 100]} hide />
             <Tooltip contentStyle={{ background: "#171e1a", border: "1px solid #2f3a33", fontSize: 12 }} labelStyle={{ color: "#c6d1ca" }} formatter={(v: number, name: string) => [name === "pop" ? `${v}%` : `${v}${unitT}`, name === "pop" ? "Rain chance" : "Temp"]} />
-            <Bar yAxisId="p" dataKey="pop" fill="#60a5fa" opacity={0.45} radius={[2, 2, 0, 0]} />
-            <Line yAxisId="t" type="monotone" dataKey="temp" stroke="#4ade80" strokeWidth={2} dot={false} />
+            <Bar yAxisId="p" dataKey="pop" fill="#60a5fa" opacity={0.45} radius={[2, 2, 0, 0]} isAnimationActive={false} />
+            <Line yAxisId="t" type="monotone" dataKey="temp" stroke="#4ade80" strokeWidth={2} dot={false} isAnimationActive={false} />
           </ComposedChart>
         </ResponsiveContainer>
       </div>

@@ -219,3 +219,19 @@ def test_suggest_pattern():
     import re
 
     assert re.search(pat, "AMEX CR 99999", re.I) and "\\d+" in pat
+
+
+def test_cache_drops_data_from_other_mode(tmp_path):
+    from app.db import Database
+
+    db = Database(tmp_path / "c.db")
+    cache = Cache(db)
+    cache.configure("docker", 15, True, source="mock")
+    cache.set_ok("docker", {"x": 1}, source="mock")
+    again = Cache(Database(tmp_path / "c.db"))
+    assert again.data("docker") == {"x": 1}
+    again.configure("docker", 15, True, source="live")
+    assert again.data("docker") is None
+    same = Cache(Database(tmp_path / "c.db"))
+    same.configure("docker", 15, True, source="mock")
+    assert same.data("docker") == {"x": 1}

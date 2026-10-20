@@ -62,6 +62,13 @@ class Database:
                 pass
             self._conn.executescript(SCHEMA)
             self._conn.commit()
+            self._migrate()
+
+    def _migrate(self) -> None:
+        cols = {r["name"] for r in self._conn.execute("PRAGMA table_info(cache)").fetchall()}
+        if "source" not in cols:
+            self._conn.execute("ALTER TABLE cache ADD COLUMN source TEXT")
+            self._conn.commit()
 
     # -- generic helpers -------------------------------------------------
     def execute(self, sql: str, params: Iterable[Any] = ()) -> sqlite3.Cursor:

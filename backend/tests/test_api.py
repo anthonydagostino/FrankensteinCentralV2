@@ -21,8 +21,8 @@ def client(tmp_path_factory):
             await state.scheduler.refresh_once(integration)
 
     asyncio.run(load())
-    with TestClient(app) as c:
-        yield c
+    # no context manager: the lifespan must not run, so the test never touches the real data/ database
+    yield TestClient(app)
 
 
 def test_health_is_public(client):

@@ -29,6 +29,7 @@ class Entry:
     last_attempt: datetime | None = None
     attempts_failed: int = 0
     hint: list[str] = field(default_factory=list)
+    source: str | None = None  # "mock" or "live"
 
 
 class Cache:
@@ -41,7 +42,7 @@ class Cache:
     # -- persistence -----------------------------------------------------
     def _load(self) -> None:
         assert self.db is not None
-        for row in self.db.fetchall("SELECT key, payload, fetched_at, status, error FROM cache"):
+        for row in self.db.fetchall("SELECT key, payload, fetched_at, status, error, source FROM cache"):
             try:
                 data = json.loads(row["payload"]) if row["payload"] else None
             except json.JSONDecodeError:
@@ -52,6 +53,7 @@ class Cache:
                 fetched_at=parse_iso(row["fetched_at"]),
                 status=row["status"] or "error",
                 error=row["error"],
+                source=row["source"],
             )
         if self._entries:
             log.info("restored %d cached modules from SQLite", len(self._entries))
@@ -61,9 +63,9 @@ class Cache:
             return
         try:
             self.db.execute(
-                "INSERT INTO cache(key, payload, fetched_at, status, error) VALUES(?,?,?,?,?) "
-                "ON CONFLICT(key) DO UPDATE SET payload=excluded.payload, fetched_at=excluded.fetched_at, status=excluded.status, error=excluded.error",
-                (entry.module, dumps(entry.data), iso(entry.fetched_at), entry.status, entry.error),
+                "INSERT INTO cache(key, payload, fetched_at, status, error, source) VALUES(?,?,?,?,?,?) "
+                "ON CONFLICT(key) DO UPDATE SET payload=excluded.payload, fetched_at=excluded.fetched_at, status=excluded.status, error=excluded.error, source=excluded.source",
+                (entry.module, dumps(entry.data), iso(entry.fetched_at), entry.status, entry.error, entry.source),
             )
         except Exception as exc:  # never let persistence break a refresh
             log.warning("could not persist cache for %s: %s", entry.module, exc)
@@ -74,17 +76,29 @@ class Cache:
             self._entries[module] = Entry(module=module)
         return self._entries[module]
 
-    def configure(self, module: str, interval: int, configured: bool, hint: list[str] | None = None) -> None:
+    def configure(self, module: str, interval: int, configured: bool, hint: list[str] | None = None, source: str | None = None) -> None:
         e = self._entry(module)
         e.interval = interval
         e.configured = configured
         e.hint = hint or []
+        if source and e.source and e.source != source:
+            # restored data came from the other mode (mock vs live): never mix them
+            log.info("dropping cached %s data from %s mode", module, e.source)
+            e.data = None
+            e.fetched_at = None
+            e.status = "error"
+            e.error = "First refresh has not completed yet"
+        e.source = source or e.source
         if not configured:
             e.status = "disabled"
             e.error = None
+            e.data = None
+            e.fetched_at = None
 
-    def set_ok(self, module: str, data: Any) -> None:
+    def set_ok(self, module: str, data: Any, source: str | None = None) -> None:
         e = self._entry(module)
+        if source:
+            e.source = source
         e.data = json.loads(dumps(data))
         e.fetched_at = utcnow()
         e.last_attempt = e.fetched_at
@@ -93,8 +107,10 @@ class Cache:
         e.attempts_failed = 0
         self._persist(e)
 
-    def set_degraded(self, module: str, data: Any, error: str) -> None:
+    def set_degraded(self, module: str, data: Any, error: str, source: str | None = None) -> None:
         e = self._entry(module)
+        if source:
+            e.source = source
         e.data = json.loads(dumps(data))
         e.fetched_at = utcnow()
         e.last_attempt = e.fetched_at
@@ -117,6 +133,8 @@ class Cache:
         e.hint = hint
         e.status = "disabled"
         e.error = None
+        e.data = None
+        e.fetched_at = None
         e.last_attempt = utcnow()
 
     # -- reads -----------------------------------------------------------

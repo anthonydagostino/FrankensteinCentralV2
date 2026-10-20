@@ -139,7 +139,7 @@ export function FinanceBody({ data, syncEnabled }: { data: FinanceSummary; syncE
                 <XAxis dataKey="date" hide />
                 <YAxis hide />
                 <Tooltip contentStyle={{ background: "#171e1a", border: "1px solid #2f3a33", fontSize: 12 }} labelFormatter={(l) => formatDateOnly(String(l), "MMM d")} formatter={(v: number) => [formatMoney(v), "Spent"]} />
-                <Area type="monotone" dataKey="amount" stroke="#4ade80" fill="url(#spend)" strokeWidth={1.5} />
+                <Area type="monotone" dataKey="amount" stroke="#4ade80" fill="url(#spend)" strokeWidth={1.5} isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -152,7 +152,7 @@ export function FinanceBody({ data, syncEnabled }: { data: FinanceSummary; syncE
                 <XAxis type="number" hide />
                 <YAxis type="category" dataKey="name" width={90} tick={{ fill: "#97a69c", fontSize: 10 }} axisLine={false} tickLine={false} />
                 <Tooltip contentStyle={{ background: "#171e1a", border: "1px solid #2f3a33", fontSize: 12 }} formatter={(v: number) => [formatMoney(v), "Spent"]} cursor={{ fill: "#222b26" }} />
-                <Bar dataKey="value" radius={[0, 3, 3, 0]} barSize={10}>
+                <Bar dataKey="value" radius={[0, 3, 3, 0]} barSize={10} isAnimationActive={false}>
                   {cats.map((_, i) => (
                     <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
                   ))}
