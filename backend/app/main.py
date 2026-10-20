@@ -118,15 +118,16 @@ def mount_static(application: FastAPI) -> None:
         candidate = static_dir / full_path
         if full_path and candidate.is_file() and candidate.resolve().is_relative_to(static_dir.resolve()):
             return FileResponse(candidate)
-        if not index.exists():
-            return JSONResponse({"detail": "Frontend not built. Run npm run build in frontend/."}, status_code=503)
         if full_path.rstrip("/") == "kiosk" and "token" in request.query_params:
-            # /kiosk?token=... sets the read-only kiosk cookie and drops the token from the URL
+            # /kiosk?token=... sets the read-only kiosk cookie and drops the token from the URL.
+            # This does not need the built frontend, so it runs before the index check.
             token = request.query_params.get("token")
             if authlib.kiosk_token_valid(token):
                 response = RedirectResponse("/kiosk", status_code=303)
                 authlib.set_kiosk_cookie(request, response)
                 return response
+        if not index.exists():
+            return JSONResponse({"detail": "Frontend not built. Run npm run build in frontend/."}, status_code=503)
         return FileResponse(index)
 
 
