@@ -1,0 +1,13 @@
+{"MediaContainer": {"size": 2, "Metadata": [
+ {"sessionKey": "12", "ratingKey": "40121", "type": "episode", "title": "The Rains of Castamere", "grandparentTitle": "Game of Thrones", "parentTitle": "Season 3", "parentIndex": 3, "index": 9, "year": 2013,
+  "thumb": "/library/metadata/40121/thumb/1760000001", "grandparentThumb": "/library/metadata/40001/thumb/1760000002",
+  "viewOffset": 1534000, "duration": 3420000,
+  "User": {"id": "1", "title": "anthony"},
+  "Player": {"title": "Living Room TV", "product": "Plex for Roku", "state": "playing", "local": true},
+  "TranscodeSession": {"key": "/transcode/sessions/abc", "videoDecision": "transcode", "audioDecision": "copy"}},
+ {"sessionKey": "13", "ratingKey": "50233", "type": "movie", "title": "Blade Runner 2049", "year": 2017,
+  "thumb": "/library/metadata/50233/thumb/1760000003",
+  "viewOffset": 2210000, "duration": 9840000,
+  "User": {"id": "2", "title": "sam"},
+  "Player": {"title": "iPhone", "product": "Plex for iOS", "state": "paused", "local": false}}
+]}}

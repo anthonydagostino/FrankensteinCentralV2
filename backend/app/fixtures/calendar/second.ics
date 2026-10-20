@@ -1,0 +1,60 @@
+BEGIN:VCALENDAR
+PRODID:-//FrankensteinCentral//Mock Second//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Work
+X-WR-TIMEZONE:America/New_York
+BEGIN:VEVENT
+DTSTART;TZID=America/New_York:20260105T093000
+DTEND;TZID=America/New_York:20260105T094500
+RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR
+DTSTAMP:20260101T120000Z
+UID:team-standup@frankenstein.mock
+SUMMARY:Team standup
+DESCRIPTION:Daily sync.<br>Join: <a href="https://meet.google.com/abc-defg-hij">https://meet.google.com/abc-defg-hij</a>
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=America/New_York:20260108T150000
+DTEND;TZID=America/New_York:20260108T160000
+RRULE:FREQ=WEEKLY;INTERVAL=2;BYDAY=TH
+DTSTAMP:20260101T120000Z
+UID:sprint-review@frankenstein.mock
+SUMMARY:Sprint review
+LOCATION:https://zoom.us/j/99887766554
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=America/New_York:20260106T110000
+DTEND;TZID=America/New_York:20260106T113000
+RRULE:FREQ=WEEKLY;BYDAY=TU
+DTSTAMP:20260101T120000Z
+UID:one-on-one@frankenstein.mock
+SUMMARY:1:1 with manager
+LOCATION:https://teams.microsoft.com/l/meetup-join/mock
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=America/New_York:20261020T093000
+DTEND;TZID=America/New_York:20261020T094500
+DTSTAMP:20260101T120000Z
+UID:team-standup@frankenstein.mock
+SUMMARY:Team standup
+DESCRIPTION:Duplicate copy of the standup, same UID and start, should be de-duplicated.
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=America/New_York:20261021T130000
+DTEND;TZID=America/New_York:20261021T140000
+DTSTAMP:20261001T120000Z
+UID:arch-review@frankenstein.mock
+SUMMARY:Architecture review: ingestion service
+LOCATION:Conference room B
+DESCRIPTION:Review the .NET ingestion service design.
+END:VEVENT
+BEGIN:VEVENT
+DTSTART;TZID=America/New_York:20261029T120000
+DTEND;TZID=America/New_York:20261029T133000
+DTSTAMP:20261001T120000Z
+UID:team-lunch@frankenstein.mock
+SUMMARY:Team lunch
+LOCATION:Bareli's, Secaucus
+END:VEVENT
+END:VCALENDAR
