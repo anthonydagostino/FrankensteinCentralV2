@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getJson, sendJson } from "./client";
 import type {
-  AttentionData, BenefitsData, CalendarData, CardData, ContainersData, Envelope, FinanceSummary, Me, PlexData, ProbesData, PublicConfig, SettingsData, StatusRow, TransactionRow, UnclassifiedData, VaultData, WeatherData,
+  AttentionData, BenefitsData, CalendarData, CardData, ContainersData, Envelope, FinanceSummary, Me, PlexData, ProbesData, PublicConfig, RecurringData, SettingsData, StatusRow, TransactionRow, UnclassifiedData, VaultData, WeatherData,
 } from "./types";
 
 const MIN = 60_000;
@@ -18,6 +18,7 @@ export const useWeather = (location?: string) => envelopeQuery<WeatherData>(["we
 export const useCalendar = (days = 7) => envelopeQuery<CalendarData>(["calendar", days], `/api/calendar?days=${days}`, 2 * MIN);
 export const useFinance = () => envelopeQuery<FinanceSummary>(["finance"], "/api/finance/summary", 5 * MIN);
 export const useTransactions = (limit = 15) => envelopeQuery<{ transactions: TransactionRow[] }>(["transactions", limit], `/api/finance/transactions?limit=${limit}`, 5 * MIN);
+export const useRecurring = () => envelopeQuery<RecurringData>(["recurring"], "/api/finance/recurring", 5 * MIN);
 export const useCards = () => envelopeQuery<{ cards: CardData[] }>(["cards"], "/api/cards", 5 * MIN);
 export const useBenefits = (year?: number) => envelopeQuery<BenefitsData>(["benefits", year], `/api/benefits${year ? `?year=${year}` : ""}`, 5 * MIN);
 export const useUnclassified = (enabled = true) => envelopeQuery<UnclassifiedData>(["unclassified"], "/api/benefits/unclassified", 5 * MIN, enabled);
@@ -82,6 +83,17 @@ export function useRestartContainer() {
   return useMutation({
     mutationFn: (id: string) => sendJson<{ ok: boolean }>(`/api/containers/${id}/restart`, "POST"),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["containers"] }),
+  });
+}
+
+export function useRecurringIgnore() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: { key: string; ignore: boolean }) => sendJson<{ ok: boolean }>("/api/finance/recurring/ignore", "POST", body),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["recurring"] });
+      qc.invalidateQueries({ queryKey: ["attention"] });
+    },
   });
 }
 

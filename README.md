@@ -20,11 +20,12 @@ The build environment for this repository had no outbound network access to the 
 | Vaultwarden (alive, version, backup age) | implemented | respx | `VAULTWARDEN_URL` |
 | Docker (socket proxy, inspect, restart counts) | implemented | respx | compose socket proxy (no extra config) |
 | HTTP probes | implemented | mock | `probes` in `config/dashboard.yaml` |
+| Recurring charge detector | implemented | 10 unit tests plus an API test on mock data | Firefly |
 | Firefly "Sync now" (data importer) | implemented | manual only | `FIREFLY_IMPORTER_URL`, `FIREFLY_IMPORTER_SECRET` |
 | Firefly tag write back | implemented behind `FIREFLY_WRITEBACK_TAGS` | respx | off by default |
 | Container restart | implemented behind `DOCKER_ALLOW_RESTART` | API test (403 by default) | proxy `POST=1`, `ALLOW_RESTARTS=1` |
 
-Test suite: 58 backend tests (`pytest`) and 9 frontend tests (`vitest`); `scripts/test.sh` runs everything.
+Test suite: 68 backend tests (`pytest`) and 9 frontend tests (`vitest`); `scripts/test.sh` runs everything.
 
 ## Setup
 
@@ -90,6 +91,7 @@ The dashboard is meant for the LAN and your tailnet only. Pick one:
 * **Privacy**: the eye icon in the header blurs every dollar amount. The choice is saved per browser and in the dashboard settings. Kiosk amounts are blurred unless `finance.kiosk_hide_amounts: false`.
 * **Benefits page** (`/benefits`): tiles per benefit with used (green), pending (striped amber), and remaining (gray). Click a tile for the evidence drawer and use "this is wrong" to reclassify. Manual benefits (Uber Cash) are checked off per period at the bottom.
 * **Settings** (`/settings`): pin the Firefly account behind each card, pick the default weather location, see each integration's status, last fetch, last error, and whether it is mocked.
+* **Recurring charges** (under Finances): every withdrawal in Firefly from the last year is clustered by merchant and cadence (weekly to yearly). The widget shows the monthly and yearly total, flags price increases, new subscriptions, charges routed through Apple or PayPal (split by amount), and subscriptions that stopped. A price increase also lands in the attention strip. Click the eye icon to ignore a charge that is not a subscription; transfers and deposits never count.
 * Stale data: a widget whose source has not refreshed for three refresh intervals shows an amber "stale" badge but keeps showing the last good data. Cached data survives restarts.
 
 ## Development

@@ -87,3 +87,21 @@ def test_no_token_in_plex_response(client):
     client.post("/api/auth/login", json={"password": "x"})
     body = client.get("/api/plex").text
     assert "X-Plex-Token" not in body
+
+
+def test_recurring_route_and_ignore(client):
+    client.post("/api/auth/login", json={"password": "x"})
+    body = client.get("/api/finance/recurring").json()
+    assert body["module"] == "recurring" and body["status"] == "ok"
+    items = body["data"]["items"]
+    netflix = next(i for i in items if "NETFLIX" in i["key"])
+    assert netflix["price_increase"] is True
+    before = body["data"]["totals"]["active_count"]
+    r = client.post("/api/finance/recurring/ignore", json={"key": netflix["key"], "ignore": True})
+    assert r.status_code == 200
+    after = client.get("/api/finance/recurring").json()["data"]
+    assert after["totals"]["active_count"] == before - 1
+    assert next(i for i in after["items"] if i["key"] == netflix["key"])["ignored"] is True
+    client.post("/api/finance/recurring/ignore", json={"key": netflix["key"], "ignore": False})
+    attention = client.get("/api/attention").json()["data"]["items"]
+    assert any(a["source"] == "recurring" for a in attention)

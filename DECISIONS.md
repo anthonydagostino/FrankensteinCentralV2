@@ -29,3 +29,8 @@ One line per choice the spec left open, in the order they were made.
 - Hourly day or night icons are derived from the daily sunrise and sunset because the hourly `is_day` field is not requested.
 - Plex deep links use the formats in the spec; they could not be tested against a live server here, so if an item link fails open the server link instead.
 - No live service and no Docker daemon were reachable from the build environment, so Phases 5 and 6 were verified with respx against recorded fixtures only; `docker compose config` and a wheel build of the backend were verified, `docker compose build` was not.
+- Recurring charge detector: a cluster needs 60 percent of its intervals near one cadence; weekly and biweekly clusters, and any cluster seen only twice, must repeat the exact amount (so two grocery runs never look like a subscription); monthly and slower clusters may vary up to 20 percent, or 60 percent when at least three charges exist (utilities), and anything wider is dropped.
+- Charges through Apple, PayPal, Google, Square, and similar processors are clustered by descriptor plus amount, because the descriptor hides the real merchant.
+- Yearly cost is the latest amount times the cadence's periods per year, not the measured interval, so a 31 day gap does not change the annual figure.
+- A subscription is "lapsed" after 1.6 intervals without a charge and "new" when first seen within 60 days. Only price increases of 5 percent or more raise an attention item.
+- Ignored recurring charges are stored as a newline separated list in the settings table under `recurring_ignore`.

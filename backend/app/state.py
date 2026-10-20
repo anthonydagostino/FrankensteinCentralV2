@@ -15,6 +15,7 @@ from .services.attention import build_attention
 from .services.benefits.engine import BenefitsEngine, strip_internal
 from .services.cards import card_metrics, resolve_card_accounts
 from .services.finance import build_summary, firefly_links
+from .services.recurring import detect as detect_recurring
 from .settings import Settings
 from .util import iso, local_now, money, today_local, utcnow
 
@@ -81,6 +82,25 @@ class AppState:
             return None
         return build_summary(data, self.config, self.settings.firefly_vanity_url, today_local(), local_now())
 
+    def recurring_ignored(self) -> set[str]:
+        raw = self.db.get_setting("recurring_ignore") or ""
+        return {k for k in raw.split("\n") if k}
+
+    def set_recurring_ignored(self, key: str, ignore: bool) -> set[str]:
+        keys = self.recurring_ignored()
+        if ignore:
+            keys.add(key)
+        else:
+            keys.discard(key)
+        self.db.set_setting("recurring_ignore", "\n".join(sorted(keys)))
+        return keys
+
+    def recurring(self) -> dict | None:
+        data = self.firefly_data()
+        if data is None:
+            return None
+        return detect_recurring(data.get("transactions") or [], today_local(), self.recurring_ignored(), firefly_links(self.settings.firefly_vanity_url))
+
     def cards(self) -> dict | None:
         data = self.firefly_data()
         if data is None:
@@ -109,7 +129,12 @@ class AppState:
             finance = self.finance_summary()
         except Exception as exc:
             log.warning("finance for attention failed: %s", exc)
-        return build_attention(self.cache, benefits, finance, utcnow(), location)
+        recurring = None
+        try:
+            recurring = self.recurring()
+        except Exception as exc:
+            log.warning("recurring for attention failed: %s", exc)
+        return build_attention(self.cache, benefits, finance, utcnow(), location, recurring)
 
     def snapshot_benefits(self) -> None:
         """Upsert one row per benefit per period for history."""

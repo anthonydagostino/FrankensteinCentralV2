@@ -118,3 +118,17 @@ export interface PublicConfig {
 export interface StatusRow { module: string; status: ModuleStatus; configured: boolean; fetched_at: string | null; last_attempt: string | null; stale: boolean; error: string | null; interval: number; mocked: boolean | null; setup_hint: string[] }
 export interface SettingsData { values: Record<string, string>; card_accounts: Record<string, { id: string; name: string; type: string; role: string | null; pinned: boolean } | null>; accounts: { id: string; name: string; type: string; role: string | null }[]; catalog_last_verified: string }
 export interface Me { authenticated: boolean; mode: "session" | "kiosk" | null; read_only: boolean }
+
+// ---- recurring charges
+export interface RecurringItem {
+  key: string; name: string; merchant: string | null; account: string | null; category: string | null;
+  cadence: "weekly" | "biweekly" | "monthly" | "bimonthly" | "quarterly" | "semiannual" | "annual";
+  interval_days: number; amount: string; previous_amount: string | null; amount_min: string; amount_max: string; variable: boolean;
+  occurrences: number; first_seen: string; last_seen: string; next_expected: string; days_until_next: number;
+  monthly_cost: string; annual_cost: string; status: "active" | "lapsed"; new: boolean; price_increase: boolean; passthrough: boolean; ignored: boolean; url: string | null;
+}
+export interface RecurringData {
+  items: RecurringItem[];
+  totals: { monthly_total: string; annual_total: string; active_count: number; new_count: number; increased_count: number; lapsed_count: number; ignored_count: number };
+  today: string;
+}

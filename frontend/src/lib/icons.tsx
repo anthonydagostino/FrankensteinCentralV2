@@ -1,6 +1,6 @@
 import {
   AlertTriangle, BadgeDollarSign, Calendar, CalendarCheck, CalendarClock, CircleHelp, Cloud, CloudDrizzle, CloudFog, CloudHail, CloudLightning, CloudMoon, CloudRain, CloudRainWind, CloudSnow, CloudSun,
-  Container, Database, DatabaseBackup, DatabaseZap, HeartPulse, KeyRound, Link, Moon, ShieldOff, Sun, Tv, Umbrella, Wallet, Wind, Snowflake, SunMedium, type LucideIcon,
+  Container, Database, DatabaseBackup, DatabaseZap, HeartPulse, KeyRound, Link, Moon, Receipt, ShieldOff, Sun, Tv, Umbrella, Wallet, Wind, Snowflake, SunMedium, type LucideIcon,
 } from "lucide-react";
 
 const MAP: Record<string, LucideIcon> = {
@@ -36,6 +36,7 @@ const MAP: Record<string, LucideIcon> = {
   wallet: Wallet,
   tv: Tv,
   "key-round": KeyRound,
+  receipt: Receipt,
   link: Link,
 };
 

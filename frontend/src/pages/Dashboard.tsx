@@ -6,6 +6,7 @@ import { CardsWidget } from "../widgets/Cards";
 import { ContainersWidget } from "../widgets/Containers";
 import { FinanceWidget } from "../widgets/Finance";
 import { PlexWidget } from "../widgets/Plex";
+import { RecurringWidget } from "../widgets/Recurring";
 import { ServiceHealthRow } from "../widgets/ServiceHealth";
 import { VaultWidget } from "../widgets/Vault";
 import { WeatherWidget } from "../widgets/Weather";
@@ -21,8 +22,9 @@ export function Dashboard({ config, readOnly }: { config?: PublicConfig; readOnl
         <div className="order-2 min-w-0 lg:order-none lg:col-span-4">
           <WeatherWidget location={config?.selected_location} />
         </div>
-        <div className="order-4 min-w-0 lg:order-none lg:col-span-8">
+        <div className="order-4 min-w-0 space-y-4 lg:order-none lg:col-span-8">
           <FinanceWidget syncEnabled={!!config?.features.finance_sync && !readOnly} />
+          <RecurringWidget readOnly={readOnly} />
         </div>
         <div className="order-3 min-w-0 space-y-4 lg:order-none lg:col-span-4">
           <CardsWidget />

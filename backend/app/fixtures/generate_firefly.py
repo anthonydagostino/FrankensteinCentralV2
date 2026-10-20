@@ -118,7 +118,17 @@ def build() -> dict:
         add(dt(1), "withdrawal", "1850.00", "RENT PAYMENT", src=CHK, dst="Landlord", category="Housing", budget="Housing")
         add(dt(12), "withdrawal", "94.60", "JCP&L ELECTRIC", src=CHK, dst="JCP&L", category="Utilities", budget="Utilities")
         add(dt(18), "withdrawal", "85.00", "VERIZON WIRELESS", src=CHK, dst="Verizon", category="Utilities", budget="Utilities")
-        add(dt(3), "withdrawal", "15.49", "NETFLIX.COM", src=CHK, dst="Netflix", category="Subscriptions")
+        add(dt(3), "withdrawal", "17.99" if (y, mo) >= (2026, 9) else "15.49", "NETFLIX.COM", src=CHK, dst="Netflix", category="Subscriptions")
+        if (y, mo) <= (2026, 6):
+            add(dt(9), "withdrawal", "11.99", "SPOTIFY USA", src=CHK, dst="Spotify", category="Subscriptions")
+        if (y, mo) >= (2026, 9):
+            add(dt(14), "withdrawal", "4.00", "NYTIMES*NYT DIGITAL", src=PLAT, dst="New York Times", category="Subscriptions")
+        add(dt(21), "withdrawal", "2.99", "APPLE.COM/BILL 866-712-7753", src=GOLD, dst="Apple", category="Subscriptions")
+        add(dt(21), "withdrawal", "9.99", "APPLE.COM/BILL 866-712-7753", src=GOLD, dst="Apple", category="Subscriptions")
+        if (y, mo) in ((2025, 11), (2026, 11)) or (y, mo) == (2025, 12):
+            pass
+        if (y, mo) == (2025, 12):
+            add(dt(5), "withdrawal", "139.00", "AMAZON PRIME MEMBERSHIP", src=DISC, dst="Amazon", category="Subscriptions")
         add(dt(16), "transfer", "500.00", "Transfer to savings", src=CHK, dst=SAV)
         add(dt(20), "transfer", "220.00", "Student loan payment", src=CHK, dst=LOAN)
 

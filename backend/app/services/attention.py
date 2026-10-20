@@ -12,7 +12,7 @@ def _item(severity: str, icon: str, title: str, detail: str | None, link: str | 
     return {"severity": severity, "icon": icon, "title": title, "detail": detail, "link": link, "source": source, "time": ts}
 
 
-def build_attention(cache, benefits: dict | None, finance_summary: dict | None, now: datetime, location: str | None = None) -> list[dict]:
+def build_attention(cache, benefits: dict | None, finance_summary: dict | None, now: datetime, location: str | None = None, recurring: dict | None = None) -> list[dict]:
     items: list[dict] = []
 
     # Weather alerts and badges
@@ -66,6 +66,12 @@ def build_attention(cache, benefits: dict | None, finance_summary: dict | None, 
         fresh = finance_summary.get("freshness") or {}
         if fresh.get("stale"):
             items.append(_item("warning", "database-zap", "Finance data looks stale", f"Newest bank transaction is {fresh.get('hours_since', 0):.0f} hours old, check the SimpleFIN import", finance_summary.get("links", {}).get("home"), "finance"))
+
+    # Recurring charges: a price increase is the one thing worth interrupting for
+    if recurring:
+        bumps = [r for r in recurring.get("items") or [] if r.get("price_increase") and not r.get("ignored") and r.get("status") == "active"]
+        for r in bumps[:2]:
+            items.append(_item("warning", "receipt", f"{r['name']} went up to ${r['amount']}", f"Was ${r['previous_amount']} per {r['cadence'].replace('ly', '') if r['cadence'] != 'monthly' else 'month'}", r.get("url") or "/", "recurring"))
 
     # Calendar
     cal = cache.data("calendar") or {}
