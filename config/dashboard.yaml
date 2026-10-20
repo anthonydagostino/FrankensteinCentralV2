@@ -1,0 +1,59 @@
+owner_name: Anthony
+timezone: America/New_York
+
+weather:
+  locations:
+    - name: Toms River
+      lat: 39.9537
+      lon: -74.1979
+      default: true
+    - name: Hoboken
+      lat: 40.7440
+      lon: -74.0324
+      default: false
+  units: imperial            # imperial or metric
+
+calendar:
+  lookahead_days: 30
+  feeds:
+    - name: Personal
+      env: GCAL_ICS_PRIMARY
+      color: "#4ade80"
+    - name: Second
+      env: GCAL_ICS_SECOND
+      color: "#60a5fa"
+
+finance:
+  currency: USD
+  hide_amounts_by_default: false     # privacy blur default on the main dashboard
+  kiosk_hide_amounts: true           # amounts blurred on kiosk unless toggled
+  stale_after_hours: 48              # warn when newest imported transaction is older
+  net_worth_include_types: [asset, liabilities]
+
+cards:
+  - id: amex_platinum
+    label: Amex Platinum
+    firefly_account_match: "(?i)platinum"   # regex on Firefly account name
+    firefly_account_id: null                # set to pin an exact account id
+    annual_fee: 895
+  - id: amex_gold
+    label: Amex Gold
+    firefly_account_match: "(?i)gold"
+    firefly_account_id: null
+    annual_fee: 325
+
+links:                     # quick launch tiles
+  - { name: Firefly III, env_url: FIREFLY_VANITY_URL, icon: wallet }
+  - { name: Plex, env_url: PLEX_PUBLIC_URL, icon: tv }
+  - { name: Vaultwarden, env_url: VAULTWARDEN_PUBLIC_URL, icon: key-round }
+  - { name: Portainer, env_url: PORTAINER_URL, icon: container }
+
+probes:                    # generic HTTP checks shown in the service health row
+  - { name: Firefly III, url_env: FIREFLY_URL, path: /api/v1/about, auth: firefly, expect: 200 }
+  - { name: Vaultwarden, url_env: VAULTWARDEN_URL, path: /alive, expect: 200 }
+  - { name: Plex, url_env: PLEX_URL, path: /identity, expect: 200 }
+
+ui:
+  theme: dark
+  accent: "#4ade80"        # "Frankenstein green"
+  kiosk_rotate_seconds: 0  # 0 means no page rotation

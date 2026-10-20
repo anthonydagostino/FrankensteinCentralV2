@@ -1,0 +1,279 @@
+# Amex benefits catalog. Verify against the Benefits page in the Amex app once a quarter.
+# Patterns are regular expressions, matched case-insensitively against the transaction
+# description, destination name, source name, and notes. They are starting points: refine
+# them from the Discovery screen at /benefits ("Suggest pattern").
+last_verified: 2026-10-20
+
+benefits:
+  # ---------------------------------------------------------------------------
+  # Platinum Card (consumer), annual fee $895
+  # ---------------------------------------------------------------------------
+  - id: plat_lululemon
+    card: amex_platinum
+    name: lululemon
+    cap: 75.00
+    period: quarterly
+    tracking: matched
+    enrollment_required: true
+    active_from: 2025-09-18
+    purchase_patterns:
+      - "lululemon"
+      - "lulu ?lemon"
+    purchase_exclude_patterns:
+      - "gift ?card"
+      - "\\bGC\\b"
+      - "outlet"
+    credit_patterns:
+      - "lululemon.*credit"
+      - "credit.*lululemon"
+      - "platinum.*lululemon"
+    notes: "Up to $75 per calendar quarter at U.S. lululemon stores and lululemon.com/app. Outlets excluded. Gift cards stopped triggering around Oct 5, 2026."
+
+  - id: plat_resy
+    card: amex_platinum
+    name: Resy dining
+    cap: 100.00
+    period: quarterly
+    tracking: credits_only
+    enrollment_required: true
+    credit_patterns:
+      - "resy.*credit"
+      - "credit.*resy"
+      - "platinum.*resy"
+    notes: "Up to $100 per quarter at Resy restaurants. Restaurant names vary, so only credits are tracked."
+
+  - id: plat_digital_ent
+    card: amex_platinum
+    name: Digital entertainment
+    cap: 25.00
+    period: monthly
+    tracking: matched
+    enrollment_required: true
+    purchase_patterns:
+      - "disney"
+      - "hulu"
+      - "espn"
+      - "peacock"
+      - "paramount"
+      - "new ?york ?times"
+      - "nytimes"
+      - "wsj"
+      - "wall street journal"
+      - "youtube"
+    credit_patterns:
+      - "digital ent.*credit"
+      - "entertainment credit"
+      - "platinum.*(disney|hulu|espn|peacock|paramount|nyt|wsj|youtube).*credit"
+    notes: "Up to $25 per month. Verify the eligible partner list in the Amex app."
+
+  - id: plat_uber_cash
+    card: amex_platinum
+    name: Uber Cash
+    cap: 15.00
+    period: monthly
+    period_caps: { "12": 35.00 }
+    tracking: manual
+    enrollment_required: true
+    notes: "$15 per month, $35 in December. Lands in the Uber app, not on the card, so mark it by hand."
+
+  - id: plat_uber_one
+    card: amex_platinum
+    name: Uber One membership
+    cap: 120.00
+    period: annual
+    tracking: matched
+    enrollment_required: true
+    purchase_patterns:
+      - "uber ?one"
+    credit_patterns:
+      - "uber one.*credit"
+      - "credit.*uber one"
+    notes: "Pay for Uber One with the Platinum."
+
+  - id: plat_hotel
+    card: amex_platinum
+    name: Hotel credit (FHR and The Hotel Collection)
+    cap: 300.00
+    period: semiannual
+    tracking: credits_only
+    enrollment_required: true
+    credit_patterns:
+      - "hotel.*credit"
+      - "fhr"
+      - "fine hotels"
+      - "hotel collection"
+      - "amex travel.*credit"
+    notes: "Up to $300 per half year on prepaid Fine Hotels + Resorts or The Hotel Collection stays booked through Amex Travel."
+
+  - id: plat_airline
+    card: amex_platinum
+    name: Airline incidental fees
+    cap: 200.00
+    period: annual
+    tracking: credits_only
+    enrollment_required: true
+    credit_patterns:
+      - "airline.*credit"
+      - "airline fee"
+      - "incidental"
+    notes: "Up to $200 per calendar year on incidental fees with the selected airline."
+
+  - id: plat_clear
+    card: amex_platinum
+    name: CLEAR+
+    cap: 219.00
+    period: annual
+    tracking: matched
+    enrollment_required: true
+    purchase_patterns:
+      - "clear ?me"
+      - "clear\\b"
+    credit_patterns:
+      - "clear.*credit"
+    notes: "Some third party sites still list $209; Amex's own page lists $219."
+
+  - id: plat_walmart
+    card: amex_platinum
+    name: Walmart+ membership
+    cap: 14.00
+    period: monthly
+    tracking: matched
+    enrollment_required: true
+    purchase_patterns:
+      - "walmart\\+"
+      - "walmart plus"
+      - "wmt plus"
+    credit_patterns:
+      - "walmart.*credit"
+    notes: "$12.95 plus tax per month (cap set to $14.00)."
+
+  - id: plat_equinox
+    card: amex_platinum
+    name: Equinox
+    cap: 300.00
+    period: annual
+    tracking: matched
+    enrollment_required: true
+    purchase_patterns:
+      - "equinox"
+    credit_patterns:
+      - "equinox.*credit"
+    notes: "Up to $300 per calendar year on Equinox or Equinox+."
+
+  - id: plat_oura
+    card: amex_platinum
+    name: Oura Ring
+    cap: 200.00
+    period: annual
+    tracking: matched
+    enrollment_required: true
+    purchase_patterns:
+      - "oura"
+    credit_patterns:
+      - "oura.*credit"
+    notes: "Up to $200 per calendar year at ouraring.com."
+
+  - id: plat_global_entry
+    card: amex_platinum
+    name: Global Entry or TSA PreCheck
+    cap: 120.00
+    period: multi_year
+    period_years: 4
+    tracking: matched
+    enrollment_required: false
+    purchase_patterns:
+      - "global entry"
+      - "tsa ?pre"
+      - "cbp"
+      - "idemia"
+      - "telos"
+    credit_patterns:
+      - "global entry.*credit"
+      - "tsa.*credit"
+    notes: "$120 for Global Entry every 4 years or $85 for TSA PreCheck every 4.5 years. Shows last used and next eligible date."
+
+  - id: plat_saks
+    card: amex_platinum
+    name: Saks Fifth Avenue
+    cap: 50.00
+    period: semiannual
+    tracking: matched
+    enrollment_required: true
+    active_until: 2026-06-30
+    purchase_patterns:
+      - "saks"
+    credit_patterns:
+      - "saks.*credit"
+    notes: "Retired July 1, 2026 after Saks Global's bankruptcy. Kept for history only."
+
+  # ---------------------------------------------------------------------------
+  # Gold Card (consumer), annual fee $325
+  # ---------------------------------------------------------------------------
+  - id: gold_dining
+    card: amex_gold
+    name: Dining credit
+    cap: 10.00
+    period: monthly
+    tracking: matched
+    enrollment_required: true
+    purchase_patterns:
+      - "grubhub"
+      - "seamless"
+      - "five guys"
+      - "cheesecake factory"
+      - "buffalo wild wings"
+      - "bww"
+      - "wonder"
+    credit_patterns:
+      - "dining credit"
+      - "gold.*dining"
+      - "(grubhub|seamless|five guys|cheesecake|buffalo wild|wonder).*credit"
+    notes: "Up to $10 per month. Buffalo Wild Wings and Wonder added April 2026; Goldbelly and Wine.com removed July 1, 2026."
+
+  - id: gold_uber_cash
+    card: amex_gold
+    name: Uber Cash
+    cap: 10.00
+    period: monthly
+    tracking: manual
+    enrollment_required: true
+    notes: "$10 per month. Lands in the Uber app, not on the card."
+
+  - id: gold_resy
+    card: amex_gold
+    name: Resy
+    cap: 50.00
+    period: semiannual
+    tracking: credits_only
+    enrollment_required: true
+    credit_patterns:
+      - "resy.*credit"
+      - "gold.*resy"
+    notes: "Up to $50 per half year at Resy restaurants."
+
+  - id: gold_dunkin
+    card: amex_gold
+    name: "Dunkin'"
+    cap: 7.00
+    period: monthly
+    tracking: matched
+    enrollment_required: true
+    purchase_patterns:
+      - "dunkin"
+    credit_patterns:
+      - "dunkin.*credit"
+    notes: "Up to $7 per month at U.S. Dunkin' locations."
+
+  - id: gold_uber_one_promo
+    card: amex_gold
+    name: Uber One membership (limited time)
+    cap: 96.00
+    period: annual
+    tracking: matched
+    enrollment_required: true
+    active_until: 2026-10-30
+    purchase_patterns:
+      - "uber ?one"
+    credit_patterns:
+      - "uber one.*credit"
+    notes: "One time promotional credit of up to $96 for the Gold's 60th anniversary. Ends Oct 30, 2026."

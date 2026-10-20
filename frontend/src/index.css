@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+html, body, #root { min-height: 100%; }
+body { font-feature-settings: "tnum" 1; }
+.tabular { font-variant-numeric: tabular-nums; }
+.privacy-blur { filter: blur(7px); user-select: none; transition: filter 150ms ease; }
+.kiosk-idle, .kiosk-idle * { cursor: none !important; }
+.scrollbar-thin::-webkit-scrollbar { height: 6px; width: 6px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #2f3a33; border-radius: 3px; }
+.striped { background-image: repeating-linear-gradient(45deg, rgba(245,158,11,.9) 0 6px, rgba(245,158,11,.45) 6px 12px); }
+@keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+.animate-pulse-soft { animation: pulse-soft 1.6s ease-in-out infinite; }
