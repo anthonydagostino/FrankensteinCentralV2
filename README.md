@@ -25,7 +25,7 @@ The build environment for this repository had no outbound network access to the 
 | Firefly tag write back | implemented behind `FIREFLY_WRITEBACK_TAGS` | respx | off by default |
 | Container restart | implemented behind `DOCKER_ALLOW_RESTART` | API test (403 by default) | proxy `POST=1`, `ALLOW_RESTARTS=1` |
 
-Test suite: 68 backend tests (`pytest`) and 9 frontend tests (`vitest`); `scripts/test.sh` runs everything.
+Test suite: 68 backend tests (`pytest`) and 9 frontend tests (`vitest`); `scripts/test.sh` runs everything, and the GitHub Actions workflow in `.github/workflows/ci.yml` runs it on every push and pull request.
 
 ## Setup
 
