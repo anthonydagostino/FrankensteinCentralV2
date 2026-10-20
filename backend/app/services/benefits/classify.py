@@ -67,8 +67,19 @@ class Classified:
         return out
 
 
-def text_of(row: dict) -> str:
-    return " ".join(str(row.get(k) or "") for k in ("description", "destination_name", "source_name", "notes")).lower()
+def text_of(row: dict, account_id: str | None = None) -> str:
+    """Description, notes, and the counterparty name. The card's own account name is left out."""
+    parts = [str(row.get("description") or ""), str(row.get("notes") or "")]
+    if account_id is None or str(row.get("source_id")) != str(account_id):
+        parts.append(str(row.get("source_name") or ""))
+    if account_id is None or str(row.get("destination_id")) != str(account_id):
+        parts.append(str(row.get("destination_name") or ""))
+    return " ".join(parts).lower()
+
+
+def own_text(row: dict) -> str:
+    """Description and notes only, used for generic credit markers."""
+    return " ".join(str(row.get(k) or "") for k in ("description", "notes")).lower()
 
 
 def direction(row: dict, account_id: str) -> str:
@@ -122,7 +133,7 @@ def classify_card(rows: list[dict], account_id: str, account_name: str, benefits
             continue
         if d != "outflow":
             continue
-        text = text_of(row)
+        text = text_of(row, account_id)
         c = _base(row, "other", account_name)
         if override:
             cls = override.get("classification")
@@ -179,7 +190,8 @@ def classify_card(rows: list[dict], account_id: str, account_name: str, benefits
         if direction(row, account_id) != "inflow":
             continue
         journal_id = int(row.get("journal_id") or 0)
-        text = text_of(row)
+        text = text_of(row, account_id)
+        desc = own_text(row)
         c = _base(row, "unclassified_deposit", account_name)
         override = overrides.get(journal_id)
         if override:
@@ -199,7 +211,7 @@ def classify_card(rows: list[dict], account_id: str, account_name: str, benefits
                 c.kind = "other"
             out.append(c)
             continue
-        if PAYMENT_MARKERS.search(text) and not GENERIC_CREDIT_MARKERS.search(text):
+        if PAYMENT_MARKERS.search(desc) and not GENERIC_CREDIT_MARKERS.search(desc):
             c.kind = "payment"
             out.append(c)
             continue
@@ -208,7 +220,7 @@ def classify_card(rows: list[dict], account_id: str, account_name: str, benefits
         for b in benefits:
             if b.tracking == "manual":
                 continue
-            if b.matches_credit(text) or (GENERIC_CREDIT_MARKERS.search(text) and b.matches_merchant(text)):
+            if b.matches_credit(text) or (GENERIC_CREDIT_MARKERS.search(desc) and b.matches_merchant(text)):
                 c.kind = "statement_credit"
                 c.benefit_id = b.id
                 c.confidence = "high"

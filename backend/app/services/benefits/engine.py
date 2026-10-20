@@ -74,7 +74,7 @@ def period_result(benefit: Benefit, period: Period, items: list[Classified], man
     ended = period.ended(today)
     if benefit.tracking == "manual":
         if manual_used is None:
-            status = "expired_unused" if ended else "manual"
+            status = "manual"
         elif used >= cap:
             status = "used"
         elif ended:

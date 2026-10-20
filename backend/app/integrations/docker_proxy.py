@@ -34,7 +34,7 @@ def parse_health(status: str | None) -> str:
     if not m:
         return "none"
     value = m.group(1).lower()
-    return "starting" if value.startswith("health") else value
+    return "starting" if value.startswith("health:") else value
 
 
 def _parse_time(value: str | None) -> datetime | None:
