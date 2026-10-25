@@ -17,7 +17,7 @@ Self-hosted personal life dashboard for Anthony. `SPEC.md` is the source of trut
 
 ## Rules
 1. Never stop to ask questions. Pick the spec DEFAULT, or the simplest option that meets acceptance, and log it in `DECISIONS.md`.
-2. Mock mode first. Every integration works with `MOCK_MODE=true` from fixtures in `backend/app/fixtures/`. Per integration overrides: `MOCK_WEATHER`, `MOCK_CALENDAR`, `MOCK_FIREFLY`, `MOCK_PLEX`, `MOCK_VAULT`, `MOCK_DOCKER`.
+2. Mock mode first. Every integration works with `MOCK_MODE=true` from fixtures in `backend/app/fixtures/`. Per integration overrides: `MOCK_WEATHER`, `MOCK_CALENDAR`, `MOCK_FIREFLY`, `MOCK_PLEX`, `MOCK_VAULT`, `MOCK_DOCKER`, `MOCK_LOCKIN`.
 3. Every widget is independent. One failing integration never breaks the page. Failed widgets show last good data with a stale badge or an error card.
 4. Secrets never reach the browser. All third party calls happen in the backend. Never log tokens, URLs containing tokens, or iCal secret URLs. The logging filter redacts them.
 5. Money is `Decimal` end to end; serialize as strings with two decimals. Direction comes from Firefly `type` and source/destination, never from the sign of `amount`.

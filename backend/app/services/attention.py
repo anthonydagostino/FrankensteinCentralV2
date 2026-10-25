@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from datetime import datetime
 
+from ..util import local_tz as _local_tz
+
 SEVERITY_RANK = {"critical": 0, "warning": 1, "info": 2}
 MAX_ITEMS = 6
 
@@ -66,6 +68,23 @@ def build_attention(cache, benefits: dict | None, finance_summary: dict | None, 
         fresh = finance_summary.get("freshness") or {}
         if fresh.get("stale"):
             items.append(_item("warning", "database-zap", "Finance data looks stale", f"Newest bank transaction is {fresh.get('hours_since', 0):.0f} hours old, check the SimpleFIN import", finance_summary.get("links", {}).get("home"), "finance"))
+
+    # Lock-In training
+    lockin_entry = cache.get("lockin")
+    lockin = cache.data("lockin") or {}
+    if lockin_entry and lockin_entry.status not in ("disabled",) and lockin:
+        link = lockin.get("public_url")
+        risk = lockin.get("streak_risk")
+        needed = lockin.get("sessions_needed_for_streak") or 0
+        if risk == "at_risk" and needed > 0:
+            items.append(_item("warning", "dumbbell", f"Streak at risk: {needed} session{'s' if needed > 1 else ''} in {lockin.get('days_left_in_week')} day{'s' if lockin.get('days_left_in_week', 0) > 1 else ''}", f"Next up: {(lockin.get('next_session') or {}).get('name', '')}", link, "lockin"))
+        elif risk == "lost" and (lockin.get("streak_weeks") or 0) > 0:
+            items.append(_item("warning", "dumbbell", f"{lockin.get('streak_weeks')} week streak ends this week", f"{lockin.get('sessions_this_week')} of {lockin.get('streak_min_sessions')} sessions, {lockin.get('days_left_in_week')} days left", link, "lockin"))
+        local_hour = now.astimezone(_local_tz()).hour
+        if not lockin.get("weighed_today") and 10 <= local_hour < 22:
+            items.append(_item("info", "scale", "Log your weight", "No weigh-in yet today", link, "lockin"))
+        if (lockin.get("phase") or {}).get("deload"):
+            items.append(_item("info", "dumbbell", "Deload week", "Half the sets, stop 4 reps short of failure", link, "lockin"))
 
     # Recurring charges: a price increase is the one thing worth interrupting for
     if recurring:

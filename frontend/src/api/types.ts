@@ -132,3 +132,19 @@ export interface RecurringData {
   totals: { monthly_total: string; annual_total: string; active_count: number; new_count: number; increased_count: number; lapsed_count: number; ignored_count: number };
   today: string;
 }
+
+// ---- Lock-In training
+export interface TrainingData {
+  version: string | null; today: string;
+  phase: { key: string | null; name: string | null; week: number | null; deload: boolean };
+  days_until_goal: number; goal_date: string;
+  sessions_this_week: number; sessions_planned: number; streak_weeks: number; streak_min_sessions: number;
+  streak_risk: "safe" | "ok" | "at_risk" | "lost"; sessions_needed_for_streak: number; days_left_in_week: number;
+  last_session: { date: string; template_key: string; name: string } | null;
+  next_session: { template_key: string; name: string } | null;
+  trained_today: boolean; weighed_today: boolean;
+  weight: { latest: { date: string; lb: number } | null; avg7: number | null; avg7_prev: number | null; weekly_change: number | null; target_weekly_change: number | null; on_track: boolean | null };
+  week: { date: string; label: string; done: boolean; today: boolean; future: boolean }[] | null;
+  weight_series: { date: string; weight: number }[] | null;
+  public_url: string | null; generated_at: string;
+}

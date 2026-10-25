@@ -105,3 +105,11 @@ def test_recurring_route_and_ignore(client):
     client.post("/api/finance/recurring/ignore", json={"key": netflix["key"], "ignore": False})
     attention = client.get("/api/attention").json()["data"]["items"]
     assert any(a["source"] == "recurring" for a in attention)
+
+
+def test_lockin_route(client):
+    client.post("/api/auth/login", json={"password": "x"})
+    body = client.get("/api/lockin").json()
+    assert body["module"] == "lockin" and body["status"] == "ok"
+    assert body["data"]["next_session"]["name"] and len(body["data"]["week"]) == 7
+    assert "tok" not in client.get("/api/lockin").text

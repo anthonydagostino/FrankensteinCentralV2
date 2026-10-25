@@ -1,0 +1,633 @@
+{
+ "exportedAt": "2026-10-25T12:00:00.000Z",
+ "version": "0.2.1",
+ "weighIns": [
+  {
+   "id": "w-2026-08-26",
+   "date": "2026-08-26",
+   "weightLb": 152.5,
+   "updatedAt": 1761000000060,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-08-27",
+   "date": "2026-08-27",
+   "weightLb": 152.3,
+   "updatedAt": 1761000000059,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-08-28",
+   "date": "2026-08-28",
+   "weightLb": 152.3,
+   "updatedAt": 1761000000058,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-08-29",
+   "date": "2026-08-29",
+   "weightLb": 152.0,
+   "updatedAt": 1761000000057,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-08-30",
+   "date": "2026-08-30",
+   "weightLb": 152.3,
+   "updatedAt": 1761000000056,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-01",
+   "date": "2026-09-01",
+   "weightLb": 151.4,
+   "updatedAt": 1761000000054,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-02",
+   "date": "2026-09-02",
+   "weightLb": 152.3,
+   "updatedAt": 1761000000053,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-04",
+   "date": "2026-09-04",
+   "weightLb": 153.1,
+   "updatedAt": 1761000000051,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-05",
+   "date": "2026-09-05",
+   "weightLb": 152.9,
+   "updatedAt": 1761000000050,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-06",
+   "date": "2026-09-06",
+   "weightLb": 152.5,
+   "updatedAt": 1761000000049,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-07",
+   "date": "2026-09-07",
+   "weightLb": 152.7,
+   "updatedAt": 1761000000048,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-08",
+   "date": "2026-09-08",
+   "weightLb": 153.1,
+   "updatedAt": 1761000000047,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-10",
+   "date": "2026-09-10",
+   "weightLb": 153.3,
+   "updatedAt": 1761000000045,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-11",
+   "date": "2026-09-11",
+   "weightLb": 153.2,
+   "updatedAt": 1761000000044,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-12",
+   "date": "2026-09-12",
+   "weightLb": 153.1,
+   "updatedAt": 1761000000043,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-13",
+   "date": "2026-09-13",
+   "weightLb": 152.9,
+   "updatedAt": 1761000000042,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-14",
+   "date": "2026-09-14",
+   "weightLb": 153.4,
+   "updatedAt": 1761000000041,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-15",
+   "date": "2026-09-15",
+   "weightLb": 153.2,
+   "updatedAt": 1761000000040,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-16",
+   "date": "2026-09-16",
+   "weightLb": 152.7,
+   "updatedAt": 1761000000039,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-17",
+   "date": "2026-09-17",
+   "weightLb": 152.9,
+   "updatedAt": 1761000000038,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-19",
+   "date": "2026-09-19",
+   "weightLb": 153.5,
+   "updatedAt": 1761000000036,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-20",
+   "date": "2026-09-20",
+   "weightLb": 153.8,
+   "updatedAt": 1761000000035,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-21",
+   "date": "2026-09-21",
+   "weightLb": 154.5,
+   "updatedAt": 1761000000034,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-23",
+   "date": "2026-09-23",
+   "weightLb": 154.8,
+   "updatedAt": 1761000000032,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-24",
+   "date": "2026-09-24",
+   "weightLb": 154.9,
+   "updatedAt": 1761000000031,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-25",
+   "date": "2026-09-25",
+   "weightLb": 153.7,
+   "updatedAt": 1761000000030,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-26",
+   "date": "2026-09-26",
+   "weightLb": 154.4,
+   "updatedAt": 1761000000029,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-27",
+   "date": "2026-09-27",
+   "weightLb": 153.4,
+   "updatedAt": 1761000000028,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-28",
+   "date": "2026-09-28",
+   "weightLb": 154.4,
+   "updatedAt": 1761000000027,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-29",
+   "date": "2026-09-29",
+   "weightLb": 153.3,
+   "updatedAt": 1761000000026,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-09-30",
+   "date": "2026-09-30",
+   "weightLb": 153.4,
+   "updatedAt": 1761000000025,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-02",
+   "date": "2026-10-02",
+   "weightLb": 153.8,
+   "updatedAt": 1761000000023,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-03",
+   "date": "2026-10-03",
+   "weightLb": 154.4,
+   "updatedAt": 1761000000022,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-04",
+   "date": "2026-10-04",
+   "weightLb": 155.0,
+   "updatedAt": 1761000000021,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-05",
+   "date": "2026-10-05",
+   "weightLb": 155.2,
+   "updatedAt": 1761000000020,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-07",
+   "date": "2026-10-07",
+   "weightLb": 155.0,
+   "updatedAt": 1761000000018,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-08",
+   "date": "2026-10-08",
+   "weightLb": 155.9,
+   "updatedAt": 1761000000017,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-09",
+   "date": "2026-10-09",
+   "weightLb": 155.0,
+   "updatedAt": 1761000000016,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-10",
+   "date": "2026-10-10",
+   "weightLb": 154.8,
+   "updatedAt": 1761000000015,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-11",
+   "date": "2026-10-11",
+   "weightLb": 155.4,
+   "updatedAt": 1761000000014,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-12",
+   "date": "2026-10-12",
+   "weightLb": 154.4,
+   "updatedAt": 1761000000013,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-13",
+   "date": "2026-10-13",
+   "weightLb": 154.4,
+   "updatedAt": 1761000000012,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-14",
+   "date": "2026-10-14",
+   "weightLb": 155.1,
+   "updatedAt": 1761000000011,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-15",
+   "date": "2026-10-15",
+   "weightLb": 154.6,
+   "updatedAt": 1761000000010,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-18",
+   "date": "2026-10-18",
+   "weightLb": 155.3,
+   "updatedAt": 1761000000007,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-19",
+   "date": "2026-10-19",
+   "weightLb": 155.7,
+   "updatedAt": 1761000000006,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-20",
+   "date": "2026-10-20",
+   "weightLb": 156.6,
+   "updatedAt": 1761000000005,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-21",
+   "date": "2026-10-21",
+   "weightLb": 156.3,
+   "updatedAt": 1761000000004,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-22",
+   "date": "2026-10-22",
+   "weightLb": 155.9,
+   "updatedAt": 1761000000003,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-23",
+   "date": "2026-10-23",
+   "weightLb": 156.7,
+   "updatedAt": 1761000000002,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-24",
+   "date": "2026-10-24",
+   "weightLb": 155.8,
+   "updatedAt": 1761000000001,
+   "deleted": false
+  },
+  {
+   "id": "w-2026-10-25",
+   "date": "2026-10-25",
+   "weightLb": 156.3,
+   "updatedAt": 1761000000000,
+   "deleted": false
+  }
+ ],
+ "sessions": [
+  {
+   "id": "s-2026-09-21",
+   "date": "2026-09-21",
+   "templateKey": "pushA",
+   "startedAt": 1761000000000,
+   "completedAt": 1761003600000,
+   "notes": "",
+   "updatedAt": 1761000000000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22",
+   "date": "2026-09-22",
+   "templateKey": "pullA",
+   "startedAt": 1761000010000,
+   "completedAt": 1761003610000,
+   "notes": "",
+   "updatedAt": 1761000010000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23",
+   "date": "2026-09-23",
+   "templateKey": "legsA",
+   "startedAt": 1761000020000,
+   "completedAt": 1761003620000,
+   "notes": "",
+   "updatedAt": 1761000020000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24",
+   "date": "2026-09-24",
+   "templateKey": "pushB",
+   "startedAt": 1761000030000,
+   "completedAt": 1761003630000,
+   "notes": "",
+   "updatedAt": 1761000030000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25",
+   "date": "2026-09-25",
+   "templateKey": "pullB",
+   "startedAt": 1761000040000,
+   "completedAt": 1761003640000,
+   "notes": "",
+   "updatedAt": 1761000040000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26",
+   "date": "2026-09-26",
+   "templateKey": "legsB",
+   "startedAt": 1761000050000,
+   "completedAt": 1761003650000,
+   "notes": "",
+   "updatedAt": 1761000050000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28",
+   "date": "2026-09-28",
+   "templateKey": "pushA",
+   "startedAt": 1761000060000,
+   "completedAt": 1761003660000,
+   "notes": "",
+   "updatedAt": 1761000060000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29",
+   "date": "2026-09-29",
+   "templateKey": "pullA",
+   "startedAt": 1761000070000,
+   "completedAt": 1761003670000,
+   "notes": "",
+   "updatedAt": 1761000070000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30",
+   "date": "2026-09-30",
+   "templateKey": "legsA",
+   "startedAt": 1761000080000,
+   "completedAt": 1761003680000,
+   "notes": "",
+   "updatedAt": 1761000080000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02",
+   "date": "2026-10-02",
+   "templateKey": "pushB",
+   "startedAt": 1761000090000,
+   "completedAt": 1761003690000,
+   "notes": "",
+   "updatedAt": 1761000090000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03",
+   "date": "2026-10-03",
+   "templateKey": "pullB",
+   "startedAt": 1761000100000,
+   "completedAt": 1761003700000,
+   "notes": "",
+   "updatedAt": 1761000100000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05",
+   "date": "2026-10-05",
+   "templateKey": "legsB",
+   "startedAt": 1761000110000,
+   "completedAt": 1761003710000,
+   "notes": "",
+   "updatedAt": 1761000110000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06",
+   "date": "2026-10-06",
+   "templateKey": "pushA",
+   "startedAt": 1761000120000,
+   "completedAt": 1761003720000,
+   "notes": "",
+   "updatedAt": 1761000120000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07",
+   "date": "2026-10-07",
+   "templateKey": "pullA",
+   "startedAt": 1761000130000,
+   "completedAt": 1761003730000,
+   "notes": "",
+   "updatedAt": 1761000130000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08",
+   "date": "2026-10-08",
+   "templateKey": "legsA",
+   "startedAt": 1761000140000,
+   "completedAt": 1761003740000,
+   "notes": "",
+   "updatedAt": 1761000140000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09",
+   "date": "2026-10-09",
+   "templateKey": "pushB",
+   "startedAt": 1761000150000,
+   "completedAt": 1761003750000,
+   "notes": "",
+   "updatedAt": 1761000150000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10",
+   "date": "2026-10-10",
+   "templateKey": "pullB",
+   "startedAt": 1761000160000,
+   "completedAt": 1761003760000,
+   "notes": "",
+   "updatedAt": 1761000160000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12",
+   "date": "2026-10-12",
+   "templateKey": "legsB",
+   "startedAt": 1761000170000,
+   "completedAt": 1761003770000,
+   "notes": "",
+   "updatedAt": 1761000170000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13",
+   "date": "2026-10-13",
+   "templateKey": "pushA",
+   "startedAt": 1761000180000,
+   "completedAt": 1761003780000,
+   "notes": "",
+   "updatedAt": 1761000180000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14",
+   "date": "2026-10-14",
+   "templateKey": "pullA",
+   "startedAt": 1761000190000,
+   "completedAt": 1761003790000,
+   "notes": "",
+   "updatedAt": 1761000190000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16",
+   "date": "2026-10-16",
+   "templateKey": "legsA",
+   "startedAt": 1761000200000,
+   "completedAt": 1761003800000,
+   "notes": "",
+   "updatedAt": 1761000200000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17",
+   "date": "2026-10-17",
+   "templateKey": "pushB",
+   "startedAt": 1761000210000,
+   "completedAt": 1761003810000,
+   "notes": "",
+   "updatedAt": 1761000210000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19",
+   "date": "2026-10-19",
+   "templateKey": "pullB",
+   "startedAt": 1761000220000,
+   "completedAt": 1761003820000,
+   "notes": "",
+   "updatedAt": 1761000220000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20",
+   "date": "2026-10-20",
+   "templateKey": "legsB",
+   "startedAt": 1761000230000,
+   "completedAt": 1761003830000,
+   "notes": "",
+   "updatedAt": 1761000230000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22",
+   "date": "2026-10-22",
+   "templateKey": "pushA",
+   "startedAt": 1761000240000,
+   "completedAt": 1761003840000,
+   "notes": "",
+   "updatedAt": 1761000240000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23",
+   "date": "2026-10-23",
+   "templateKey": "pullA",
+   "startedAt": 1761000250000,
+   "completedAt": 1761003850000,
+   "notes": "",
+   "updatedAt": 1761000250000,
+   "deleted": false
+  }
+ ],
+ "sets": []
+}

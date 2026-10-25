@@ -47,11 +47,13 @@ links:                     # quick launch tiles
   - { name: Plex, env_url: PLEX_PUBLIC_URL, icon: tv }
   - { name: Vaultwarden, env_url: VAULTWARDEN_PUBLIC_URL, icon: key-round }
   - { name: Portainer, env_url: PORTAINER_URL, icon: container }
+  - { name: Lock-In, env_url: LOCKIN_PUBLIC_URL, icon: dumbbell }
 
 probes:                    # generic HTTP checks shown in the service health row
   - { name: Firefly III, url_env: FIREFLY_URL, path: /api/v1/about, auth: firefly, expect: 200 }
   - { name: Vaultwarden, url_env: VAULTWARDEN_URL, path: /alive, expect: 200 }
   - { name: Plex, url_env: PLEX_URL, path: /identity, expect: 200 }
+  - { name: Lock-In, url_env: LOCKIN_URL, path: /api/health, expect: 200 }
 
 ui:
   theme: dark

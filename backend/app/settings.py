@@ -45,6 +45,7 @@ class Settings(BaseSettings):
     mock_plex: bool | None = None
     mock_vault: bool | None = None
     mock_docker: bool | None = None
+    mock_lockin: bool | None = None
 
     # Weather
     nws_user_agent: str = "(FrankensteinCentral, your-email@example.com)"
@@ -71,6 +72,11 @@ class Settings(BaseSettings):
     vaultwarden_url: str = ""
     vaultwarden_public_url: str = ""
     vaultwarden_backup_dir: str = ""
+
+    # Lock-In (training tracker)
+    lockin_url: str = ""
+    lockin_token: str = ""
+    lockin_public_url: str = ""
 
     # Docker
     docker_host: str = "tcp://socket-proxy:2375"
@@ -120,6 +126,7 @@ class Settings(BaseSettings):
             self.firefly_token,
             self.firefly_importer_secret,
             self.plex_token,
+            self.lockin_token,
             self.gcal_ics_primary,
             self.gcal_ics_second,
         ]
