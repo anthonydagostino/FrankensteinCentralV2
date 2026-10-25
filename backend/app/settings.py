@@ -67,6 +67,7 @@ class Settings(BaseSettings):
     plex_url: str = ""
     plex_token: str = ""
     plex_public_url: str = "https://app.plex.tv/desktop"
+    plex_server_name: str = ""  # pick a specific server from plex.tv discovery; empty picks owned first, then first shared
 
     # Vaultwarden
     vaultwarden_url: str = ""
