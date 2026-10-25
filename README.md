@@ -30,7 +30,7 @@ Test suite: 76 backend tests (`pytest`) and 9 frontend tests (`vitest`); `script
 
 ## Setup
 
-1. Copy `.env.example` to `.env`.
+1. Copy `.env.example` to `.env`. The `data/` folder ships with the repository and is mounted into the container for the SQLite database; it must be writable by uid 1000 (the first user on Ubuntu). If the container logs "unable to open database file", run `sudo chown -R 1000:1000 data` once.
 2. Generate secrets.
    * Password hash: `docker compose run --rm frankenstein python -m app.hash_password` (or `docker compose exec frankenstein python -m app.hash_password` once the stack is up). Paste the printed bcrypt hash into `DASHBOARD_PASSWORD_HASH`. In `.env` the `$` characters are fine; only if you ever paste the hash directly into `docker-compose.yml` must each `$` be written as `$$`.
    * `SECRET_KEY` and `KIOSK_TOKEN`: `python -c "import secrets; print(secrets.token_urlsafe(48))"` (run twice).
