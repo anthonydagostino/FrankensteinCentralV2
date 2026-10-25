@@ -1,0 +1,34 @@
+{
+ "_version": "0.2.1",
+ "generatedAt": "2026-10-25T12:00:00.000Z",
+ "today": "2026-10-25",
+ "phase": {
+  "key": "rampBack",
+  "name": "Ramp back",
+  "week": 1,
+  "deload": false
+ },
+ "daysUntilGoal": 219,
+ "sessionsThisWeek": 4,
+ "sessionsPlannedPerWeek": 6,
+ "trainingStreakWeeks": 4,
+ "lastSession": {
+  "date": "2026-10-23",
+  "templateKey": "pullA",
+  "templateName": "Pull A"
+ },
+ "nextSession": {
+  "templateKey": "legsA",
+  "templateName": "Legs A"
+ },
+ "weight": {
+  "latest": {
+   "date": "2026-10-25",
+   "weightLb": 156.3
+  },
+  "avg7": 156.2,
+  "avg7Prev": 154.8,
+  "weeklyChangeLb": 1.4,
+  "targetWeeklyChangeLb": 0.5
+ }
+}

@@ -6,6 +6,7 @@ import { BenefitsWidget } from "../widgets/Benefits";
 import { CalendarWidget } from "../widgets/Calendar";
 import { ContainersWidget } from "../widgets/Containers";
 import { PlexWidget } from "../widgets/Plex";
+import { TrainingWidget } from "../widgets/Training";
 import { WeatherWidget } from "../widgets/Weather";
 
 const RELOAD_MS = 6 * 60 * 60 * 1000;
@@ -50,13 +51,16 @@ export function Kiosk({ config }: { config?: PublicConfig }) {
         <div className="col-span-5">
           <WeatherWidget kiosk location={config?.selected_location} />
         </div>
-        <div className="col-span-5">
-          <BenefitsWidget kiosk />
+        <div className="col-span-3">
+          <TrainingWidget kiosk />
         </div>
         <div className="col-span-4">
-          <PlexWidget kiosk onlyNowPlaying />
+          <BenefitsWidget kiosk />
         </div>
         <div className="col-span-3">
+          <PlexWidget kiosk onlyNowPlaying />
+        </div>
+        <div className="col-span-2">
           <ContainersWidget readOnly kiosk summaryOnly />
         </div>
       </div>

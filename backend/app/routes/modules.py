@@ -96,6 +96,11 @@ async def restart(cid: str, state: AppState = Depends(get_state)):
     return {"ok": True}
 
 
+@router.get("/lockin")
+async def lockin(state: AppState = Depends(get_state)):
+    return state.cache.envelope("lockin")
+
+
 @router.get("/probes")
 async def probes(state: AppState = Depends(get_state)):
     return state.cache.envelope("probes")

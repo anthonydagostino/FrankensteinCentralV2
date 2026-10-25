@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getJson, sendJson } from "./client";
 import type {
-  AttentionData, BenefitsData, CalendarData, CardData, ContainersData, Envelope, FinanceSummary, Me, PlexData, ProbesData, PublicConfig, RecurringData, SettingsData, StatusRow, TransactionRow, UnclassifiedData, VaultData, WeatherData,
+  AttentionData, BenefitsData, CalendarData, CardData, ContainersData, Envelope, FinanceSummary, Me, PlexData, ProbesData, PublicConfig, RecurringData, SettingsData, StatusRow, TrainingData, TransactionRow, UnclassifiedData, VaultData, WeatherData,
 } from "./types";
 
 const MIN = 60_000;
@@ -23,6 +23,7 @@ export const useCards = () => envelopeQuery<{ cards: CardData[] }>(["cards"], "/
 export const useBenefits = (year?: number) => envelopeQuery<BenefitsData>(["benefits", year], `/api/benefits${year ? `?year=${year}` : ""}`, 5 * MIN);
 export const useUnclassified = (enabled = true) => envelopeQuery<UnclassifiedData>(["unclassified"], "/api/benefits/unclassified", 5 * MIN, enabled);
 export const usePlex = () => envelopeQuery<PlexData>(["plex"], "/api/plex", 30_000);
+export const useTraining = () => envelopeQuery<TrainingData>(["lockin"], "/api/lockin", 2 * MIN);
 export const useVault = () => envelopeQuery<VaultData>(["vault"], "/api/vault", MIN);
 export const useContainers = () => envelopeQuery<ContainersData>(["containers"], "/api/containers", 15_000);
 export const useProbes = () => envelopeQuery<ProbesData>(["probes"], "/api/probes", MIN);

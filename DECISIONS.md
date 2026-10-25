@@ -34,3 +34,7 @@ One line per choice the spec left open, in the order they were made.
 - Yearly cost is the latest amount times the cadence's periods per year, not the measured interval, so a 31 day gap does not change the annual figure.
 - A subscription is "lapsed" after 1.6 intervals without a charge and "new" when first seen within 60 days. Only price increases of 5 percent or more raise an attention item.
 - Ignored recurring charges are stored as a newline separated list in the settings table under `recurring_ignore`.
+- Lock-In integration reads `/api/summary` for the headline numbers and `/api/export` (read only, same token) for the Monday to Sunday squares and the 60 day weight trend; if the export call fails the widget still renders from the summary with status `degraded`.
+- Streak risk is derived in Frankenstein: `at_risk` when the sessions still needed for 5 equal the days left in the week (today included), `lost` when they exceed them, `safe` once 5 are done. The attention strip only warns for `at_risk`, and for `lost` only when a streak exists to lose.
+- The weigh-in nudge fires between 10 AM and 10 PM New York time when the latest weigh-in is not dated today.
+- "On track" for weight means the weekly change is within 0.5 lb per week of the phase target.

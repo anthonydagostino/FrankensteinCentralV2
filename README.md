@@ -1,6 +1,6 @@
 # FrankensteinCentral
 
-A self-hosted personal life dashboard: weather, calendar, finances (Firefly III), Amex benefit tracking, Plex, Vaultwarden health, and Docker containers on one dark screen, with a kiosk mode for an always-on display.
+A self-hosted personal life dashboard: weather, calendar, finances (Firefly III), Amex benefit tracking, Lock-In training, Plex, Vaultwarden health, and Docker containers on one dark screen, with a kiosk mode for an always-on display.
 
 The full build specification is in `SPEC.md`. Choices the spec left open are logged in `DECISIONS.md`.
 
@@ -19,13 +19,14 @@ The build environment for this repository had no outbound network access to the 
 | Plex (identity, sessions, recently added, on deck, libraries, image proxy) | implemented | respx | `PLEX_URL`, `PLEX_TOKEN` |
 | Vaultwarden (alive, version, backup age) | implemented | respx | `VAULTWARDEN_URL` |
 | Docker (socket proxy, inspect, restart counts) | implemented | respx | compose socket proxy (no extra config) |
+| Lock-In training tracker (summary, week squares, weight trend) | implemented | respx plus unit tests | `LOCKIN_URL`, `LOCKIN_TOKEN` |
 | HTTP probes | implemented | mock | `probes` in `config/dashboard.yaml` |
 | Recurring charge detector | implemented | 10 unit tests plus an API test on mock data | Firefly |
 | Firefly "Sync now" (data importer) | implemented | manual only | `FIREFLY_IMPORTER_URL`, `FIREFLY_IMPORTER_SECRET` |
 | Firefly tag write back | implemented behind `FIREFLY_WRITEBACK_TAGS` | respx | off by default |
 | Container restart | implemented behind `DOCKER_ALLOW_RESTART` | API test (403 by default) | proxy `POST=1`, `ALLOW_RESTARTS=1` |
 
-Test suite: 68 backend tests (`pytest`) and 9 frontend tests (`vitest`); `scripts/test.sh` runs everything, and the GitHub Actions workflow in `.github/workflows/ci.yml` runs it on every push and pull request.
+Test suite: 76 backend tests (`pytest`) and 9 frontend tests (`vitest`); `scripts/test.sh` runs everything, and the GitHub Actions workflow in `.github/workflows/ci.yml` runs it on every push and pull request.
 
 ## Setup
 
@@ -40,8 +41,9 @@ Test suite: 68 backend tests (`pytest`) and 9 frontend tests (`vitest`); `script
 6. Amex: enroll every benefit in the Amex app, otherwise credits never post. After the first sync open `/benefits`, review the Unclassified deposits list, label anything the engine missed, and paste the suggested regex patterns into `config/benefits.yaml`. Verify the catalog against the Benefits page in the Amex app once a quarter and bump `last_verified`.
 7. Plex: in Plex Web open any library item, choose the three dot menu, Get Info, View XML. The XML page URL contains `X-Plex-Token=...`. Set `PLEX_URL` (reachable from the container) and `PLEX_TOKEN`. `PLEX_PUBLIC_URL` is where "Open Plex" links go.
 8. Vaultwarden: set `VAULTWARDEN_URL` (internal) and `VAULTWARDEN_PUBLIC_URL` (browser). Optional: mount your backup folder read-only and set `VAULTWARDEN_BACKUP_DIR` to show backup age and warn after 48 hours.
-9. Docker: nothing beyond compose. Optional labels on any container: `frankenstein.url` (launch link), `frankenstein.name` (display name), `frankenstein.hide=true`, `frankenstein.critical=true` (non-running becomes a critical attention item).
-10. Set `MOCK_MODE=false` (or flip the per integration flags one at a time), then:
+9. Lock-In (your training tracker): set `LOCKIN_TOKEN` to the same value as `LOCKIN_TOKEN` in the Lock-In `.env`, `LOCKIN_URL` to an address the container can reach (the Lock-In compose binds `127.0.0.1:8090`, so either join its Docker network and use `http://lockin:8080`, or publish it on the host IP), and `LOCKIN_PUBLIC_URL` to the Tailscale HTTPS address the phone uses, for the "Open Lock-In" button. Frankenstein only reads `/api/health`, `/api/summary`, and `/api/export`; it never writes.
+10. Docker: nothing beyond compose. Optional labels on any container: `frankenstein.url` (launch link), `frankenstein.name` (display name), `frankenstein.hide=true`, `frankenstein.critical=true` (non-running becomes a critical attention item).
+11. Set `MOCK_MODE=false` (or flip the per integration flags one at a time), then:
 
 ```
 docker compose build
@@ -91,6 +93,7 @@ The dashboard is meant for the LAN and your tailnet only. Pick one:
 * **Privacy**: the eye icon in the header blurs every dollar amount. The choice is saved per browser and in the dashboard settings. Kiosk amounts are blurred unless `finance.kiosk_hide_amounts: false`.
 * **Benefits page** (`/benefits`): tiles per benefit with used (green), pending (striped amber), and remaining (gray). Click a tile for the evidence drawer and use "this is wrong" to reclassify. Manual benefits (Uber Cash) are checked off per period at the bottom.
 * **Settings** (`/settings`): pin the Firefly account behind each card, pick the default weather location, see each integration's status, last fetch, last error, and whether it is mocked.
+* **Lock-In** (under Weather, and on the kiosk): phase and week, streak, next workout, Monday to Sunday squares, sessions this week, latest weight, 7 day average, weekly change against the phase target, and a 60 day weight trend. The attention strip warns when the 5 session streak is at risk for the week, nudges you to log a weigh-in after 10 AM, and notes deload weeks.
 * **Recurring charges** (under Finances): every withdrawal in Firefly from the last year is clustered by merchant and cadence (weekly to yearly). The widget shows the monthly and yearly total, flags price increases, new subscriptions, charges routed through Apple or PayPal (split by amount), and subscriptions that stopped. A price increase also lands in the attention strip. Click the eye icon to ignore a charge that is not a subscription; transfers and deposits never count.
 * Stale data: a widget whose source has not refreshed for three refresh intervals shows an amber "stale" badge but keeps showing the last good data. Cached data survives restarts.
 
