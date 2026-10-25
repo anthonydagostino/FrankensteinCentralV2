@@ -91,7 +91,7 @@ export interface UnclassifiedData { items: UnclassifiedItem[]; overrides: Overri
 // ---- plex
 export interface PlexSession { session_key: string | null; rating_key: string; type: string; title: string; subtitle: string | null; thumb: string | null; user: string | null; player: string | null; state: string; progress: number; transcoding: boolean }
 export interface PlexItem { rating_key: string; type: string; title: string; subtitle: string | null; year: number | null; thumb: string | null; added_at: string | null; progress: number | null }
-export interface PlexData { server: { online: boolean; version: string | null; machine_id: string | null; name: string | null }; sessions: PlexSession[]; recently_added: PlexItem[]; on_deck: PlexItem[]; libraries: { key: string; title: string; type: string; count: number | null }[]; links: { server: string; item_template: string } }
+export interface PlexData { server: { online: boolean; version: string | null; machine_id: string | null; name: string | null; owned?: boolean | null; shared_by?: string | null; via?: "direct" | "relay" }; sessions: PlexSession[]; recently_added: PlexItem[]; on_deck: PlexItem[]; libraries: { key: string; title: string; type: string; count: number | null }[]; links: { server: string; item_template: string } }
 
 // ---- vault
 export interface VaultData { online: boolean; latency_ms: number | null; version: string | null; error: string | null; checked_at: string; backup: { available: boolean; newest_file?: string | null; age_hours?: number | null; error?: string } | null; public_url: string | null; admin_url: string | null }

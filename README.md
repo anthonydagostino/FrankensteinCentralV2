@@ -16,7 +16,7 @@ The build environment for this repository had no outbound network access to the 
 | Calendar (Google secret iCal feeds) | implemented, conditional requests, recurrence expansion | respx plus iCal parsing tests (RRULE, EXDATE, RECURRENCE-ID, all-day, TZID, UTC, canceled) | `GCAL_ICS_*` URLs |
 | Firefly III (accounts, summary, transactions, insights, budgets, bills) | implemented with pagination | respx (pagination, token rejection, degraded) | `FIREFLY_URL`, `FIREFLY_TOKEN` |
 | Amex cards and benefits engine | implemented | 18 scenario tests from SPEC section 12.2 plus extras | Firefly |
-| Plex (identity, sessions, recently added, on deck, libraries, image proxy) | implemented | respx | `PLEX_URL`, `PLEX_TOKEN` |
+| Plex (plex.tv discovery for owned or shared servers, identity, sessions, recently added, on deck, libraries, image proxy) | implemented | respx | `PLEX_URL`, `PLEX_TOKEN` |
 | Vaultwarden (alive, version, backup age) | implemented | respx | `VAULTWARDEN_URL` |
 | Docker (socket proxy, inspect, restart counts) | implemented | respx | compose socket proxy (no extra config) |
 | Lock-In training tracker (summary, week squares, weight trend) | implemented | respx plus unit tests | `LOCKIN_URL`, `LOCKIN_TOKEN` |
@@ -26,20 +26,23 @@ The build environment for this repository had no outbound network access to the 
 | Firefly tag write back | implemented behind `FIREFLY_WRITEBACK_TAGS` | respx | off by default |
 | Container restart | implemented behind `DOCKER_ALLOW_RESTART` | API test (403 by default) | proxy `POST=1`, `ALLOW_RESTARTS=1` |
 
-Test suite: 76 backend tests (`pytest`) and 9 frontend tests (`vitest`); `scripts/test.sh` runs everything, and the GitHub Actions workflow in `.github/workflows/ci.yml` runs it on every push and pull request.
+Test suite: 83 backend tests (`pytest`) and 9 frontend tests (`vitest`); `scripts/test.sh` runs everything, and the GitHub Actions workflow in `.github/workflows/ci.yml` runs it on every push and pull request.
 
 ## Setup
 
-1. Copy `.env.example` to `.env`.
+1. Copy `.env.example` to `.env`. The `data/` folder ships with the repository and is mounted into the container for the SQLite database; it must be writable by uid 1000 (the first user on Ubuntu). If the container logs "unable to open database file", run `sudo chown -R 1000:1000 data` once.
 2. Generate secrets.
-   * Password hash: `docker compose run --rm frankenstein python -m app.hash_password` (or `docker compose exec frankenstein python -m app.hash_password` once the stack is up). Paste the printed bcrypt hash into `DASHBOARD_PASSWORD_HASH`. In `.env` the `$` characters are fine; only if you ever paste the hash directly into `docker-compose.yml` must each `$` be written as `$$`.
+   * Password hash: `docker compose run --rm frankenstein python -m app.hash_password` (or `docker compose exec frankenstein python -m app.hash_password` once the stack is up). Paste the printed bcrypt hash into `DASHBOARD_PASSWORD_HASH` wrapped in single quotes, for example `DASHBOARD_PASSWORD_HASH='$2b$12$...'`. Docker Compose treats a bare `$` in `.env` as a variable reference and would blank out parts of the hash, which makes every login fail. (If you ever paste the hash directly into `docker-compose.yml`, write each `$` as `$$` instead.)
    * `SECRET_KEY` and `KIOSK_TOKEN`: `python -c "import secrets; print(secrets.token_urlsafe(48))"` (run twice).
    * Until a hash is set, the login page accepts any password and the log prints a warning. Set it before exposing the dashboard beyond your own machine.
 3. Weather: set `NWS_USER_AGENT` to something like `(FrankensteinCentral, you@example.com)`; the National Weather Service requires a contact. Adjust `weather.locations` in `config/dashboard.yaml` (several locations are allowed, the dashboard has a switcher).
 4. Google Calendar: in Google Calendar on the web open Settings, pick the calendar under "Settings for my calendars", scroll to "Integrate calendar", and copy "Secret address in iCal format". Paste it into `GCAL_ICS_PRIMARY` (and `GCAL_ICS_SECOND`, or add more feeds under `calendar.feeds` with any env var name). The URL is a credential: anyone with it can read the calendar, and Google lets you reset it.
 5. Firefly III: create a Personal Access Token (Options, Profile, OAuth, Personal Access Tokens, Create new token) and put it in `FIREFLY_TOKEN`. Set `FIREFLY_URL` to an address reachable from inside the container (see networking below) and `FIREFLY_VANITY_URL` to the address you use in the browser, so amounts link into Firefly. Make sure the SimpleFIN imports run on a schedule; the dashboard flags finance data older than `finance.stale_after_hours` (48 by default).
 6. Amex: enroll every benefit in the Amex app, otherwise credits never post. After the first sync open `/benefits`, review the Unclassified deposits list, label anything the engine missed, and paste the suggested regex patterns into `config/benefits.yaml`. Verify the catalog against the Benefits page in the Amex app once a quarter and bump `last_verified`.
-7. Plex: in Plex Web open any library item, choose the three dot menu, Get Info, View XML. The XML page URL contains `X-Plex-Token=...`. Set `PLEX_URL` (reachable from the container) and `PLEX_TOKEN`. `PLEX_PUBLIC_URL` is where "Open Plex" links go.
+7. Plex: set `PLEX_TOKEN` to your account token. The quickest way to get it: open `app.plex.tv` in a desktop browser, press F12, open the Console tab, run `localStorage.getItem("myPlexAccessToken")`, and copy the value without the quotes. (On a server you own, View XML under Get Info also shows it in the URL.) Then either:
+   * leave `PLEX_URL` empty, and Frankenstein asks plex.tv which servers your account can see, including servers friends have shared with you, picks the owned one or the first shared one (or `PLEX_SERVER_NAME`), and connects through the server's public address or the Plex relay using the server specific token plex.tv issues; or
+   * set `PLEX_URL` to a direct address such as `http://192.168.1.50:32400` when the server is on your own network.
+   `PLEX_PUBLIC_URL` is where "Open Plex" links go. The health probe for Plex only runs when `PLEX_URL` is set.
 8. Vaultwarden: set `VAULTWARDEN_URL` (internal) and `VAULTWARDEN_PUBLIC_URL` (browser). Optional: mount your backup folder read-only and set `VAULTWARDEN_BACKUP_DIR` to show backup age and warn after 48 hours.
 9. Lock-In (your training tracker): set `LOCKIN_TOKEN` to the same value as `LOCKIN_TOKEN` in the Lock-In `.env`, `LOCKIN_URL` to an address the container can reach (the Lock-In compose binds `127.0.0.1:8090`, so either join its Docker network and use `http://lockin:8080`, or publish it on the host IP), and `LOCKIN_PUBLIC_URL` to the Tailscale HTTPS address the phone uses, for the "Open Lock-In" button. Frankenstein only reads `/api/health`, `/api/summary`, and `/api/export`; it never writes.
 10. Docker: nothing beyond compose. Optional labels on any container: `frankenstein.url` (launch link), `frankenstein.name` (display name), `frankenstein.hide=true`, `frankenstein.critical=true` (non-running becomes a critical attention item).

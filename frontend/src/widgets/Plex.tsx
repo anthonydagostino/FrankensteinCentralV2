@@ -69,6 +69,8 @@ export function PlexBody({ data, kiosk, onlyNowPlaying }: { data: PlexData; kios
           <span className={`h-2.5 w-2.5 rounded-full ${data.server.online ? "bg-accent" : "bg-red-500"}`} />
           {data.server.name ?? "Plex"} {data.server.version ? `v${data.server.version.split("-")[0]}` : ""}
         </span>
+        {data.server.shared_by && <Chip tone="info">shared by {data.server.shared_by}</Chip>}
+        {data.server.via === "relay" && <Chip tone="warn">via Plex relay</Chip>}
         {!onlyNowPlaying && data.libraries.map((l) => (
           <Chip key={l.key}>
             {l.title}: {l.count ?? "?"}

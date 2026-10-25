@@ -46,10 +46,11 @@ async def plex_image(path: str, w: int = Query(300, ge=16, le=2000), h: int = Qu
     if not path.startswith("/library/") or ".." in path:
         raise HTTPException(status_code=400, detail="path must start with /library/")
     integration = state.integrations.get("plex")
-    if integration is None or integration.is_mocked() or not integration.is_configured():
+    base = integration.base_url() if integration else None
+    if integration is None or integration.is_mocked() or not integration.is_configured() or not base:
         svg = _placeholder_svg(path, w, h)
         return Response(content=svg, media_type="image/svg+xml", headers={"Cache-Control": "public, max-age=86400"})
-    url = f"{state.settings.plex_url.rstrip('/')}/photo/:/transcode"
+    url = f"{base}/photo/:/transcode"
     params = {"width": w, "height": h, "minSize": 1, "upscale": 1, "url": path}
     async with make_client(headers=integration.headers()) as client:
         resp = await client.get(url, params=params)
