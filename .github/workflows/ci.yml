@@ -140,8 +140,9 @@ jobs:
           cache-to: type=gha,mode=max
 
   claude-review:
-    # Tier 2: advisory review. continue-on-error keeps it from ever blocking a merge,
+    # Tier 2: advisory review. Every step continues on error so the job is never red,
     # and GITHUB_TOKEN with contents: read keeps Claude unable to commit or push.
+    # Without the ANTHROPIC_API_KEY secret the job only prints a notice.
     name: Claude review (advisory)
     needs: [backend, frontend, vulnerabilities, secrets, build]
     if: >-
@@ -151,7 +152,6 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    continue-on-error: true
     permissions:
       contents: read
       pull-requests: write
@@ -159,12 +159,16 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       PR: ${{ github.event.pull_request.number }}
       BASE: ${{ github.event.pull_request.base.ref }}
+      CLAUDE_ENABLED: ${{ secrets.ANTHROPIC_API_KEY != '' }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+      - if: env.CLAUDE_ENABLED != 'true'
+        run: echo "::notice::ANTHROPIC_API_KEY is not set, so the Claude review is skipped"
       - name: Skip diffs that only touch docs or lockfiles; take the prompt from the base branch
         id: scope
+        continue-on-error: true
         run: |
           git diff --name-only "origin/$BASE...HEAD" \
             | grep -vE '\.(md|txt)$|^docs/|^LICENSE|(^|/)(package-lock\.json|uv\.lock)$' > changed.txt || true
@@ -181,7 +185,8 @@ jobs:
             echo 'PROMPT_EOF'
           } >> "$GITHUB_OUTPUT"
       - name: Remove this job's comments from the previous push
-        if: steps.scope.outputs.code == 'true'
+        if: env.CLAUDE_ENABLED == 'true' && steps.scope.outputs.code == 'true'
+        continue-on-error: true
         run: |
           gh api --paginate "repos/$GITHUB_REPOSITORY/pulls/$PR/comments" \
             --jq '.[] | select(.user.login == "github-actions[bot]") | .id' \
@@ -189,7 +194,8 @@ jobs:
           gh api --paginate "repos/$GITHUB_REPOSITORY/issues/$PR/comments" \
             --jq '.[] | select(.user.login == "github-actions[bot]" and (.body | contains("claude-diff-review"))) | .id' \
             | xargs -r -I{} gh api -X DELETE "repos/$GITHUB_REPOSITORY/issues/comments/{}"
-      - if: steps.scope.outputs.code == 'true'
+      - if: env.CLAUDE_ENABLED == 'true' && steps.scope.outputs.code == 'true'
+        continue-on-error: true
         uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
