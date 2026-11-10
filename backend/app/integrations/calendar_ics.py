@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
-from datetime import date, datetime, time, timedelta, timezone
+from datetime import date, datetime, time, timedelta
 from typing import Any
 
 import recurring_ical_events
@@ -68,14 +68,11 @@ def parse_feed(ics_text: str, feed_name: str, color: str, window_start: datetime
             end = _as_aware(dtend.dt, tz)
         else:
             duration = ev.get("DURATION")
-            if duration is not None:
-                end = start + duration.dt
-            else:
-                end = start + (timedelta(days=1) if all_day else timedelta(hours=1))
+            end = start + duration.dt if duration is not None else start + (timedelta(days=1) if all_day else timedelta(hours=1))
         if end is None or end <= start:
             end = start + (timedelta(days=1) if all_day else timedelta(hours=1))
         uid = str(ev.get("UID", ""))
-        summary = str(ev.get("SUMMARY", "(no title)"))
+        summary = str(ev.get("SUMMARY") or "(no title)")
         location = str(ev.get("LOCATION", "") or "")
         description = strip_html(str(ev.get("DESCRIPTION", "") or ""))
         events.append(
@@ -98,6 +95,7 @@ def parse_feed(ics_text: str, feed_name: str, color: str, window_start: datetime
 
 
 def build_output(all_events: list[dict], now: datetime, lookahead_days: int) -> dict:
+    """Group de-duplicated events by local day, pick the next event, and count events per date for the month grid."""
     tz = local_tz()
     local_now = now.astimezone(tz)
     today = local_now.date()
@@ -121,25 +119,24 @@ def build_output(all_events: list[dict], now: datetime, lookahead_days: int) -> 
         day_events = [e for e in unique if e["start"] < day_end and e["end"] > day_start]
         day_events.sort(key=lambda e: (not e["all_day"], e["start"]))
         label = "Today" if offset == 0 else "Tomorrow" if offset == 1 else day.strftime("%A")
-        serialized = []
-        for e in day_events:
-            serialized.append(
-                {
-                    "id": e["id"],
-                    "title": e["title"],
-                    "start": iso(e["start"]),
-                    "end": iso(e["end"]),
-                    "all_day": e["all_day"],
-                    "multi_day": e["all_day"] and (e["end"] - e["start"]) > timedelta(days=1) or (not e["all_day"] and e["end"].date() != e["start"].date()),
-                    "calendar": e["calendar"],
-                    "color": e["color"],
-                    "location": e["location"],
-                    "description": e["description"],
-                    "join_url": e["join_url"],
-                    "tentative": e["tentative"],
-                    "in_progress": e["start"] <= local_now < e["end"],
-                }
-            )
+        serialized = [
+            {
+                "id": e["id"],
+                "title": e["title"],
+                "start": iso(e["start"]),
+                "end": iso(e["end"]),
+                "all_day": e["all_day"],
+                "multi_day": (e["all_day"] and (e["end"] - e["start"]) > timedelta(days=1)) or (not e["all_day"] and e["end"].date() != e["start"].date()),
+                "calendar": e["calendar"],
+                "color": e["color"],
+                "location": e["location"],
+                "description": e["description"],
+                "join_url": e["join_url"],
+                "tentative": e["tentative"],
+                "in_progress": e["start"] <= local_now < e["end"],
+            }
+            for e in day_events
+        ]
         if day_events:
             density[day.isoformat()] = len(day_events)
         days.append({"date": day.isoformat(), "label": label, "events": serialized})
@@ -176,7 +173,7 @@ class CalendarIntegration(BaseIntegration):
     def _feeds(self) -> list[tuple[str, str, str]]:
         out = []
         for feed in self.config.calendar.feeds:
-            url = self.settings.env_value(feed.env) or getattr(self.settings, feed.env.lower(), "")
+            url = self.settings.lookup(feed.env)
             if url:
                 out.append((feed.name, feed.color, url))
         return out
@@ -214,16 +211,17 @@ class CalendarIntegration(BaseIntegration):
         w_start, w_end = self._window(now)
         events: list[dict] = []
         errors: list[str] = []
+        feeds = self._feeds()
         async with make_client(timeout=20.0) as client:
-            for name, color, url in self._feeds():
+            for name, color, url in feeds:
                 try:
                     body = await self._download(client, name, url)
                     events.extend(parse_feed(body, name, color, w_start, w_end))
                 except Exception as exc:
                     errors.append(f"{name}: {describe_error(exc, 'calendar feed')}")
         data = build_output(events, now, self.config.calendar.lookahead_days)
-        data["feeds"] = [{"name": n, "color": c} for n, c, _ in self._feeds()]
-        if errors and len(errors) == len(self._feeds()):
+        data["feeds"] = [{"name": n, "color": c} for n, c, _ in feeds]
+        if errors and len(errors) == len(feeds):
             raise RuntimeError("; ".join(errors))
         if errors:
             raise Degraded(data, "; ".join(errors))

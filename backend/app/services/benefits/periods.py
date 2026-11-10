@@ -17,21 +17,19 @@ class Period:
 
     @property
     def label(self) -> str:
+        """October 2026, Q4: Oct to Dec 2026, H2: Jul to Dec 2026, or 2026."""
         if "-M" in self.key:
             return self.start.strftime("%B %Y")
-        if "-Q" in self.key:
-            return f"{self.key.split('-')[1]}: {self.start.strftime('%b')} to {self.end.strftime('%b')} {self.start.year}"
-        if "-H" in self.key:
+        if "-" in self.key:
             return f"{self.key.split('-')[1]}: {self.start.strftime('%b')} to {self.end.strftime('%b')} {self.start.year}"
         return str(self.start.year)
 
-    def contains(self, d: date) -> bool:
-        return self.start <= d <= self.end
-
     def days_left(self, today: date) -> int:
+        """Whole days until the period ends, never negative."""
         return max(0, (self.end - today).days)
 
     def ended(self, today: date) -> bool:
+        """True once the period's last day is behind today."""
         return today > self.end
 
 
@@ -40,6 +38,7 @@ def _month_end(y: int, m: int) -> date:
 
 
 def period_for(kind: str, d: date) -> Period:
+    """The period of the given kind that contains date d."""
     y = d.year
     if kind == "monthly":
         return Period(f"{y}-M{d.month:02d}", date(y, d.month, 1), _month_end(y, d.month))
@@ -98,6 +97,22 @@ def cap_for(benefit: Benefit, period: Period) -> Decimal:
 
 
 def next_eligible(last_used: date | None, period_years: float) -> date | None:
+    """For multi year benefits: the date the credit can be earned again."""
     if last_used is None:
         return None
-    return last_used + timedelta(days=int(round(period_years * 365.25)))
+    return last_used + timedelta(days=round(period_years * 365.25))
+
+
+def key_start(key: str) -> date:
+    """First day of a period key: 2026, 2026-M10, 2026-Q4, or 2026-H2. Raises ValueError for anything else."""
+    year = int(key[:4])
+    if len(key) == 4:
+        return date(year, 1, 1)
+    kind, n = key[5], int(key[6:])
+    if kind == "M":
+        return date(year, n, 1)
+    if kind == "Q" and 1 <= n <= 4:
+        return date(year, 3 * (n - 1) + 1, 1)
+    if kind == "H" and n in (1, 2):
+        return date(year, 1 if n == 1 else 7, 1)
+    raise ValueError(f"bad period key {key!r}")

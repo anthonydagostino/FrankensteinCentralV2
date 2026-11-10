@@ -8,6 +8,7 @@ from datetime import date
 from decimal import Decimal
 
 from ...config_loader import BenefitConfig, BenefitsCatalog
+from ...util import compile_pattern
 
 
 @dataclass
@@ -31,9 +32,7 @@ class Benefit:
     def is_active_on(self, d: date) -> bool:
         if self.active_from and d < self.active_from:
             return False
-        if self.active_until and d > self.active_until:
-            return False
-        return True
+        return not (self.active_until and d > self.active_until)
 
     def matches_merchant(self, text: str) -> bool:
         return any(p.search(text) for p in self.purchase_patterns)
@@ -46,13 +45,7 @@ class Benefit:
 
 
 def _compile(patterns: list[str]) -> list[re.Pattern]:
-    out = []
-    for p in patterns:
-        try:
-            out.append(re.compile(p, re.I))
-        except re.error:
-            out.append(re.compile(re.escape(p), re.I))
-    return out
+    return [compile_pattern(p) for p in patterns]
 
 
 def from_config(cfg: BenefitConfig) -> Benefit:

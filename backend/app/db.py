@@ -2,10 +2,12 @@
 
 from __future__ import annotations
 
+import contextlib
 import sqlite3
 import threading
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS cache (
@@ -56,10 +58,11 @@ class Database:
         self._conn = sqlite3.connect(str(self.path), check_same_thread=False)
         self._conn.row_factory = sqlite3.Row
         with self._lock:
-            try:
+            with contextlib.suppress(sqlite3.DatabaseError):
                 self._conn.execute("PRAGMA journal_mode=WAL")
-            except sqlite3.DatabaseError:
-                pass
+                # WAL keeps NORMAL crash safe (a power loss can lose the last commits, never corrupt), and it drops
+                # the per-statement fsync that otherwise runs on the event loop for every cache write
+                self._conn.execute("PRAGMA synchronous=NORMAL")
             self._conn.executescript(SCHEMA)
             self._conn.commit()
             self._migrate()
@@ -77,6 +80,12 @@ class Database:
             self._conn.commit()
             return cur
 
+    def executemany(self, sql: str, rows: Iterable[Iterable[Any]]) -> None:
+        """Run one statement for many parameter rows in a single transaction."""
+        with self._lock:
+            self._conn.executemany(sql, [tuple(r) for r in rows])
+            self._conn.commit()
+
     def fetchall(self, sql: str, params: Iterable[Any] = ()) -> list[sqlite3.Row]:
         with self._lock:
             return self._conn.execute(sql, tuple(params)).fetchall()
@@ -87,16 +96,19 @@ class Database:
 
     # ---- settings
     def get_setting(self, key: str, default: str | None = None) -> str | None:
+        """One value from the settings table, or `default`."""
         row = self.fetchone("SELECT value FROM settings WHERE key = ?", (key,))
         return row["value"] if row else default
 
     def set_setting(self, key: str, value: str) -> None:
+        """Upsert one settings row."""
         self.execute(
             "INSERT INTO settings(key, value) VALUES(?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
             (key, value),
         )
 
     def all_settings(self) -> dict[str, str]:
+        """Every settings row as a dict."""
         return {r["key"]: r["value"] for r in self.fetchall("SELECT key, value FROM settings")}
 
     def close(self) -> None:

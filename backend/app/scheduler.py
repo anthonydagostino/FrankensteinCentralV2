@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
 import random
-from typing import Awaitable, Callable
+from collections.abc import Awaitable, Callable
 
 from .cache import Cache
 from .integrations.base import BaseIntegration, Degraded, describe_error
@@ -17,6 +18,8 @@ MAX_BACKOFF = 600
 
 
 class Scheduler:
+    """Runs each integration on its own interval with exponential backoff (capped) after failures."""
+
     def __init__(self, cache: Cache):
         self.cache = cache
         self.integrations: dict[str, BaseIntegration] = {}
@@ -26,28 +29,32 @@ class Scheduler:
         self._stopping = False
 
     def register(self, integration: BaseIntegration) -> None:
+        """Add an integration and tell the cache about it; mocked integrations count as configured."""
         self.integrations[integration.name] = integration
         mocked = integration.is_mocked()
-        self.cache.configure(integration.name, integration.interval_seconds, integration.is_configured() or mocked, integration.setup_hint(), source="mock" if mocked else "live")
+        self.cache.configure(
+            integration.name, integration.interval_seconds, integration.is_configured() or mocked, integration.setup_hint(), source="mock" if mocked else "live"
+        )
 
     def on_success(self, name: str, callback: Callable[[], Awaitable[None] | None]) -> None:
+        """Run `callback` after every successful refresh of the named integration (sync or async)."""
         self.after_success.setdefault(name, []).append(callback)
 
     async def start(self) -> None:
+        """Start one refresh loop task per registered integration."""
         self._stopping = False
         for name, integration in self.integrations.items():
             self._wake[name] = asyncio.Event()
             self._tasks[name] = asyncio.create_task(self._loop(integration), name=f"refresh:{name}")
 
     async def stop(self) -> None:
+        """Cancel every refresh loop and wait for the tasks to finish."""
         self._stopping = True
         for task in self._tasks.values():
             task.cancel()
         for task in self._tasks.values():
-            try:
+            with contextlib.suppress(asyncio.CancelledError, Exception):
                 await task
-            except (asyncio.CancelledError, Exception):
-                pass
         self._tasks.clear()
 
     def trigger(self, name: str) -> None:
@@ -102,14 +109,13 @@ class Scheduler:
             ok = await self.refresh_once(integration)
             entry = self.cache.get(name)
             failures = entry.attempts_failed if entry else 0
-            if ok or (entry and entry.status == "disabled"):
-                delay = integration.interval_seconds
-            else:
-                delay = min(integration.interval_seconds * (2 ** min(failures, 6)), MAX_BACKOFF)
-            delay = delay * (0.9 + random.random() * 0.2)
+            base = (
+                integration.interval_seconds
+                if ok or (entry and entry.status == "disabled")
+                else min(integration.interval_seconds * (2 ** min(failures, 6)), MAX_BACKOFF)
+            )
+            delay = base * (0.9 + random.random() * 0.2)  # jitter so sources are not polled in lockstep
             ev = self._wake[name]
             ev.clear()
-            try:
+            with contextlib.suppress(asyncio.TimeoutError):
                 await asyncio.wait_for(ev.wait(), timeout=delay)
-            except asyncio.TimeoutError:
-                pass

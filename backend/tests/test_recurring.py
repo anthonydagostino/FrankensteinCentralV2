@@ -9,7 +9,21 @@ _jid = [1]
 
 def tx(d: date, amount: str, desc: str, kind: str = "withdrawal", dest: str = "Merchant", src: str = "Checking") -> dict:
     _jid[0] += 1
-    return {"journal_id": _jid[0], "group_id": str(_jid[0]), "type": kind, "date": d.isoformat(), "amount": amount, "description": desc, "source_id": "1", "source_name": src, "destination_id": "9", "destination_name": dest, "category_name": "Subscriptions", "tags": [], "notes": ""}
+    return {
+        "journal_id": _jid[0],
+        "group_id": str(_jid[0]),
+        "type": kind,
+        "date": d.isoformat(),
+        "amount": amount,
+        "description": desc,
+        "source_id": "1",
+        "source_name": src,
+        "destination_id": "9",
+        "destination_name": dest,
+        "category_name": "Subscriptions",
+        "tags": [],
+        "notes": "",
+    }
 
 
 def monthly(desc: str, amount: str, months: int, start: date = date(2026, 1, 3), amounts: list[str] | None = None) -> list[dict]:
@@ -87,7 +101,7 @@ def test_passthrough_processor_split_by_amount():
 
 
 def test_transfers_deposits_and_ignored_keys_excluded():
-    rows = monthly("AMEX EPAYMENT ACH PMT", "500.00", 6) 
+    rows = monthly("AMEX EPAYMENT ACH PMT", "500.00", 6)
     for r in rows:
         r["type"] = "transfer"
     assert detect(rows, TODAY)["items"] == []

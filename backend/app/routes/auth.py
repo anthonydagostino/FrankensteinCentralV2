@@ -1,4 +1,8 @@
+"""Login, logout, and session introspection."""
+
 from __future__ import annotations
+
+import asyncio
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel
@@ -18,7 +22,7 @@ class LoginBody(BaseModel):
 async def login(body: LoginBody, request: Request, response: Response, state: AppState = Depends(get_state)):
     ip = request.client.host if request.client else "unknown"
     authlib.check_rate_limit(ip)
-    if not authlib.verify_password(body.password, state.settings):
+    if not await asyncio.to_thread(authlib.verify_password, body.password, state.settings):
         raise HTTPException(status_code=401, detail="Wrong password")
     authlib.set_session_cookie(request, response, state.settings)
     return {"ok": True, "mode": "session"}
@@ -33,4 +37,5 @@ async def logout(response: Response):
 @router.get("/me")
 async def me(request: Request):
     mode = authlib.auth_mode(request)
-    return {"authenticated": mode is not None, "mode": mode, "read_only": mode == "kiosk"}
+    # password_configured is not secret and lets the login page warn when no hash is set yet
+    return {"authenticated": mode is not None, "mode": mode, "read_only": mode == "kiosk", "password_configured": authlib.password_configured()}

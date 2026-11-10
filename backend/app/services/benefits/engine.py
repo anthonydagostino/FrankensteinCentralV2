@@ -2,16 +2,16 @@
 
 from __future__ import annotations
 
+from collections import defaultdict
 from datetime import date, timedelta
 from decimal import Decimal
-from typing import Any
 
 from ...config_loader import BenefitsCatalog, CardConfig
 from ...util import money
 from .catalog import Benefit, benefits_for_card, load_catalog
 from .classify import Classified, classify_card
 from .match import attribute
-from .periods import Period, cap_for, current_period, next_eligible, period_for, periods_in_year
+from .periods import Period, cap_for, current_period, key_start, next_eligible, period_for, periods_in_year
 
 ZERO = Decimal("0.00")
 MISSING_CREDIT_DAYS = 14
@@ -26,8 +26,13 @@ def _s(d: Decimal) -> str:
 
 
 def period_result(benefit: Benefit, period: Period, items: list[Classified], manual: dict[str, Decimal], today: date) -> dict:
+    """Cap, used, pending, remaining, and status for one benefit in one period.
+
+    `items` must already be limited to this benefit. Credits beyond the cap are kept in evidence with an
+    over cap note; clawbacks subtract from used in the period of the credit they reverse.
+    """
     cap = cap_for(benefit, period)
-    in_period = [c for c in items if c.benefit_id == benefit.id and c.period_key == period.key]
+    in_period = [c for c in items if c.period_key == period.key]
     credits = [c for c in in_period if c.kind == "statement_credit"]
     clawbacks = [c for c in in_period if c.kind == "credit_clawback"]
     purchases = [c for c in in_period if c.kind == "purchase" and c.eligible]
@@ -67,7 +72,9 @@ def period_result(benefit: Benefit, period: Period, items: list[Classified], man
         for p in sorted(purchases, key=lambda x: x.date):
             age = (today - p.date).days
             if age > MISSING_CREDIT_DAYS and p.credited == ZERO and p.remaining_unmatched > ZERO:
-                missing_credit = f"No credit yet for ${_s(p.amount)} at {p.description.strip()} on {p.date.strftime('%b %-d')}. Check that the benefit is enrolled."
+                missing_credit = (
+                    f"No credit yet for ${_s(p.amount)} at {p.description.strip()} on {p.date.strftime('%b %-d')}. Check that the benefit is enrolled."
+                )
                 missing_age = age
                 break
 
@@ -88,15 +95,14 @@ def period_result(benefit: Benefit, period: Period, items: list[Classified], man
             status = "expired_partial"
         else:
             status = "used"
+    elif used >= cap:
+        status = "used"
+    elif pending > ZERO and used + pending >= cap:
+        status = "pending"
+    elif used > ZERO or pending > ZERO:
+        status = "partial"
     else:
-        if used >= cap:
-            status = "used"
-        elif pending > ZERO and used + pending >= cap:
-            status = "pending"
-        elif used > ZERO or pending > ZERO:
-            status = "partial"
-        else:
-            status = "unused"
+        status = "unused"
 
     days_left = period.days_left(today)
     return {
@@ -122,8 +128,9 @@ def period_result(benefit: Benefit, period: Period, items: list[Classified], man
 
 
 def multi_year_result(benefit: Benefit, items: list[Classified], today: date) -> dict:
-    credits = sorted([c for c in items if c.benefit_id == benefit.id and c.kind == "statement_credit"], key=lambda c: c.date)
-    purchases = sorted([c for c in items if c.benefit_id == benefit.id and c.kind == "purchase" and c.eligible], key=lambda c: c.date)
+    """Global Entry style benefits: no per period math, just last used and next eligible dates."""
+    credits = sorted([c for c in items if c.kind == "statement_credit"], key=lambda c: c.date)
+    purchases = sorted([c for c in items if c.kind == "purchase" and c.eligible], key=lambda c: c.date)
     last_credit = credits[-1] if credits else None
     last_used = last_credit.date if last_credit else None
     nxt = next_eligible(last_used, benefit.period_years)
@@ -153,6 +160,8 @@ def multi_year_result(benefit: Benefit, items: list[Classified], today: date) ->
 
 
 class BenefitsEngine:
+    """Turns Firefly splits on the card accounts into per benefit, per period results."""
+
     def __init__(self, catalog: BenefitsCatalog, cards: list[CardConfig]):
         self.catalog = catalog
         self.benefits = load_catalog(catalog)
@@ -167,10 +176,14 @@ class BenefitsEngine:
         today: date,
         year: int,
     ) -> dict:
-        """card_accounts: card id -> {"id": account id, "name": account name} or None."""
+        """Run classification and attribution for every card, then summarize each benefit for `year`.
+
+        card_accounts maps card id to {"id": Firefly account id, "name": account name} or None when unresolved.
+        The result carries `_classified` (per card Classified rows) for the discovery list; strip_internal() removes it.
+        """
         cards_out = []
         expiring: list[dict] = []
-        attention: list[dict] = []
+        missing: list[dict] = []
         all_classified: dict[str, list[Classified]] = {}
         for card in self.cards:
             acct = card_accounts.get(card.id)
@@ -183,6 +196,10 @@ class BenefitsEngine:
                 for b in benefits:
                     attribute(b, items)
             all_classified[card.id] = items
+            by_benefit: dict[str, list[Classified]] = defaultdict(list)
+            for c in items:
+                if c.benefit_id:
+                    by_benefit[c.benefit_id].append(c)
 
             captured = ZERO
             left_on_table = ZERO
@@ -190,29 +207,28 @@ class BenefitsEngine:
             benefits_out = []
             for b in benefits:
                 manual = manual_usage.get(b.id, {})
-                evidence = sorted([c for c in items if c.benefit_id == b.id], key=lambda c: (c.date, c.journal_id))
+                evidence = sorted(by_benefit.get(b.id, []), key=lambda c: (c.date, c.journal_id))
                 if b.period == "multi_year":
-                    current = multi_year_result(b, items, today)
-                    history: list[dict] = []
-                    captured += Decimal(current["used"])
-                    benefits_out.append(self._benefit_out(b, current, history, evidence))
+                    multi = multi_year_result(b, evidence, today)
+                    captured += Decimal(multi["used"])
+                    benefits_out.append(self._benefit_out(b, multi, [], evidence))
                     continue
                 periods = periods_in_year(b.period, year, b.active_from, b.active_until)
-                # include last year's periods that still have evidence (early January view)
-                extra_keys = {c.period_key for c in evidence if c.period_key and not c.period_key.startswith(str(year))}
-                for key in sorted(extra_keys):
-                    try:
-                        sample = next(c for c in evidence if c.period_key == key)
-                        p = period_for(b.period, sample.date if sample.kind == "purchase" else sample.date - timedelta(days=3))
-                        if p.key == key and p not in periods:
+                # include other years' periods that still have evidence (the early January view of last Q4)
+                known = {p.key for p in periods}
+                for c in evidence:
+                    if c.period_key and c.period_key not in known:
+                        try:
+                            p = period_for(b.period, key_start(c.period_key))
+                        except ValueError:
+                            continue
+                        if p.key == c.period_key:  # an override key of another period kind cannot be shown and is skipped
                             periods.append(p)
-                    except StopIteration:
-                        pass
-                periods = [p for p in periods if p.start <= today]
-                periods.sort(key=lambda p: p.start)
-                results = [period_result(b, p, items, manual, today) for p in periods]
+                            known.add(p.key)
+                periods = sorted((p for p in periods if p.start <= today), key=lambda p: p.start)
+                results = [period_result(b, p, evidence, manual, today) for p in periods]
                 cur_period = current_period(b, today)
-                current = next((r for r in results if cur_period and r["period_key"] == cur_period.key), None)
+                current: dict | None = next((r for r in results if cur_period and r["period_key"] == cur_period.key), None)
                 history = [r for r in results if not current or r["period_key"] != current["period_key"]]
                 for r in results:
                     if r["period_key"].startswith(str(year)):
@@ -222,12 +238,21 @@ class BenefitsEngine:
                 if current:
                     still_available += Decimal(current["remaining"])
                     if current["expiring_soon"]:
-                        expiring.append({"card": card.id, "card_label": card.label, "id": b.id, "name": b.name, "remaining": current["remaining"], "days_left": current["days_left"]})
-                    if current.get("missing_credit") and (current.get("missing_credit_age_days") or 0) >= MISSING_CREDIT_ATTENTION_DAYS:
-                        attention.append({"card": card.id, "card_label": card.label, "id": b.id, "name": b.name, "message": current["missing_credit"]})
-                for r in history:
-                    if r.get("missing_credit") and (r.get("missing_credit_age_days") or 0) >= MISSING_CREDIT_ATTENTION_DAYS and not r["ended"]:
-                        attention.append({"card": card.id, "card_label": card.label, "id": b.id, "name": b.name, "message": r["missing_credit"]})
+                        expiring.append(
+                            {
+                                "card": card.id,
+                                "card_label": card.label,
+                                "id": b.id,
+                                "name": b.name,
+                                "remaining": current["remaining"],
+                                "days_left": current["days_left"],
+                            }
+                        )
+                missing.extend(
+                    {"card": card.id, "card_label": card.label, "id": b.id, "name": b.name, "message": r["missing_credit"]}
+                    for r in results
+                    if r["missing_credit"] and (r["missing_credit_age_days"] or 0) >= MISSING_CREDIT_ATTENTION_DAYS and not r["ended"]
+                )
                 benefits_out.append(self._benefit_out(b, current, history, evidence))
 
             fee = Decimal(card.annual_fee)
@@ -250,7 +275,7 @@ class BenefitsEngine:
             "catalog_last_verified": self.catalog.last_verified.isoformat(),
             "cards": cards_out,
             "expiring_soon": sorted(expiring, key=lambda e: e["days_left"]),
-            "missing_credits": attention,
+            "missing_credits": missing,
             "_classified": all_classified,
         }
 
@@ -301,4 +326,5 @@ class BenefitsEngine:
 
 
 def strip_internal(result: dict) -> dict:
+    """The public /api/benefits payload: everything except the underscore prefixed working data."""
     return {k: v for k, v in result.items() if not k.startswith("_")}

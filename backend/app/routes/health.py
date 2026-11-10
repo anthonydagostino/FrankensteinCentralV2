@@ -1,3 +1,5 @@
+"""Liveness, public config, integration status, and UI settings routes."""
+
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, Request
@@ -14,7 +16,7 @@ router = APIRouter(prefix="/api", tags=["core"])
 @router.get("/health")
 async def health(request: Request):
     state: AppState | None = getattr(request.app.state, "fc", None)
-    return {"status": "ok", "time": iso(utcnow()), "modules": len(state.cache.all_status()) if state else 0}
+    return {"status": "ok", "time": iso(utcnow()), "modules": len(state.cache.modules()) if state else 0}
 
 
 @router.get("/config/public", dependencies=[Depends(require_read)])

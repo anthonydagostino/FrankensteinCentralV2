@@ -16,7 +16,7 @@ class ProbesIntegration(BaseIntegration):
     def _targets(self) -> list[dict]:
         out = []
         for p in self.config.probes:
-            base = self.settings.env_value(p.url_env) or getattr(self.settings, p.url_env.lower(), "")
+            base = self.settings.url_from_env(p.url_env)
             if not base:
                 continue
             headers = {}
@@ -40,9 +40,23 @@ class ProbesIntegration(BaseIntegration):
             resp = await client.get(target["url"], headers=target["headers"])
             latency = int((time.perf_counter() - started) * 1000)
             ok = resp.status_code == target["expect"]
-            return {"name": target["name"], "url": target["base"], "ok": ok, "status_code": resp.status_code, "latency_ms": latency, "error": None if ok else f"HTTP {resp.status_code}"}
+            return {
+                "name": target["name"],
+                "url": target["base"],
+                "ok": ok,
+                "status_code": resp.status_code,
+                "latency_ms": latency,
+                "error": None if ok else f"HTTP {resp.status_code}",
+            }
         except Exception as exc:
-            return {"name": target["name"], "url": target["base"], "ok": False, "status_code": None, "latency_ms": None, "error": describe_error(exc, target["name"])}
+            return {
+                "name": target["name"],
+                "url": target["base"],
+                "ok": False,
+                "status_code": None,
+                "latency_ms": None,
+                "error": describe_error(exc, target["name"]),
+            }
 
     async def fetch(self) -> dict:
         async with make_client(timeout=8.0) as client:
@@ -53,6 +67,9 @@ class ProbesIntegration(BaseIntegration):
         names = [p.name for p in self.config.probes] or ["Firefly III", "Vaultwarden", "Plex"]
         latencies = [41, 12, 27, 33]
         return {
-            "probes": [{"name": n, "url": None, "ok": True, "status_code": 200, "latency_ms": latencies[i % len(latencies)], "error": None} for i, n in enumerate(names)],
+            "probes": [
+                {"name": n, "url": None, "ok": True, "status_code": 200, "latency_ms": latencies[i % len(latencies)], "error": None}
+                for i, n in enumerate(names)
+            ],
             "checked_at": iso(utcnow()),
         }

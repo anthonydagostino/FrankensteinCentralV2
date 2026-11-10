@@ -1,3 +1,5 @@
+"""Benefits routes: engine output, the discovery list, overrides, and manual usage."""
+
 from __future__ import annotations
 
 import logging
@@ -5,35 +7,26 @@ from decimal import Decimal, InvalidOperation
 from typing import Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from ..auth import require_read, require_write
 from ..deps import get_state
+from ..integrations.firefly import add_tags_to_group
 from ..services.benefits.classify import suggest_pattern
+from ..services.benefits.periods import cap_for, key_start, period_for
 from ..state import AppState
 from ..util import iso, today_local, utcnow
 
 log = logging.getLogger("frankenstein.routes.benefits")
 router = APIRouter(prefix="/api/benefits", tags=["benefits"], dependencies=[Depends(require_read)])
 
-
-def _env(state: AppState, builder):
-    env = state.cache.envelope("firefly")
-    env["module"] = "benefits"
-    if env.get("data") is not None:
-        try:
-            env["data"] = builder()
-        except Exception as exc:
-            log.exception("benefits view failed")
-            env["status"] = "error"
-            env["error"] = f"Could not compute benefits: {exc.__class__.__name__}"
-            env["data"] = None
-    return env
+# 2026, 2026-M10, 2026-Q4, 2026-H2 (annual keys are the bare year)
+PERIOD_KEY = r"^\d{4}(-(M(0[1-9]|1[0-2])|Q[1-4]|H[12]))?$"
 
 
 @router.get("")
 async def benefits(year: int | None = Query(None, ge=2020, le=2100), state: AppState = Depends(get_state)):
-    return _env(state, lambda: state.benefits_public(year))
+    return state.derived_envelope("benefits", lambda: state.benefits_public(year))
 
 
 @router.get("/unclassified")
@@ -46,15 +39,15 @@ async def unclassified(days: int = Query(120, ge=1, le=400), state: AppState = D
         overrides = [dict(o) for o in state.db.fetchall("SELECT * FROM benefit_overrides ORDER BY created_at DESC")]
         return {"items": rows, "overrides": overrides, "benefits": [{"id": b.id, "name": b.name, "card": b.card} for b in state.engine.benefits]}
 
-    return _env(state, build)
+    return state.derived_envelope("benefits", build)
 
 
 class OverrideBody(BaseModel):
     journal_id: int
     classification: Literal["statement_credit", "merchant_refund", "payment", "ignore", "purchase", "credit_clawback"]
     benefit_id: str | None = None
-    period_key: str | None = None
-    note: str | None = None
+    period_key: str | None = Field(None, pattern=PERIOD_KEY)
+    note: str | None = Field(None, max_length=500)
 
 
 @router.post("/overrides", dependencies=[Depends(require_write)])
@@ -83,10 +76,10 @@ async def delete_override(override_id: int, state: AppState = Depends(get_state)
 
 class ManualBody(BaseModel):
     benefit_id: str
-    period_key: str
+    period_key: str = Field(pattern=PERIOD_KEY)
     amount: str | None = None  # None or "" means "used, full cap"
     used: bool = True
-    note: str | None = None
+    note: str | None = Field(None, max_length=500)
 
 
 @router.post("/manual", dependencies=[Depends(require_write)])
@@ -99,13 +92,7 @@ async def manual_usage(body: ManualBody, state: AppState = Depends(get_state)):
         state.invalidate_benefits()
         return {"ok": True, "removed": True}
     if body.amount in (None, ""):
-        from ..services.benefits.periods import cap_for, period_for
-
-        try:
-            sample = _period_sample_date(body.period_key)
-            amount = cap_for(benefit, period_for(benefit.period, sample))
-        except ValueError:
-            amount = benefit.cap
+        amount = cap_for(benefit, period_for(benefit.period, key_start(body.period_key)))
     else:
         try:
             amount = Decimal(str(body.amount)).quantize(Decimal("0.01"))
@@ -122,19 +109,6 @@ async def manual_usage(body: ManualBody, state: AppState = Depends(get_state)):
     return {"ok": True, "amount": f"{amount:.2f}"}
 
 
-def _period_sample_date(key: str):
-    from datetime import date
-
-    year = int(key[:4])
-    if "-M" in key:
-        return date(year, int(key.split("-M")[1]), 1)
-    if "-Q" in key:
-        return date(year, 3 * (int(key.split("-Q")[1]) - 1) + 1, 1)
-    if "-H" in key:
-        return date(year, 1 if key.endswith("H1") else 7, 1)
-    return date(year, 1, 1)
-
-
 async def _maybe_writeback(state: AppState, body: OverrideBody) -> None:
     if not state.settings.firefly_writeback_tags or body.classification != "statement_credit":
         return
@@ -145,8 +119,6 @@ async def _maybe_writeback(state: AppState, body: OverrideBody) -> None:
     row = next((t for t in data.get("transactions") or [] if int(t.get("journal_id") or 0) == body.journal_id), None)
     if not row:
         return
-    from ..integrations.firefly import add_tags_to_group
-
     tags = ["amex-credit", f"benefit:{body.benefit_id}" + (f":{body.period_key}" if body.period_key else "")]
     try:
         await add_tags_to_group(state.settings, row["group_id"], body.journal_id, tags)

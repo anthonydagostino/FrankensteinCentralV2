@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import itertools
 import re
 import statistics
 from collections import Counter, defaultdict
@@ -61,8 +62,8 @@ def classify_cadence(intervals: list[int]) -> tuple[str, int] | None:
             best = (name, nominal, share)
     if best is None:
         return None
-    matching = [i for i in intervals if abs(i - best[1]) <= [t for n, _, t in CADENCES if n == best[0]][0]]
-    return best[0], int(round(statistics.median(matching)))
+    matching = [i for i in intervals if abs(i - best[1]) <= next(t for n, _, t in CADENCES if n == best[0])]
+    return best[0], round(statistics.median(matching))
 
 
 def _within(a: Decimal, ref: Decimal, tol: Decimal) -> bool:
@@ -72,6 +73,12 @@ def _within(a: Decimal, ref: Decimal, tol: Decimal) -> bool:
 
 
 def detect(transactions: list[dict], today: date, ignored: set[str] | None = None, links: dict | None = None) -> dict:
+    """Recurring charges found in withdrawal rows (rules in DECISIONS.md).
+
+    Rows are clustered by a normalized description (plus the exact amount for pass-through merchants such as
+    PayPal or Apple), one charge per day per cluster, and a cluster counts when most of its intervals agree with
+    one cadence. Weekly, biweekly, and two-charge clusters must repeat the exact amount. Each item reports the
+    cadence, next expected date, lapsed and new flags, price increases, and whether the user ignored it."""
     ignored = ignored or set()
     links = links or {}
     tmpl = links.get("transaction_template")
@@ -96,7 +103,7 @@ def detect(transactions: list[dict], today: date, ignored: set[str] | None = Non
         if len(rows) < 2:
             continue
         dates = [date.fromisoformat(r["date"][:10]) for r in rows]
-        intervals = [(b - a).days for a, b in zip(dates, dates[1:])]
+        intervals = [(b - a).days for a, b in itertools.pairwise(dates)]
         cadence = classify_cadence(intervals)
         if cadence is None:
             continue

@@ -33,7 +33,7 @@ class Settings(BaseSettings):
     app_port: int = 8000
     tz: str = "America/New_York"
     mock_mode: bool = True
-    secret_key: str = "change-me-to-a-long-random-string"
+    secret_key: str = "change-me-to-a-long-random-string"  # noqa: S105 - placeholder; main.py warns when it is left unchanged
     dashboard_password_hash: str = ""
     kiosk_token: str = ""
     session_days: int = 30
@@ -118,6 +118,15 @@ class Settings(BaseSettings):
         """Read an arbitrary env var (used for calendar feeds, link tiles, probes)."""
         return os.environ.get(name, "") or ""
 
+    def lookup(self, name: str) -> str:
+        """Value of an env var named in dashboard.yaml, falling back to the matching Settings field."""
+        return self.env_value(name) or str(getattr(self, name.lower(), "") or "")
+
+    def url_from_env(self, name: str) -> str:
+        """lookup() for values that reach the browser or the envelope: only *_URL names qualify, so a
+        config typo such as env_url: FIREFLY_TOKEN can never leak a secret."""
+        return self.lookup(name) if name.upper().endswith("_URL") else ""
+
     def secret_values(self) -> list[str]:
         """Every secret value that must never appear in logs."""
         values = [
@@ -131,9 +140,7 @@ class Settings(BaseSettings):
             self.gcal_ics_primary,
             self.gcal_ics_second,
         ]
-        for key, value in os.environ.items():
-            if key.startswith("GCAL_ICS_") and value:
-                values.append(value)
+        values.extend(value for key, value in os.environ.items() if key.startswith("GCAL_ICS_") and value)
         return [v for v in values if v and len(v) >= 8]
 
 

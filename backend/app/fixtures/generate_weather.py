@@ -13,7 +13,18 @@ ANCHOR = date(2026, 10, 20)
 def build_open_meteo() -> dict:
     rnd = random.Random(42)
     hourly_time, temps, pops, codes, winds = [], [], [], [], []
-    daily = {"time": [], "weather_code": [], "temperature_2m_max": [], "temperature_2m_min": [], "precipitation_probability_max": [], "precipitation_sum": [], "sunrise": [], "sunset": [], "uv_index_max": [], "wind_speed_10m_max": []}
+    daily: dict[str, list] = {
+        "time": [],
+        "weather_code": [],
+        "temperature_2m_max": [],
+        "temperature_2m_min": [],
+        "precipitation_probability_max": [],
+        "precipitation_sum": [],
+        "sunrise": [],
+        "sunset": [],
+        "uv_index_max": [],
+        "wind_speed_10m_max": [],
+    }
     day_codes = [3, 61, 2, 0, 1, 80, 2]
     for d in range(7):
         day = ANCHOR + timedelta(days=d)
@@ -35,10 +46,7 @@ def build_open_meteo() -> dict:
             hourly_time.append(t.strftime("%Y-%m-%dT%H:%M"))
             temp = base_lo + (base_hi - base_lo) * (0.5 - 0.5 * math.cos((h - 5) / 24 * 2 * math.pi))
             temps.append(round(temp + rnd.uniform(-1, 1), 1))
-            if day_pop >= 60:
-                pop = int(max(0, min(100, day_pop + 25 * math.sin((h - 8) / 10 * math.pi))))
-            else:
-                pop = int(max(0, day_pop + rnd.uniform(-5, 10)))
+            pop = int(max(0, min(100, day_pop + 25 * math.sin((h - 8) / 10 * math.pi)))) if day_pop >= 60 else int(max(0, day_pop + rnd.uniform(-5, 10)))
             pops.append(pop)
             codes.append(61 if pop >= 55 else (3 if pop >= 30 else day_codes[d]))
             winds.append(round(6 + 8 * rnd.random(), 1))
@@ -48,7 +56,18 @@ def build_open_meteo() -> dict:
         "longitude": -74.2,
         "timezone": "America/New_York",
         "current_units": {"temperature_2m": "°F", "wind_speed_10m": "mp/h", "precipitation": "inch"},
-        "current": {"time": f"{ANCHOR.isoformat()}T16:45", "interval": 900, "temperature_2m": 58.3, "apparent_temperature": 55.1, "relative_humidity_2m": 71, "weather_code": 3, "is_day": 1, "precipitation": 0.0, "wind_speed_10m": 9.4, "wind_gusts_10m": 18.2},
+        "current": {
+            "time": f"{ANCHOR.isoformat()}T16:45",
+            "interval": 900,
+            "temperature_2m": 58.3,
+            "apparent_temperature": 55.1,
+            "relative_humidity_2m": 71,
+            "weather_code": 3,
+            "is_day": 1,
+            "precipitation": 0.0,
+            "wind_speed_10m": 9.4,
+            "wind_gusts_10m": 18.2,
+        },
         "hourly_units": {"temperature_2m": "°F", "precipitation_probability": "%"},
         "hourly": {"time": hourly_time, "temperature_2m": temps, "precipitation_probability": pops, "weather_code": codes, "wind_speed_10m": winds},
         "daily_units": {"temperature_2m_max": "°F"},

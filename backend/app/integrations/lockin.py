@@ -12,8 +12,8 @@ from typing import Any
 
 import httpx
 
-from ..util import iso, local_now, today_local, utcnow
-from .base import BaseIntegration, Degraded, describe_error, load_fixture, make_client, request
+from ..util import iso, today_local, utcnow
+from .base import BaseIntegration, Degraded, bearer_headers, describe_error, load_fixture, make_client, request, shift_date
 
 log = logging.getLogger("frankenstein.lockin")
 
@@ -21,10 +21,6 @@ FIXTURE_ANCHOR = date(2026, 10, 25)
 WEIGHT_SERIES_DAYS = 60
 STREAK_MIN_SESSIONS = 5
 GOAL_DATE = date(2027, 6, 1)
-
-
-def _headers(token: str) -> dict[str, str]:
-    return {"Authorization": f"Bearer {token}", "Accept": "application/json"}
 
 
 def week_start(d: date) -> date:
@@ -59,7 +55,7 @@ def build_training(summary: dict, export: dict | None, today: date, now: datetim
     weight_series: list[dict] | None = None
     trained_today = False
     if export:
-        done_dates = {s["date"] for s in export.get("sessions") or [] if s.get("completedAt") is not None and not s.get("deleted")}
+        done_dates = {s["date"] for s in export.get("sessions") or [] if s.get("date") and s.get("completedAt") is not None and not s.get("deleted")}
         ws = week_start(today)
         week = []
         for i in range(7):
@@ -67,7 +63,14 @@ def build_training(summary: dict, export: dict | None, today: date, now: datetim
             week.append({"date": d.isoformat(), "label": "MTWTFSS"[i], "done": d.isoformat() in done_dates, "today": d == today, "future": d > today})
         trained_today = today.isoformat() in done_dates
         cutoff = (today - timedelta(days=WEIGHT_SERIES_DAYS)).isoformat()
-        series = sorted(((w["date"], float(w["weightLb"])) for w in export.get("weighIns") or [] if not w.get("deleted") and w["date"] > cutoff), key=lambda x: x[0])
+        series = sorted(
+            (
+                (w["date"], float(w["weightLb"]))
+                for w in export.get("weighIns") or []
+                if not w.get("deleted") and w.get("weightLb") is not None and (w.get("date") or "") > cutoff
+            ),
+            key=lambda x: x[0],
+        )
         weight_series = [{"date": d, "weight": round(v, 1)} for d, v in series]
     elif summary.get("lastSession"):
         trained_today = summary["lastSession"].get("date") == today.isoformat()
@@ -128,7 +131,7 @@ class LockInIntegration(BaseIntegration):
         today = today_local()
         version = None
         errors: list[str] = []
-        async with make_client(headers=_headers(self.settings.lockin_token)) as client:
+        async with make_client(headers=bearer_headers(self.settings.lockin_token)) as client:
             try:
                 version = (await self._get(client, "/api/health")).get("version")
             except Exception as exc:
@@ -151,9 +154,7 @@ class LockInIntegration(BaseIntegration):
         export = load_fixture("lockin/export.json")
 
         def shift(value: str | None) -> str | None:
-            if not value:
-                return value
-            return (date.fromisoformat(value[:10]) + delta).isoformat()
+            return shift_date(value, delta)
 
         summary["today"] = today.isoformat()
         summary["daysUntilGoal"] = max(0, (GOAL_DATE - today).days)
@@ -169,4 +170,6 @@ class LockInIntegration(BaseIntegration):
         ws = week_start(today)
         done = [s for s in export["sessions"] if s.get("completedAt") is not None and not s.get("deleted")]
         summary["sessionsThisWeek"] = sum(1 for s in done if ws.isoformat() <= s["date"] <= (ws + timedelta(days=6)).isoformat())
-        return build_training(summary, export, today, utcnow(), self.settings.lockin_public_url or "https://lockin.example.ts.net", summary.get("_version", "0.2.1"))
+        return build_training(
+            summary, export, today, utcnow(), self.settings.lockin_public_url or "https://lockin.example.ts.net", summary.get("_version", "0.2.1")
+        )

@@ -35,7 +35,7 @@ class WeatherConfig(StrictModel):
     units: Literal["imperial", "metric"] = "imperial"
 
     @model_validator(mode="after")
-    def _one_default(self) -> "WeatherConfig":
+    def _one_default(self) -> WeatherConfig:
         if not any(loc.default for loc in self.locations):
             self.locations[0].default = True
         return self
@@ -141,7 +141,7 @@ class BenefitsCatalog(StrictModel):
     benefits: list[BenefitConfig]
 
     @model_validator(mode="after")
-    def _unique_ids(self) -> "BenefitsCatalog":
+    def _unique_ids(self) -> BenefitsCatalog:
         seen: set[str] = set()
         for b in self.benefits:
             if b.id in seen:
@@ -173,6 +173,7 @@ def _load_yaml(path: Path) -> dict:
 
 
 def load_dashboard_config(path: Path) -> DashboardConfig:
+    """Parse and validate dashboard.yaml; raises ConfigError with a readable message."""
     data = _load_yaml(path)
     try:
         return DashboardConfig.model_validate(data)
@@ -181,6 +182,7 @@ def load_dashboard_config(path: Path) -> DashboardConfig:
 
 
 def load_benefits_catalog(path: Path) -> BenefitsCatalog:
+    """Parse and validate benefits.yaml; raises ConfigError with a readable message."""
     data = _load_yaml(path)
     try:
         return BenefitsCatalog.model_validate(data)
@@ -190,6 +192,7 @@ def load_benefits_catalog(path: Path) -> BenefitsCatalog:
 
 @lru_cache
 def get_dashboard_config() -> DashboardConfig:
+    """dashboard.yaml from the configured config directory."""
     from .settings import get_settings
 
     return load_dashboard_config(get_settings().config_dir / "dashboard.yaml")
@@ -197,6 +200,7 @@ def get_dashboard_config() -> DashboardConfig:
 
 @lru_cache
 def get_benefits_catalog() -> BenefitsCatalog:
+    """benefits.yaml from the configured config directory."""
     from .settings import get_settings
 
     return load_benefits_catalog(get_settings().config_dir / "benefits.yaml")

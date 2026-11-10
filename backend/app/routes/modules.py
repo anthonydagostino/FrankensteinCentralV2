@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
 
 from ..auth import require_read, require_write
@@ -51,7 +51,7 @@ async def plex_image(path: str, w: int = Query(300, ge=16, le=2000), h: int = Qu
         svg = _placeholder_svg(path, w, h)
         return Response(content=svg, media_type="image/svg+xml", headers={"Cache-Control": "public, max-age=86400"})
     url = f"{base}/photo/:/transcode"
-    params = {"width": w, "height": h, "minSize": 1, "upscale": 1, "url": path}
+    params: dict[str, str | int] = {"width": w, "height": h, "minSize": 1, "upscale": 1, "url": path}
     async with make_client(headers=integration.headers()) as client:
         resp = await client.get(url, params=params)
     if resp.status_code != 200:
@@ -60,6 +60,7 @@ async def plex_image(path: str, w: int = Query(300, ge=16, le=2000), h: int = Qu
 
 
 def _placeholder_svg(path: str, w: int, h: int) -> str:
+    """Deterministic gradient poster for mock mode, so the layout looks right without a Plex server."""
     seed = sum(ord(c) for c in path)
     hue = seed % 360
     return (
@@ -108,6 +109,6 @@ async def probes(state: AppState = Depends(get_state)):
 
 
 @router.get("/attention")
-async def attention(request: Request, location: str | None = None, state: AppState = Depends(get_state)):
+async def attention(location: str | None = None, state: AppState = Depends(get_state)):
     items = state.attention(location)
     return {"module": "attention", "status": "ok", "configured": True, "fetched_at": None, "stale": False, "error": None, "data": {"items": items}}

@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-import json
 import logging
-from datetime import date, datetime, timedelta, timezone
+from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
-
-import pytest
 
 from app.cache import Cache
 from app.integrations.base import load_fixture
@@ -41,7 +38,19 @@ def test_periods_in_year_respects_active_range():
 
 
 def test_period_caps_override_by_month():
-    b = Benefit(id="x", card="c", name="x", cap=Decimal("15.00"), period="monthly", period_caps={"12": Decimal("35.00")}, period_years=4, tracking="manual", enrollment_required=True, active_from=None, active_until=None)
+    b = Benefit(
+        id="x",
+        card="c",
+        name="x",
+        cap=Decimal("15.00"),
+        period="monthly",
+        period_caps={"12": Decimal("35.00")},
+        period_years=4,
+        tracking="manual",
+        enrollment_required=True,
+        active_from=None,
+        active_until=None,
+    )
     assert cap_for(b, period_for("monthly", date(2026, 12, 1))) == Decimal("35.00")
     assert cap_for(b, period_for("monthly", date(2026, 11, 1))) == Decimal("15.00")
 
@@ -57,7 +66,7 @@ def test_wmo_mapping():
 
 def test_parse_forecast_badges_and_hours():
     raw = load_fixture("weather/open_meteo.json")
-    now = datetime(2026, 10, 20, 16, 30, tzinfo=timezone.utc)
+    now = datetime(2026, 10, 20, 16, 30, tzinfo=UTC)
     out = parse_forecast(raw, now, "imperial")
     assert len(out["next_12h"]) == 12
     assert out["next_12h"][0]["time"].startswith("2026-10-20T12:00")
@@ -98,7 +107,7 @@ def test_calendar_all_day_multi_day_and_canceled():
     assert not any("Canceled" in e["title"] for e in events)
     trip = next(e for e in events if e["uid"] == "hoboken-trip@frankenstein.mock")
     assert trip["all_day"] and trip["start"].date() == date(2026, 10, 24) and trip["end"].date() == date(2026, 10, 27)
-    now = datetime(2026, 10, 20, 20, 0, tzinfo=timezone.utc)
+    now = datetime(2026, 10, 20, 20, 0, tzinfo=UTC)
     out = build_output(events, now, 7)
     by_date = {d["date"]: [e["title"] for e in d["events"]] for d in out["days"]}
     assert "Trip to Hoboken" in by_date["2026-10-24"] and "Trip to Hoboken" in by_date["2026-10-26"]
@@ -116,7 +125,7 @@ def test_calendar_utc_event_and_join_url_and_dedupe():
     assert flight["start"].hour == 9 and flight["start"].tzinfo is not None  # 13:00Z is 09:00 EDT
     # the same event delivered by two feeds (same UID and start) must appear once
     second_again = parse_feed(load_fixture("calendar/second.ics"), "Work copy", "#ffffff", start, end)
-    out = build_output(personal + second + second_again, datetime(2026, 10, 20, 12, 0, tzinfo=timezone.utc), 7)
+    out = build_output(personal + second + second_again, datetime(2026, 10, 20, 12, 0, tzinfo=UTC), 7)
     today = [e for e in out["days"][0]["events"] if e["title"] == "Team standup"]
     assert len(today) == 1 and today[0]["join_url"] == "https://meet.google.com/abc-defg-hij"
     assert out["next_event"]["title"] in ("1:1 with manager", "Team standup", "Coffee with Sam")
@@ -156,8 +165,10 @@ def test_docker_health_and_grouping():
     assert parse_health("Up 5 days") == "none"
     assert proxy_base("tcp://socket-proxy:2375") == "http://socket-proxy:2375"
     items = load_fixture("docker/containers.json")
-    now = datetime.now(timezone.utc)
-    c = build_container(items[7], {"RestartCount": 3, "State": {"Status": "exited", "ExitCode": 1, "StartedAt": "2026-10-20T15:00:00.123456789Z"}}, {items[7]["Id"]: 1}, now)
+    now = datetime.now(UTC)
+    c = build_container(
+        items[7], {"RestartCount": 3, "State": {"Status": "exited", "ExitCode": 1, "StartedAt": "2026-10-20T15:00:00.123456789Z"}}, {items[7]["Id"]: 1}, now
+    )
     assert c["state"] == "exited" and c["critical"] is True and c["restart_increased"] is True and c["restart_count"] == 3
     hidden = build_container(items[9], None, {}, now)
     assert hidden["hidden"] is True
@@ -166,19 +177,42 @@ def test_docker_health_and_grouping():
 # -- attention ----------------------------------------------------------------------
 def test_attention_rules():
     cache = Cache(None)
-    cache.set_ok("weather", {"default": "Toms River", "locations": {"Toms River": {"alerts": [{"event": "Tornado Warning", "severity": "Extreme", "headline": "h"}], "badges": ["umbrella"]}}})
+    cache.set_ok(
+        "weather",
+        {
+            "default": "Toms River",
+            "locations": {"Toms River": {"alerts": [{"event": "Tornado Warning", "severity": "Extreme", "headline": "h"}], "badges": ["umbrella"]}},
+        },
+    )
     cache.set_ok("vault", {"online": False, "error": "down", "backup": {"available": True, "age_hours": 70}})
-    cache.set_ok("docker", {"groups": [{"project": "x", "containers": [{"display_name": "pihole", "state": "exited", "critical": True, "health": "none"}, {"display_name": "t", "state": "running", "critical": False, "health": "unhealthy"}]}]})
+    cache.set_ok(
+        "docker",
+        {
+            "groups": [
+                {
+                    "project": "x",
+                    "containers": [
+                        {"display_name": "pihole", "state": "exited", "critical": True, "health": "none"},
+                        {"display_name": "t", "state": "running", "critical": False, "health": "unhealthy"},
+                    ],
+                }
+            ]
+        },
+    )
     cache.set_ok("calendar", {"next_event": {"title": "Standup", "minutes_until": 10, "in_progress": False}})
-    benefits = {"expiring_soon": [{"card": "amex_gold", "card_label": "Amex Gold", "id": "gold_dining", "name": "Dining credit", "remaining": "10.00", "days_left": 11}, {"card": "amex_gold", "card_label": "Amex Gold", "id": "gold_dunkin", "name": "Dunkin'", "remaining": "7.00", "days_left": 11}], "missing_credits": []}
+    benefits = {
+        "expiring_soon": [
+            {"card": "amex_gold", "card_label": "Amex Gold", "id": "gold_dining", "name": "Dining credit", "remaining": "10.00", "days_left": 11},
+            {"card": "amex_gold", "card_label": "Amex Gold", "id": "gold_dunkin", "name": "Dunkin'", "remaining": "7.00", "days_left": 11},
+        ],
+        "missing_credits": [],
+    }
     finance = {"freshness": {"stale": True, "hours_since": 72}, "links": {}}
-    items = build_attention(cache, benefits, finance, datetime.now(timezone.utc))
+    items = build_attention(cache, benefits, finance, datetime.now(UTC))
     assert len(items) == 6
     assert items[0]["severity"] == "critical"
     titles = [i["title"] for i in items]
     assert any("Tornado" in t for t in titles) and any("Vaultwarden is down" in t for t in titles) and any("pihole" in t for t in titles)
-    all_items = build_attention(cache, benefits, finance, datetime.now(timezone.utc))
-    assert any("Gold: $10.00 Dining credit and $7.00 Dunkin' left, 11 days" == t for t in [i["title"] for i in all_items]) or True
 
 
 def test_attention_empty_when_all_clear():
@@ -187,7 +221,7 @@ def test_attention_empty_when_all_clear():
     cache.set_ok("vault", {"online": True, "backup": None})
     cache.set_ok("docker", {"groups": []})
     cache.set_ok("calendar", {"next_event": None})
-    assert build_attention(cache, {"expiring_soon": [], "missing_credits": []}, {"freshness": {"stale": False}}, datetime.now(timezone.utc)) == []
+    assert build_attention(cache, {"expiring_soon": [], "missing_credits": []}, {"freshness": {"stale": False}}, datetime.now(UTC)) == []
 
 
 # -- cache --------------------------------------------------------------------------
@@ -206,11 +240,38 @@ def test_cache_keeps_last_good_data_on_error_and_marks_stale():
 # -- redaction ----------------------------------------------------------------------
 def test_log_redaction():
     flt = RedactingFilter(["supersecrettoken123"])
-    record = logging.LogRecord("x", logging.INFO, "", 0, "GET http://plex/x?X-Plex-Token=abc123 Authorization: Bearer zzz https://calendar.google.com/calendar/ical/abc/basic.ics key supersecrettoken123", (), None)
+    record = logging.LogRecord(
+        "x",
+        logging.INFO,
+        "",
+        0,
+        "GET http://plex/x?X-Plex-Token=abc123 Authorization: Bearer zzz https://calendar.google.com/calendar/ical/abc/basic.ics key supersecrettoken123",
+        (),
+        None,
+    )
     flt.filter(record)
     msg = record.getMessage()
     assert "abc123" not in msg and "zzz" not in msg and "/calendar/ical/abc" not in msg and "supersecrettoken123" not in msg
     assert "[redacted]" in msg
+
+
+def test_log_redaction_covers_tracebacks():
+    flt = RedactingFilter(["supersecrettoken123"])
+    try:
+        raise RuntimeError("GET https://calendar.google.com/calendar/ical/abc/basic.ics?token=supersecrettoken123 failed")
+    except RuntimeError:
+        import sys
+
+        record = logging.LogRecord("x", logging.ERROR, "", 0, "boom", (), sys.exc_info())
+    flt.filter(record)
+    rendered = logging.Formatter().format(record)
+    assert "supersecrettoken123" not in rendered and "/calendar/ical/abc" not in rendered and "RuntimeError" in rendered
+
+
+def test_strip_html_decodes_entities_once():
+    from app.util import strip_html
+
+    assert strip_html("<p>Tom &amp; Jerry<br>&amp;lt;b&amp;gt; &#8217;quoted&#8217;&nbsp;</p>") == "Tom & Jerry\n&lt;b&gt; \u2019quoted\u2019"
 
 
 # -- patterns -------------------------------------------------------------------------

@@ -16,6 +16,8 @@ _PATTERNS = [
 
 
 class RedactingFilter(logging.Filter):
+    """Replaces token patterns and literal secret values with [redacted] in log records."""
+
     def __init__(self, secrets: list[str] | None = None):
         super().__init__()
         self.secrets = sorted({s for s in (secrets or []) if s}, key=len, reverse=True)
@@ -37,18 +39,28 @@ class RedactingFilter(logging.Filter):
         if redacted != msg:
             record.msg = redacted
             record.args = ()
+        if record.exc_info:
+            # tracebacks carry request URLs (httpx errors), so they are rendered and redacted here
+            record.exc_text = self.redact(logging.Formatter().formatException(record.exc_info))
+            record.exc_info = None
         return True
 
 
-_installed: RedactingFilter | None = None
+# One process wide filter; install_redaction() loads the secrets into it and attaches it to the loggers.
+_filter = RedactingFilter()
 
 
 def install_redaction(secrets: list[str]) -> RedactingFilter:
     """Attach the filter to every handler we know about, including uvicorn's."""
-    global _installed
-    flt = RedactingFilter(secrets)
-    _installed = flt
-    loggers = [logging.getLogger(), logging.getLogger("uvicorn"), logging.getLogger("uvicorn.access"), logging.getLogger("uvicorn.error"), logging.getLogger("frankenstein")]
+    flt = _filter
+    flt.secrets = sorted({s for s in secrets if s}, key=len, reverse=True)
+    loggers = [
+        logging.getLogger(),
+        logging.getLogger("uvicorn"),
+        logging.getLogger("uvicorn.access"),
+        logging.getLogger("uvicorn.error"),
+        logging.getLogger("frankenstein"),
+    ]
     for lg in loggers:
         lg.addFilter(flt)
         for h in lg.handlers:
@@ -57,9 +69,8 @@ def install_redaction(secrets: list[str]) -> RedactingFilter:
 
 
 def redact_text(text: str) -> str:
-    if _installed is None:
-        return RedactingFilter([]).redact(text)
-    return _installed.redact(text)
+    """Redact known secrets and token shaped fragments from free text (used for envelope error messages)."""
+    return _filter.redact(text)
 
 
 def configure_logging(level: str = "INFO") -> None:

@@ -6,8 +6,9 @@ import asyncio
 import json
 import logging
 import random
+from datetime import date, datetime, timedelta
 from pathlib import Path
-from typing import Any, Protocol, runtime_checkable
+from typing import Any
 
 import httpx
 
@@ -32,24 +33,12 @@ class TokenRejected(Exception):
     """401 or 403 from a service: do not retry, tell the user to fix the token."""
 
 
-class NotConfigured(Exception):
-    pass
-
-
-@runtime_checkable
-class Integration(Protocol):
-    name: str
-    interval_seconds: int
-
-    def is_configured(self) -> bool: ...
-    async def fetch(self) -> dict: ...
-    def mock(self) -> dict: ...
-
-
 class BaseIntegration:
+    """Contract every integration follows. The scheduler calls fetch() (live) or mock() (fixtures) on interval_seconds."""
+
     name: str = "base"
     interval_seconds: int = 300
-    required_env: list[str] = []
+    required_env: list[str] = []  # env vars that must be non-empty for is_configured()
 
     def __init__(self, settings: Settings, config: DashboardConfig):
         self.settings = settings
@@ -72,6 +61,7 @@ class BaseIntegration:
 
 
 def load_fixture(name: str) -> Any:
+    """A fixture file under app/fixtures: parsed when .json, otherwise its text."""
     path = FIXTURES / name
     if path.suffix == ".json":
         return json.loads(path.read_text(encoding="utf-8"))
@@ -82,10 +72,33 @@ def load_fixture(name: str) -> Any:
 # HTTP helpers
 # --------------------------------------------------------------------------
 DEFAULT_TIMEOUT = 10.0
+CREDENTIAL_HEADERS = ("authorization", "x-plex-token")
 
 
 def make_client(timeout: float = DEFAULT_TIMEOUT, **kwargs: Any) -> httpx.AsyncClient:
+    """httpx client with the project defaults (timeout, redirects followed)."""
     return httpx.AsyncClient(timeout=timeout, follow_redirects=True, **kwargs)
+
+
+def bearer_headers(token: str, accept: str = "application/json") -> dict[str, str]:
+    """Authorization and Accept headers for a bearer token API."""
+    return {"Authorization": f"Bearer {token}", "Accept": accept}
+
+
+def fresh(stamp: datetime, now: datetime, ttl_seconds: float) -> bool:
+    """True while a cached value taken at `stamp` is younger than the TTL."""
+    return (now - stamp).total_seconds() < ttl_seconds
+
+
+def shift_date(value: str | None, delta: timedelta) -> str | None:
+    """Re-base the date part of an ISO date or datetime string from a fixture by `delta`; unparsable input is returned as is."""
+    if not value:
+        return value
+    try:
+        d = date.fromisoformat(value[:10])
+    except ValueError:
+        return value
+    return (d + delta).isoformat() + value[10:]
 
 
 async def request(
@@ -97,26 +110,32 @@ async def request(
     service: str = "service",
     **kwargs: Any,
 ) -> httpx.Response:
-    """Request with retries on 5xx and network errors. 401/403 raise TokenRejected immediately."""
+    """Request with retries on 5xx and network errors.
+
+    A 401/403 raises TokenRejected immediately, but only when the call carried credentials: an
+    anonymous call (NWS, a locked down docker-socket-proxy endpoint) gets the response back so the
+    caller can report the real status code.
+    """
+    sent = {k.lower() for k in client.headers} | {k.lower() for k in (kwargs.get("headers") or {})}
+    authed = any(h in sent for h in CREDENTIAL_HEADERS)
     last_exc: Exception | None = None
     for attempt in range(retries + 1):
         try:
             resp = await client.request(method, url, **kwargs)
-        except (httpx.TransportError, httpx.TimeoutException) as exc:
+        except httpx.TransportError as exc:
             last_exc = exc
             if attempt < retries:
                 await asyncio.sleep(0.5 * (2**attempt) + random.random() * 0.3)
                 continue
             raise ConnectionError(f"{service} unreachable: {exc.__class__.__name__}") from exc
-        if resp.status_code in (401, 403):
+        if authed and resp.status_code in (401, 403):
             raise TokenRejected(f"{service}: token rejected, regenerate it and update .env")
         if resp.status_code >= 500 and attempt < retries:
             last_exc = httpx.HTTPStatusError(f"{resp.status_code}", request=resp.request, response=resp)
             await asyncio.sleep(0.5 * (2**attempt) + random.random() * 0.3)
             continue
         return resp
-    assert last_exc is not None
-    raise last_exc
+    raise last_exc or RuntimeError(f"{service}: request failed")
 
 
 def describe_error(exc: Exception, service: str = "service") -> str:

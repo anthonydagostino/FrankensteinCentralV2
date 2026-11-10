@@ -7,8 +7,6 @@ from decimal import Decimal
 
 from freezegun import freeze_time
 
-from app.services.benefits.engine import BenefitsEngine
-
 from .conftest import benefit, tx
 
 
@@ -87,14 +85,14 @@ def test_06_refund_and_clawback(run):
 def test_07_refund_equal_to_purchase_over_cap(run):
     rows = [tx("2026-09-01", "purchase", "150.00", "LULULEMON ATHLETICA"), tx("2026-09-09", "deposit", "150.00", "LULULEMON.COM")]
     result = run(rows, date(2026, 9, 20))
-    dep = [e for e in evidence(result, "plat_lululemon") if e["description"] == "LULULEMON.COM"][0]
+    dep = next(e for e in evidence(result, "plat_lululemon") if e["description"] == "LULULEMON.COM")
     assert dep["kind"] == "merchant_refund" and dep["confidence"] == "high"
 
 
 def test_08_credit_without_credit_words(run):
     rows = [tx("2026-10-01", "purchase", "150.00", "LULULEMON ATHLETICA"), tx("2026-10-03", "deposit", "75.00", "LULULEMON")]
     result = run(rows, date(2026, 10, 20))
-    dep = [e for e in evidence(result, "plat_lululemon") if e["description"] == "LULULEMON"][0]
+    dep = next(e for e in evidence(result, "plat_lululemon") if e["description"] == "LULULEMON")
     assert dep["kind"] == "statement_credit" and dep["confidence"] == "medium"
     assert cur(result, "plat_lululemon")["used"] == "75.00"
 
@@ -163,7 +161,7 @@ def test_16_over_cap(run):
     ]
     result = run(rows, date(2026, 10, 20))
     assert cur(result, "plat_lululemon")["used"] == "75.00"
-    extra = [e for e in evidence(result, "plat_lululemon", "statement_credit") if e["amount"] == "10.00"][0]
+    extra = next(e for e in evidence(result, "plat_lululemon", "statement_credit") if e["amount"] == "10.00")
     assert extra["over_cap"] is True and "over cap" in extra["note"]
 
 
