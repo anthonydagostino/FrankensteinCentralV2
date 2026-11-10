@@ -3,13 +3,16 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
-echo "== backend tests"
+echo "== backend lint, format, types"
 cd "$ROOT/backend"
-if command -v uv >/dev/null 2>&1; then
-  uv run --python .venv/bin/python pytest -q 2>/dev/null || .venv/bin/python -m pytest -q
-else
-  python -m pytest -q
-fi
+PY=.venv/bin/python
+[ -x "$PY" ] || PY=python
+"$PY" -m ruff check .
+"$PY" -m ruff format --check .
+"$PY" -m mypy app
+
+echo "== backend tests"
+"$PY" -m pytest -q
 
 echo "== frontend build (tsc + vite)"
 cd "$ROOT/frontend"

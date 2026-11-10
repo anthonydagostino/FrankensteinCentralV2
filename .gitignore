@@ -11,3 +11,4 @@ __pycache__/
 frontend/dist/
 backend/static/
 .DS_Store
+tsconfig.tsbuildinfo

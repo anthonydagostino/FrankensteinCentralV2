@@ -1,0 +1,24 @@
+# Lint and format configuration. Run: ruff check . && ruff format .
+line-length = 160
+target-version = "py312"
+
+[lint]
+select = ["E", "F", "W", "I", "B", "UP", "SIM", "C4", "PIE", "RET", "ARG", "PERF", "S", "N", "PL", "RUF"]
+ignore = [
+  "E501",    # line length is handled by the formatter
+  "B008",    # FastAPI's Depends() in defaults is the framework idiom
+  "S311",    # random is only used for refresh jitter and fixture data, never for secrets
+  "N818",    # Degraded / TokenRejected read better without an Error suffix
+  "PLR0913", "PLR0917", "PLR0912", "PLR0915", "PLR0911", "PLR2004",  # size and magic number limits do not fit parsers of third party JSON
+  "PLC0415", # local imports break cycles between settings, config, and services
+  "RUF012",  # pydantic and dataclass defaults are intentionally mutable class attributes
+  "S104",    # binding 0.0.0.0 inside the container is the deployment model
+  "PLW2901", # reassigning loop variables is used deliberately for normalization
+]
+
+[lint.per-file-ignores]
+"tests/*" = ["S101", "S105", "S106", "ARG001", "N802", "PLR", "C408", "B017"]
+"app/fixtures/generate_*.py" = ["N806", "PLW0603", "S311"]
+
+[lint.isort]
+known-first-party = ["app"]
