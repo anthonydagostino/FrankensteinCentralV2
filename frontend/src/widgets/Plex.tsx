@@ -21,11 +21,7 @@ function SessionCard({ s, data, large }: { s: PlexSession; data: PlexData; large
       <div className="min-w-0 flex-1">
         <div className={`truncate ${large ? "text-lg" : "text-sm"} font-semibold text-ink-200`}>{s.title}</div>
         {s.subtitle && <div className="truncate text-xs text-ink-300">{s.subtitle}</div>}
-        <div className="mt-1 flex flex-wrap items-center gap-1 text-[11px] text-ink-400">
-          <span>{s.user}</span>
-          <span>·</span>
-          <span>{s.player}</span>
-        </div>
+        <div className="mt-1 truncate text-[11px] text-ink-400">{[s.user, s.player].filter(Boolean).join(" · ")}</div>
         <div className="mt-2 flex items-center gap-2">
           {s.state === "paused" ? <Pause size={12} className="text-ink-400" /> : <Play size={12} className="text-accent" />}
           <ProgressBar value={s.progress} height="h-1.5" className="flex-1" label="Progress" />
@@ -86,8 +82,8 @@ export function PlexBody({ data, kiosk, onlyNowPlaying }: { data: PlexData; kios
           <p className="text-sm text-ink-500">Nothing playing</p>
         ) : (
           <div className={`grid gap-2 ${kiosk ? "grid-cols-1" : "md:grid-cols-2"}`}>
-            {data.sessions.map((s) => (
-              <SessionCard key={s.session_key ?? s.rating_key} s={s} data={data} large={kiosk} />
+            {data.sessions.map((s, i) => (
+              <SessionCard key={s.session_key ?? `${s.rating_key}-${i}`} s={s} data={data} large={kiosk} />
             ))}
           </div>
         )}

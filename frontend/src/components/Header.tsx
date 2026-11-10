@@ -10,7 +10,7 @@ export function Header({ config, readOnly }: { config?: PublicConfig; readOnly: 
   const { blurred, toggle } = usePrivacy();
   const logout = useLogout();
   const now = useNow(60_000);
-  const nav = "rounded-md px-2 py-1 text-sm text-ink-300 hover:bg-ink-700 hover:text-ink-200";
+  const nav = ({ isActive }: { isActive: boolean }) => `rounded-md px-2 py-1 text-sm text-ink-300 hover:bg-ink-700 hover:text-ink-200 ${isActive ? "bg-ink-800 text-ink-200" : ""}`;
   return (
     <header className="sticky top-0 z-30 border-b border-ink-700/80 bg-ink-950/90 backdrop-blur">
       <div className="mx-auto flex max-w-[1600px] flex-wrap items-center gap-x-4 gap-y-2 px-4 py-2">
@@ -22,23 +22,23 @@ export function Header({ config, readOnly }: { config?: PublicConfig; readOnly: 
           </div>
         </Link>
         <nav className="order-last flex w-full items-center gap-1 sm:order-none sm:ml-4 sm:w-auto">
-          <NavLink to="/" end className={({ isActive }) => `${nav} ${isActive ? "bg-ink-800 text-ink-200" : ""}`}>
+          <NavLink to="/" end className={nav}>
             Dashboard
           </NavLink>
-          <NavLink to="/benefits" className={({ isActive }) => `${nav} ${isActive ? "bg-ink-800 text-ink-200" : ""}`}>
+          <NavLink to="/benefits" className={nav}>
             <span className="inline-flex items-center gap-1">
               <BadgeDollarSign size={14} /> Benefits
             </span>
           </NavLink>
           {!readOnly && (
-            <NavLink to="/settings" className={({ isActive }) => `${nav} ${isActive ? "bg-ink-800 text-ink-200" : ""}`}>
+            <NavLink to="/settings" className={nav}>
               <span className="inline-flex items-center gap-1">
                 <SettingsIcon size={14} /> Settings
               </span>
             </NavLink>
           )}
           {config?.features.kiosk && (
-            <NavLink to="/kiosk" className={nav} title="Kiosk view">
+            <NavLink to="/kiosk" className={nav} title="Kiosk view" aria-label="Kiosk view">
               <MonitorPlay size={14} />
             </NavLink>
           )}
@@ -52,11 +52,11 @@ export function Header({ config, readOnly }: { config?: PublicConfig; readOnly: 
             ))}
           </div>
           <Clock />
-          <button type="button" onClick={toggle} className="rounded-md p-1.5 text-ink-300 hover:bg-ink-700 hover:text-ink-200" title={blurred ? "Show amounts" : "Hide amounts"} aria-pressed={blurred}>
+          <button type="button" onClick={toggle} className="rounded-md p-1.5 text-ink-300 hover:bg-ink-700 hover:text-ink-200" title={blurred ? "Show amounts" : "Hide amounts"} aria-label={blurred ? "Show amounts" : "Hide amounts"} aria-pressed={blurred}>
             {blurred ? <EyeOff size={18} /> : <Eye size={18} />}
           </button>
           {!readOnly && (
-            <button type="button" onClick={() => logout.mutate()} className="rounded-md p-1.5 text-ink-300 hover:bg-ink-700 hover:text-ink-200" title="Log out">
+            <button type="button" onClick={() => logout.mutate()} className="rounded-md p-1.5 text-ink-300 hover:bg-ink-700 hover:text-ink-200" title="Log out" aria-label="Log out">
               <LogOut size={18} />
             </button>
           )}

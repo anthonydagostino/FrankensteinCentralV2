@@ -1,17 +1,17 @@
 import { Check, ClipboardCopy, Info, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useBenefits, useDeleteOverride, useManualUsage, useSaveOverride, useUnclassified } from "../api/hooks";
-import type { BenefitOut, BenefitsData, PeriodResult, UnclassifiedItem } from "../api/types";
+import type { BenefitOut, BenefitsData, UnclassifiedItem } from "../api/types";
+
+/** Card id to display label, from the benefits envelope. */
+type CardLabels = Record<string, string>;
 import { Chip, ProgressBar, SplitBar } from "../components/Bars";
 import { Card, ErrorState, SetupHint, Skeleton } from "../components/Card";
 import { Modal } from "../components/Modal";
 import { Money } from "../components/Money";
+import { PANEL_CLASS, SectionLabel } from "../components/SectionLabel";
 import { formatDateOnly, pct } from "../lib/format";
 import { sortBenefits, statusLabel, statusTone } from "../widgets/Benefits";
-
-function periodLabel(p: PeriodResult): string {
-  return p.label;
-}
 
 function Tile({ b, onOpen }: { b: BenefitOut; onOpen: (b: BenefitOut) => void }) {
   const c = b.current;
@@ -20,7 +20,7 @@ function Tile({ b, onOpen }: { b: BenefitOut; onOpen: (b: BenefitOut) => void })
       <div className="flex w-full items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="truncate text-sm font-semibold text-ink-200">{b.name}</div>
-          <div className="text-[11px] text-ink-400">{c ? periodLabel(c) : b.active_until ? `Retired ${formatDateOnly(b.active_until)}` : "Not active"}</div>
+          <div className="text-[11px] text-ink-400">{c ? c.label : b.active_until ? `Retired ${formatDateOnly(b.active_until)}` : "Not active"}</div>
         </div>
         {c && <Chip tone={c.expiring_soon ? "warn" : statusTone(c.status)} className="shrink-0">{c.expiring_soon ? `${c.days_left} days left` : statusLabel(c.status)}</Chip>}
       </div>
@@ -69,7 +69,7 @@ function EvidenceDrawer({ b, onClose, onWrong }: { b: BenefitOut; onClose: () =>
         </div>
         {b.notes && <p className="text-xs text-ink-400">{b.notes}</p>}
         <div>
-          <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-400">Periods</div>
+          <SectionLabel>Periods</SectionLabel>
           <table className="w-full text-xs">
             <thead className="text-left text-ink-400">
               <tr>
@@ -96,7 +96,7 @@ function EvidenceDrawer({ b, onClose, onWrong }: { b: BenefitOut; onClose: () =>
           </table>
         </div>
         <div>
-          <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-400">Evidence ({b.evidence.length})</div>
+          <SectionLabel>Evidence ({b.evidence.length})</SectionLabel>
           {b.evidence.length === 0 && <p className="text-xs text-ink-500">No matching transactions in the window</p>}
           <ul className="divide-y divide-ink-800">
             {[...b.evidence].reverse().map((e) => (
@@ -127,12 +127,25 @@ function EvidenceDrawer({ b, onClose, onWrong }: { b: BenefitOut; onClose: () =>
   );
 }
 
-function ReclassifyModal({ item, benefits, onClose }: { item: { journal_id: number; description: string; amount: string; date: string }; benefits: { id: string; name: string; card: string }[]; onClose: () => void }) {
+function ReclassifyModal({
+  item,
+  benefits,
+  cardLabels,
+  onClose,
+}: {
+  item: { journal_id: number; description: string; amount: string; date: string };
+  benefits: { id: string; name: string; card: string }[];
+  cardLabels: CardLabels;
+  onClose: () => void;
+}) {
   const save = useSaveOverride();
   const [cls, setCls] = useState("statement_credit");
-  const [benefitId, setBenefitId] = useState(benefits[0]?.id ?? "");
+  const [chosen, setChosen] = useState("");
   const [period, setPeriod] = useState("");
   const needsBenefit = cls === "statement_credit";
+  // the benefit list can arrive after the modal opens, so the default is resolved at render time
+  const benefitId = chosen || benefits[0]?.id || "";
+  const canSave = !save.isPending && (!needsBenefit || benefitId !== "");
   return (
     <Modal title="Reclassify transaction" onClose={onClose}>
       <div className="space-y-3 text-sm">
@@ -151,10 +164,10 @@ function ReclassifyModal({ item, benefits, onClose }: { item: { journal_id: numb
         {needsBenefit && (
           <label className="block text-xs text-ink-400">
             Benefit
-            <select value={benefitId} onChange={(e) => setBenefitId(e.target.value)} className="mt-1 w-full rounded border border-ink-700 bg-ink-800 px-2 py-1.5 text-sm text-ink-200">
+            <select value={benefitId} onChange={(e) => setChosen(e.target.value)} className="mt-1 w-full rounded border border-ink-700 bg-ink-800 px-2 py-1.5 text-sm text-ink-200">
               {benefits.map((b) => (
                 <option key={b.id} value={b.id}>
-                  {b.card === "amex_gold" ? "Gold" : "Platinum"}: {b.name}
+                  {cardLabels[b.card] ?? b.card}: {b.name}
                 </option>
               ))}
             </select>
@@ -166,15 +179,15 @@ function ReclassifyModal({ item, benefits, onClose }: { item: { journal_id: numb
             <input value={period} onChange={(e) => setPeriod(e.target.value)} className="mt-1 w-full rounded border border-ink-700 bg-ink-800 px-2 py-1.5 text-sm text-ink-200" placeholder="auto" />
           </label>
         )}
-        {save.isError && <p className="text-xs text-red-300">{(save.error as Error).message}</p>}
+        {save.error && <p className="text-xs text-red-300">{save.error.message}</p>}
         <div className="flex justify-end gap-2">
           <button type="button" onClick={onClose} className="rounded px-3 py-1.5 text-ink-300 hover:bg-ink-700">
             Cancel
           </button>
           <button
             type="button"
-            disabled={save.isPending}
-            onClick={() => save.mutate({ journal_id: item.journal_id, classification: cls, benefit_id: needsBenefit ? benefitId : null, period_key: period || null }, { onSuccess: onClose })}
+            disabled={!canSave}
+            onClick={() => save.mutate({ journal_id: item.journal_id, classification: cls, benefit_id: needsBenefit ? benefitId : null, period_key: period.trim() || null }, { onSuccess: onClose })}
             className="rounded bg-accent/20 px-3 py-1.5 font-medium text-accent hover:bg-accent/30 disabled:opacity-50"
           >
             Save
@@ -185,11 +198,16 @@ function ReclassifyModal({ item, benefits, onClose }: { item: { journal_id: numb
   );
 }
 
-function Unclassified({ readOnly }: { readOnly: boolean }) {
+function Unclassified({ readOnly, cardLabels }: { readOnly: boolean; cardLabels: CardLabels }) {
   const q = useUnclassified();
   const del = useDeleteOverride();
   const [edit, setEdit] = useState<UnclassifiedItem | null>(null);
   const [copied, setCopied] = useState<number | null>(null);
+  useEffect(() => {
+    if (copied === null) return;
+    const t = setTimeout(() => setCopied(null), 1500);
+    return () => clearTimeout(t);
+  }, [copied]);
   const data = q.data?.data;
   return (
     <Card title="Unclassified deposits" envelope={q.data} error={q.error} onRetry={() => q.refetch()}>
@@ -225,7 +243,12 @@ function Unclassified({ readOnly }: { readOnly: boolean }) {
                         type="button"
                         className="inline-flex items-center gap-1 rounded border border-ink-700 px-1.5 py-0.5 font-mono text-[10px] text-ink-300 hover:border-accent/50"
                         title={it.suggested_pattern}
-                        onClick={() => { navigator.clipboard?.writeText(it.suggested_pattern); setCopied(it.journal_id); setTimeout(() => setCopied(null), 1500); }}
+                        onClick={() => {
+                          navigator.clipboard
+                            ?.writeText(it.suggested_pattern)
+                            .then(() => setCopied(it.journal_id))
+                            .catch(() => setCopied(null));
+                        }}
                       >
                         {copied === it.journal_id ? <Check size={10} /> : <ClipboardCopy size={10} />} {it.suggested_pattern.length > 18 ? `${it.suggested_pattern.slice(0, 18)}…` : it.suggested_pattern}
                       </button>
@@ -245,7 +268,7 @@ function Unclassified({ readOnly }: { readOnly: boolean }) {
           )}
           {d.overrides.length > 0 && (
             <div>
-              <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-400">Saved overrides</div>
+              <SectionLabel>Saved overrides</SectionLabel>
               <ul className="divide-y divide-ink-800 text-xs">
                 {d.overrides.map((o) => (
                   <li key={o.id} className="flex items-center gap-2 py-1">
@@ -263,7 +286,7 @@ function Unclassified({ readOnly }: { readOnly: boolean }) {
               </ul>
             </div>
           )}
-          {edit && data && <ReclassifyModal item={edit} benefits={data.benefits} onClose={() => setEdit(null)} />}
+          {edit && data && <ReclassifyModal item={edit} benefits={data.benefits} cardLabels={cardLabels} onClose={() => setEdit(null)} />}
         </div>
       )}
     </Card>
@@ -298,7 +321,9 @@ function ManualRow({ b, readOnly }: { b: BenefitOut; readOnly: boolean }) {
                 placeholder="amount"
                 className="w-24 rounded border border-ink-700 bg-ink-900 px-2 py-0.5 text-right text-xs text-ink-200"
                 onBlur={(e) => {
-                  if (e.target.value !== "" && e.target.value !== (p.manual_entry ?? "")) manual.mutate({ benefit_id: b.id, period_key: p.period_key, used: true, amount: e.target.value });
+                  const typed = e.target.value;
+                  const changed = p.manual_entry === null || Number(typed) !== Number(p.manual_entry);
+                  if (typed !== "" && changed) manual.mutate({ benefit_id: b.id, period_key: p.period_key, used: true, amount: typed });
                 }}
               />
               <Chip tone={statusTone(p.status)}>{statusLabel(p.status)}</Chip>
@@ -313,7 +338,7 @@ function ManualRow({ b, readOnly }: { b: BenefitOut; readOnly: boolean }) {
 function CardSection({ card, onOpen }: { card: BenefitsData["cards"][number]; onOpen: (b: BenefitOut) => void }) {
   const offset = card.fee_offset ?? 0;
   return (
-    <section className="rounded-xl border border-ink-700 bg-ink-900/80 p-4">
+    <section className={`${PANEL_CLASS} p-4`}>
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
           <h2 className="text-lg font-semibold text-ink-200">{card.label}</h2>
@@ -358,6 +383,7 @@ export function BenefitsPage({ readOnly }: { readOnly: boolean }) {
   const [wrong, setWrong] = useState<number | null>(null);
   const env = q.data;
   const benefitsList = unclassified.data?.data?.benefits ?? [];
+  const cardLabels: CardLabels = Object.fromEntries((env?.data?.cards ?? []).map((c) => [c.card, c.label]));
   const wrongItem = wrong !== null && open ? open.evidence.find((e) => e.journal_id === wrong) : null;
   return (
     <main className="mx-auto max-w-[1400px] space-y-4 px-4 py-4">
@@ -369,9 +395,9 @@ export function BenefitsPage({ readOnly }: { readOnly: boolean }) {
       {!env && !q.error && <Skeleton className="h-64 w-full" />}
       {env?.status === "disabled" && <SetupHint title="Benefits" vars={env.setup_hint} message="Benefits are computed from Firefly III transactions. Set these variables in .env and restart:" />}
       {env?.data && env.data.cards.map((card) => <CardSection key={card.card} card={card} onOpen={setOpen} />)}
-      {env?.data && env.status !== "disabled" && <Unclassified readOnly={readOnly} />}
+      {env?.data && <Unclassified readOnly={readOnly} cardLabels={cardLabels} />}
       {env?.data && (
-        <section className="rounded-xl border border-ink-700 bg-ink-900/80 p-4">
+        <section className={`${PANEL_CLASS} p-4`}>
           <h2 className="text-base font-semibold text-ink-200">Manual benefits</h2>
           <p className="mb-3 text-xs text-ink-400">These credits never touch the card statement (Uber Cash lands in the Uber app), so mark them by hand.</p>
           <div className="grid gap-3 md:grid-cols-2">
@@ -382,7 +408,7 @@ export function BenefitsPage({ readOnly }: { readOnly: boolean }) {
         </section>
       )}
       {open && <EvidenceDrawer b={open} onClose={() => setOpen(null)} onWrong={(id) => setWrong(id)} />}
-      {wrongItem && <ReclassifyModal item={wrongItem} benefits={benefitsList} onClose={() => setWrong(null)} />}
+      {wrongItem && <ReclassifyModal item={wrongItem} benefits={benefitsList} cardLabels={cardLabels} onClose={() => setWrong(null)} />}
     </main>
   );
 }

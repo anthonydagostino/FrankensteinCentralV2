@@ -1,27 +1,27 @@
 import { ChevronDown, Droplets, MapPin, Wind } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Bar, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useSaveSettings, useWeather } from "../api/hooks";
 import type { WeatherAlert, WeatherData } from "../api/types";
 import { Card } from "../components/Card";
 import { Chip } from "../components/Bars";
+import { SEVERITY_CLASS, TOOLTIP_STYLE } from "../components/SectionLabel";
 import { formatDateOnly, formatHour } from "../lib/format";
 import { DynamicIcon } from "../lib/icons";
 
 const BADGE_LABEL: Record<string, string> = { umbrella: "Umbrella", wind: "Windy", freeze: "Freeze tonight", uv: "High UV" };
 
-function alertTone(sev: string): "bad" | "warn" | "info" {
-  if (sev === "Extreme" || sev === "Severe") return "bad";
-  if (sev === "Moderate") return "warn";
+/** NWS severity to the shared severity colors: Extreme and Severe red, Moderate amber, the rest blue. */
+function alertSeverity(sev: string): keyof typeof SEVERITY_CLASS {
+  if (sev === "Extreme" || sev === "Severe") return "critical";
+  if (sev === "Moderate") return "warning";
   return "info";
 }
 
 function AlertBanner({ alert }: { alert: WeatherAlert }) {
   const [open, setOpen] = useState(false);
-  const tone = alertTone(alert.severity);
-  const cls = tone === "bad" ? "border-red-500/50 bg-red-500/10 text-red-100" : tone === "warn" ? "border-amber-500/50 bg-amber-500/10 text-amber-100" : "border-sky-500/40 bg-sky-500/10 text-sky-100";
   return (
-    <div className={`rounded-lg border ${cls}`}>
+    <div className={`rounded-lg border ${SEVERITY_CLASS[alertSeverity(alert.severity)]}`}>
       <button type="button" onClick={() => setOpen(!open)} className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm" aria-expanded={open}>
         <DynamicIcon name="triangle-alert" size={16} className="shrink-0" />
         <span className="min-w-0 flex-1">
@@ -44,11 +44,11 @@ function AlertBanner({ alert }: { alert: WeatherAlert }) {
 export function WeatherBody({ data, kiosk }: { data: WeatherData; kiosk?: boolean }) {
   const unitT = data.units === "metric" ? "°C" : "°F";
   const unitW = data.units === "metric" ? "km/h" : "mph";
-  const hours = data.next_12h.map((h) => ({ ...h, label: formatHour(h.time) }));
+  const hours = useMemo(() => data.next_12h.map((h) => ({ ...h, label: formatHour(h.time) })), [data.next_12h]);
   return (
     <div className="space-y-3">
-      {data.alerts.map((a) => (
-        <AlertBanner key={a.id ?? a.event} alert={a} />
+      {data.alerts.map((a, i) => (
+        <AlertBanner key={a.id ?? `${a.event}-${i}`} alert={a} />
       ))}
       {data.alerts_error && <p className="text-[11px] text-amber-300">Alerts unavailable: {data.alerts_error}</p>}
       <div className="flex items-center gap-4">
@@ -84,7 +84,7 @@ export function WeatherBody({ data, kiosk }: { data: WeatherData; kiosk?: boolea
             <XAxis dataKey="label" tick={{ fill: "#97a69c", fontSize: 10 }} axisLine={false} tickLine={false} interval={1} />
             <YAxis yAxisId="t" domain={["dataMin - 5", "dataMax + 5"]} tick={{ fill: "#6b7a71", fontSize: 10 }} axisLine={false} tickLine={false} />
             <YAxis yAxisId="p" orientation="right" domain={[0, 100]} hide />
-            <Tooltip contentStyle={{ background: "#171e1a", border: "1px solid #2f3a33", fontSize: 12 }} labelStyle={{ color: "#c6d1ca" }} formatter={(v: number, name: string) => [name === "pop" ? `${v}%` : `${v}${unitT}`, name === "pop" ? "Rain chance" : "Temp"]} />
+            <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={{ color: "#c6d1ca" }} formatter={(v: number, name: string) => [name === "pop" ? `${v}%` : `${v}${unitT}`, name === "pop" ? "Rain chance" : "Temp"]} />
             <Bar yAxisId="p" dataKey="pop" fill="#60a5fa" opacity={0.45} radius={[2, 2, 0, 0]} isAnimationActive={false} />
             <Line yAxisId="t" type="monotone" dataKey="temp" stroke="#4ade80" strokeWidth={2} dot={false} isAnimationActive={false} />
           </ComposedChart>

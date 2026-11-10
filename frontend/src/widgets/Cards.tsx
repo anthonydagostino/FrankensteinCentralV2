@@ -1,8 +1,8 @@
 import { CreditCard } from "lucide-react";
 import { useCards } from "../api/hooks";
 import type { CardData } from "../api/types";
-import { ProgressBar } from "../components/Bars";
 import { Card } from "../components/Card";
+import { FeeOffset } from "../components/FeeOffset";
 import { Money } from "../components/Money";
 import { formatDateOnly } from "../lib/format";
 
@@ -15,7 +15,6 @@ function CardTile({ c }: { c: CardData }) {
       </div>
     );
   }
-  const offset = c.fee_offset ?? 0;
   return (
     <div className="rounded-lg bg-ink-800/60 p-3">
       <div className="flex items-center justify-between">
@@ -23,9 +22,13 @@ function CardTile({ c }: { c: CardData }) {
           <CreditCard size={16} className="text-ink-300" />
           <span className="text-sm font-semibold text-ink-200">{c.label}</span>
         </div>
-        <a href={c.url ?? undefined} target="_blank" rel="noreferrer" className="text-[11px] text-ink-400 hover:text-ink-200">
-          {c.account?.name}
-        </a>
+        {c.url ? (
+          <a href={c.url} target="_blank" rel="noreferrer" className="text-[11px] text-ink-400 hover:text-ink-200">
+            {c.account?.name}
+          </a>
+        ) : (
+          <span className="text-[11px] text-ink-400">{c.account?.name}</span>
+        )}
       </div>
       <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-xs">
         <div className="text-ink-400">Balance</div>
@@ -44,7 +47,7 @@ function CardTile({ c }: { c: CardData }) {
           <>
             <div className="text-ink-400">Largest purchase</div>
             <div className="truncate text-right text-ink-200" title={c.largest_purchase.description}>
-              <Money value={c.largest_purchase.amount} /> <span className="text-ink-400">{c.largest_purchase.description.slice(0, 18)}</span>
+              <Money value={c.largest_purchase.amount} /> <span className="text-ink-400">{c.largest_purchase.description}</span>
             </div>
           </>
         )}
@@ -65,15 +68,7 @@ function CardTile({ c }: { c: CardData }) {
           </>
         )}
       </div>
-      <div className="mt-3">
-        <div className="flex justify-between text-[11px]">
-          <span className="text-ink-400">Fee offset</span>
-          <span className="text-ink-200">
-            <Money value={c.captured_ytd} /> of <Money value={c.annual_fee} /> ({Math.round(offset * 100)}%)
-          </span>
-        </div>
-        <ProgressBar value={offset * 100} max={100} color={offset >= 1 ? "bg-accent" : "bg-sky-400"} className="mt-1" label="Fee offset" />
-      </div>
+      <FeeOffset captured={c.captured_ytd} fee={c.annual_fee} offset={c.fee_offset} className="mt-3" />
     </div>
   );
 }

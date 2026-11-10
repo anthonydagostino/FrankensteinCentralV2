@@ -19,7 +19,7 @@ export function VaultWidget() {
                 {d.latency_ms !== null ? `, ${d.latency_ms} ms` : ""}
               </div>
               {!online && d.error && <div className="truncate text-xs text-red-300">{d.error}</div>}
-              {backup && backup.available && backup.age_hours !== null && backup.age_hours !== undefined && (
+              {backup?.available && backup.age_hours != null && (
                 <div className={`text-xs ${backup.age_hours > 48 ? "text-amber-300" : "text-ink-400"}`}>Last backup {backup.age_hours < 1 ? "under 1 h" : `${Math.round(backup.age_hours)} h`} ago</div>
               )}
               {backup && !backup.available && <div className="text-xs text-amber-300">{backup.error}</div>}

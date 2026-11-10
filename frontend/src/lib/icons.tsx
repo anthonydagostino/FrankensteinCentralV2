@@ -42,7 +42,7 @@ const MAP: Record<string, LucideIcon> = {
   link: Link,
 };
 
-export function iconFor(name: string | null | undefined): LucideIcon {
+function iconFor(name: string | null | undefined): LucideIcon {
   if (!name) return Cloud;
   return MAP[name] ?? Link;
 }

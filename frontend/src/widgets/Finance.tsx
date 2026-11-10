@@ -1,11 +1,12 @@
 import { ArrowDownRight, ArrowUpRight, ExternalLink, RefreshCw } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Area, AreaChart, Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { useFinance, useFinanceSync, useTransactions } from "../api/hooks";
 import type { AccountRow, FinanceSummary, TransactionRow } from "../api/types";
 import { Chip, ProgressBar } from "../components/Bars";
 import { Card } from "../components/Card";
 import { Money } from "../components/Money";
+import { SectionLabel, TOOLTIP_STYLE } from "../components/SectionLabel";
 import { formatDateOnly, formatMoney, toNumber } from "../lib/format";
 import { usePrivacy } from "../lib/privacy";
 
@@ -25,7 +26,7 @@ function AccountList({ title, rows, owed }: { title: string; rows: AccountRow[];
   if (rows.length === 0) return null;
   return (
     <div>
-      <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-400">{title}</div>
+      <SectionLabel>{title}</SectionLabel>
       <ul className="space-y-0.5">
         {rows.map((a) => (
           <li key={a.id} className="flex items-center justify-between gap-2 rounded px-2 py-1 text-sm hover:bg-ink-800">
@@ -39,7 +40,6 @@ function AccountList({ title, rows, owed }: { title: string; rows: AccountRow[];
 }
 
 function Transactions({ rows }: { rows: TransactionRow[] }) {
-  const { blurred } = usePrivacy();
   return (
     <table className="w-full text-xs">
       <thead>
@@ -66,9 +66,8 @@ function Transactions({ rows }: { rows: TransactionRow[] }) {
             </td>
             <td className="hidden max-w-[160px] truncate py-1 pr-2 text-ink-400 sm:table-cell">{t.account}</td>
             <td className="hidden py-1 pr-2 text-ink-400 md:table-cell">{t.category ?? ""}</td>
-            <td className={`tabular whitespace-nowrap py-1 text-right ${t.sign > 0 ? "text-accent" : t.sign < 0 ? "text-ink-200" : "text-ink-400"} ${blurred ? "privacy-blur" : ""}`}>
-              {t.sign === 0 ? "" : t.sign > 0 ? "+" : "-"}
-              {formatMoney(t.amount)}
+            <td className={`whitespace-nowrap py-1 text-right ${t.sign > 0 ? "text-accent" : t.sign < 0 ? "text-ink-200" : "text-ink-400"}`}>
+              <Money value={t.sign < 0 ? -toNumber(t.amount) : t.amount} sign={t.sign > 0} />
             </td>
           </tr>
         ))}
@@ -83,8 +82,9 @@ export function FinanceBody({ data, syncEnabled }: { data: FinanceSummary; syncE
   const { blurred } = usePrivacy();
   const [showAll, setShowAll] = useState(false);
   const pace = data.pace_pct;
-  const spark = data.daily_spend.map((d) => ({ date: d.date, amount: toNumber(d.amount) }));
-  const cats = data.categories.map((c) => ({ ...c, value: toNumber(c.amount) }));
+  // chart inputs keep their identity between renders so Recharts does not recompute on every clock tick
+  const spark = useMemo(() => data.daily_spend.map((d) => ({ date: d.date, amount: toNumber(d.amount) })), [data.daily_spend]);
+  const cats = useMemo(() => data.categories.map((c) => ({ ...c, value: toNumber(c.amount) })), [data.categories]);
   const fresh = data.freshness;
   return (
     <div className="space-y-4">
@@ -96,8 +96,8 @@ export function FinanceBody({ data, syncEnabled }: { data: FinanceSummary; syncE
             <RefreshCw size={11} className={sync.isPending ? "animate-spin" : ""} /> Sync now
           </button>
         )}
-        {sync.isSuccess && <span className="text-[11px] text-ink-400">Import triggered, refreshing in 90 s</span>}
-        {sync.isError && <span className="text-[11px] text-red-300">{(sync.error as Error).message}</span>}
+        {sync.isSuccess && <span className="text-[11px] text-ink-400">Import triggered, refreshing in {sync.data.refresh_in_seconds ?? 90} s</span>}
+        {sync.isError && <span className="text-[11px] text-red-300">{sync.error.message}</span>}
         {data.links.home && (
           <a href={data.links.home} target="_blank" rel="noreferrer" className="ml-auto inline-flex items-center gap-1 text-[11px] text-ink-400 hover:text-ink-200">
             Open Firefly <ExternalLink size={11} />
@@ -126,7 +126,7 @@ export function FinanceBody({ data, syncEnabled }: { data: FinanceSummary; syncE
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
         <div className="rounded-lg bg-ink-800/40 p-3">
-          <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-400">Daily spend, last 30 days</div>
+          <SectionLabel>Daily spend, last 30 days</SectionLabel>
           <div className={`h-24 ${blurred ? "privacy-blur" : ""}`}>
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={spark} margin={{ top: 4, right: 0, bottom: 0, left: 0 }}>
@@ -138,20 +138,20 @@ export function FinanceBody({ data, syncEnabled }: { data: FinanceSummary; syncE
                 </defs>
                 <XAxis dataKey="date" hide />
                 <YAxis hide />
-                <Tooltip contentStyle={{ background: "#171e1a", border: "1px solid #2f3a33", fontSize: 12 }} labelFormatter={(l) => formatDateOnly(String(l), "MMM d")} formatter={(v: number) => [formatMoney(v), "Spent"]} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} labelFormatter={(l) => formatDateOnly(String(l), "MMM d")} formatter={(v: number) => [formatMoney(v), "Spent"]} />
                 <Area type="monotone" dataKey="amount" stroke="#4ade80" fill="url(#spend)" strokeWidth={1.5} isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </div>
         <div className="rounded-lg bg-ink-800/40 p-3">
-          <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-400">Top categories this month</div>
+          <SectionLabel>Top categories this month</SectionLabel>
           <div className={`h-24 ${blurred ? "privacy-blur" : ""}`}>
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={cats} layout="vertical" margin={{ top: 0, right: 8, bottom: 0, left: 0 }}>
                 <XAxis type="number" hide />
                 <YAxis type="category" dataKey="name" width={90} tick={{ fill: "#97a69c", fontSize: 10 }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ background: "#171e1a", border: "1px solid #2f3a33", fontSize: 12 }} formatter={(v: number) => [formatMoney(v), "Spent"]} cursor={{ fill: "#222b26" }} />
+                <Tooltip contentStyle={TOOLTIP_STYLE} formatter={(v: number) => [formatMoney(v), "Spent"]} cursor={{ fill: "#222b26" }} />
                 <Bar dataKey="value" radius={[0, 3, 3, 0]} barSize={10} isAnimationActive={false}>
                   {cats.map((_, i) => (
                     <Cell key={i} fill={PALETTE[i % PALETTE.length]} />
@@ -169,7 +169,7 @@ export function FinanceBody({ data, syncEnabled }: { data: FinanceSummary; syncE
           <AccountList title="Liabilities" rows={data.accounts.liabilities} owed />
         </div>
         <div className="min-w-0">
-          <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-400">Budgets this month</div>
+          <SectionLabel>Budgets this month</SectionLabel>
           <ul className="space-y-2">
             {data.budgets.length === 0 && <li className="text-xs text-ink-500">No budgets set in Firefly</li>}
             {data.budgets.map((b) => (
@@ -186,7 +186,7 @@ export function FinanceBody({ data, syncEnabled }: { data: FinanceSummary; syncE
           </ul>
         </div>
         <div className="min-w-0">
-          <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-400">Upcoming bills</div>
+          <SectionLabel>Upcoming bills</SectionLabel>
           <ul className="space-y-1">
             {data.bills.length === 0 && <li className="text-xs text-ink-500">Nothing due in the next 14 days</li>}
             {data.bills.map((b) => (
@@ -208,7 +208,18 @@ export function FinanceBody({ data, syncEnabled }: { data: FinanceSummary; syncE
             {showAll ? "Show fewer" : "Show all 15"}
           </button>
         </div>
-        {tx.data?.data ? <Transactions rows={tx.data.data.transactions.slice(0, showAll ? 15 : 6)} /> : <p className="text-xs text-ink-500">Loading transactions</p>}
+        {tx.data?.data ? (
+          <Transactions rows={tx.data.data.transactions.slice(0, showAll ? 15 : 6)} />
+        ) : tx.error || tx.data?.error ? (
+          <p className="text-xs text-red-300">
+            Transactions unavailable: {tx.error?.message ?? tx.data?.error}{" "}
+            <button type="button" className="underline" onClick={() => tx.refetch()}>
+              retry
+            </button>
+          </p>
+        ) : (
+          <p className="text-xs text-ink-500">Loading transactions</p>
+        )}
       </div>
     </div>
   );

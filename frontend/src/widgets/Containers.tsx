@@ -12,10 +12,17 @@ function isProblem(c: ContainerRow): boolean {
   return c.state !== "running" || c.health === "unhealthy" || c.restart_increased;
 }
 
+/** The tag of an image reference, or the whole reference when it has none (a registry port is not a tag). */
+function imageTag(image: string | null | undefined): string | null | undefined {
+  if (!image) return image;
+  const colon = image.lastIndexOf(":");
+  return colon > image.lastIndexOf("/") ? image.slice(colon + 1) : image;
+}
+
 function Row({ c, allowRestart, readOnly }: { c: ContainerRow; allowRestart: boolean; readOnly: boolean }) {
   const restart = useRestartContainer();
   const [confirm, setConfirm] = useState(false);
-  const tag = c.image?.includes(":") ? c.image.split(":").pop() : c.image;
+  const tag = imageTag(c.image);
   return (
     <li className="flex items-center gap-2 rounded px-2 py-1 text-sm hover:bg-ink-800/70">
       <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${STATE_COLOR[c.state] ?? "bg-ink-400"}`} title={c.state} />

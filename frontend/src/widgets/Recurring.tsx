@@ -41,7 +41,8 @@ function Row({ item, readOnly }: { item: RecurringItem; readOnly: boolean }) {
           {item.passthrough && <Chip tone="neutral">via processor</Chip>}
         </span>
         <span className="block truncate text-[11px] text-ink-400">
-          {CADENCE_LABEL[item.cadence]} · {item.account} · {dueLabel(item)}
+          {CADENCE_LABEL[item.cadence]}
+          {item.account ? ` · ${item.account}` : ""} · {dueLabel(item)}
           {item.category ? ` · ${item.category}` : ""}
         </span>
       </span>

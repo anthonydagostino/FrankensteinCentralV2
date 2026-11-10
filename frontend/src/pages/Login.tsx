@@ -25,7 +25,7 @@ export function LoginPage({ passwordConfigured }: { passwordConfigured?: boolean
           Password
           <input type="password" autoFocus value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1 w-full rounded-lg border border-ink-700 bg-ink-800 px-3 py-2 text-sm text-ink-200 outline-none focus:border-accent" />
         </label>
-        {login.isError && <p className="text-xs text-red-300">{(login.error as Error).message}</p>}
+        {login.isError && <p className="text-xs text-red-300">{login.error.message}</p>}
         <button type="submit" disabled={login.isPending || !password} className="w-full rounded-lg bg-accent px-3 py-2 text-sm font-semibold text-ink-950 hover:brightness-110 disabled:opacity-50">
           {login.isPending ? "Signing in" : "Sign in"}
         </button>

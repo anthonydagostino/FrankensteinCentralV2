@@ -1,6 +1,7 @@
 import { usePublicConfig, useSaveSettings, useSettings, useStatus } from "../api/hooks";
 import { Chip } from "../components/Bars";
 import { StatusDot } from "../components/Card";
+import { PANEL_CLASS } from "../components/SectionLabel";
 import { formatDateOnly, relativeTime } from "../lib/format";
 import { usePrivacy } from "../lib/privacy";
 
@@ -16,7 +17,7 @@ export function SettingsPage() {
     <main className="mx-auto max-w-[1100px] space-y-4 px-4 py-4">
       <h1 className="text-xl font-semibold text-ink-200">Settings</h1>
 
-      <section className="rounded-xl border border-ink-700 bg-ink-900/80 p-4">
+      <section className={`${PANEL_CLASS} p-4`}>
         <h2 className="text-base font-semibold text-ink-200">Amex card accounts</h2>
         <p className="mb-3 text-xs text-ink-400">Each card resolves to a Firefly III account by name. Pin a different account if the match is wrong.</p>
         {!s ? (
@@ -50,7 +51,7 @@ export function SettingsPage() {
         )}
       </section>
 
-      <section className="rounded-xl border border-ink-700 bg-ink-900/80 p-4">
+      <section className={`${PANEL_CLASS} p-4`}>
         <h2 className="text-base font-semibold text-ink-200">Preferences</h2>
         <div className="mt-3 grid gap-4 md:grid-cols-2">
           <label className="block text-xs text-ink-400">
@@ -73,7 +74,7 @@ export function SettingsPage() {
         </div>
       </section>
 
-      <section className="rounded-xl border border-ink-700 bg-ink-900/80 p-4">
+      <section className={`${PANEL_CLASS} p-4`}>
         <div className="flex items-baseline justify-between">
           <h2 className="text-base font-semibold text-ink-200">Integrations</h2>
           {status.data && <Chip tone={status.data.mock_mode ? "warn" : "good"}>{status.data.mock_mode ? "MOCK_MODE on" : "live mode"}</Chip>}
@@ -109,7 +110,7 @@ export function SettingsPage() {
         </table>
       </section>
 
-      <section className="rounded-xl border border-ink-700 bg-ink-900/80 p-4 text-sm text-ink-300">
+      <section className={`${PANEL_CLASS} p-4 text-sm text-ink-300`}>
         <h2 className="text-base font-semibold text-ink-200">Benefits catalog</h2>
         <p className="mt-1 text-xs text-ink-400">
           config/benefits.yaml was last verified on <span className="text-ink-200">{s ? formatDateOnly(s.catalog_last_verified, "MMMM d, yyyy") : ""}</span>. Check it against the Benefits page in the Amex app once a quarter and update last_verified.

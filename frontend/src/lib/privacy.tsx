@@ -8,31 +8,16 @@ interface PrivacyContextValue {
 
 const PrivacyContext = createContext<PrivacyContextValue>({ blurred: false, toggle: () => {}, setBlurred: () => {} });
 
-const STORAGE_KEY = "fc.privacyBlur";
-
-export function readStoredPrivacy(): boolean | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw === null) return null;
-    return raw === "true";
-  } catch {
-    return null;
-  }
-}
-
+/**
+ * Privacy blur for dollar amounts. The server setting (`initial`, from /api/config/public) is the source
+ * of truth so every device agrees; toggling calls `persist` when given (dashboard) or stays local (kiosk).
+ */
 export function PrivacyProvider({ children, initial, persist }: { children: ReactNode; initial: boolean; persist?: (value: boolean) => void }) {
-  const [blurred, setBlurredState] = useState<boolean>(() => readStoredPrivacy() ?? initial);
-  useEffect(() => {
-    if (readStoredPrivacy() === null) setBlurredState(initial);
-  }, [initial]);
+  const [blurred, setBlurredState] = useState<boolean>(initial);
+  useEffect(() => setBlurredState(initial), [initial]);
   const setBlurred = useCallback(
     (value: boolean) => {
       setBlurredState(value);
-      try {
-        localStorage.setItem(STORAGE_KEY, String(value));
-      } catch {
-        /* ignore */
-      }
       persist?.(value);
     },
     [persist],

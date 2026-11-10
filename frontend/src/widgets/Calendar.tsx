@@ -88,6 +88,7 @@ export function CalendarBody({ data, kiosk, onlyToday }: { data: CalendarData; k
   const today = data.days[0];
   const rest = data.days.slice(1, 7);
   const todayDate = today?.date ?? data.now.slice(0, 10);
+  const todayEvents = today?.events ?? [];
   return (
     <div className="space-y-3">
       <NextLine data={data} large={kiosk} />
@@ -97,10 +98,11 @@ export function CalendarBody({ data, kiosk, onlyToday }: { data: CalendarData; k
             <span className={`${kiosk ? "text-base" : "text-xs"} font-semibold uppercase tracking-wide text-ink-400`}>Today</span>
             <span className="text-[11px] text-ink-500">{formatDateOnly(todayDate, "EEEE, MMM d")}</span>
           </div>
-          {today && today.events.length === 0 && <p className="px-2 text-sm text-ink-400">No events today</p>}
+          {today && todayEvents.length === 0 && <p className="px-2 text-sm text-ink-400">No events today</p>}
           <div className="space-y-0.5">
-            {today?.events.filter((e) => e.all_day).map((e) => <EventRow key={e.id} ev={e} onOpen={setOpen} />)}
-            {today?.events.filter((e) => !e.all_day).map((e) => <EventRow key={e.id} ev={e} onOpen={setOpen} />)}
+            {[...todayEvents.filter((e) => e.all_day), ...todayEvents.filter((e) => !e.all_day)].map((e) => (
+              <EventRow key={e.id} ev={e} onOpen={setOpen} />
+            ))}
           </div>
         </div>
         {!onlyToday && (

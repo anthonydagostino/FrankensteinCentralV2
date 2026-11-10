@@ -46,3 +46,13 @@ describe("helpers", () => {
     expect(minutesLabel(125)).toBe("2 h 5 min");
   });
 });
+
+describe("guards", () => {
+  it("never throws on malformed input", () => {
+    expect(formatTime("not a date")).toBe("");
+    expect(formatDateOnly("2026-13-45")).toBe("");
+    expect(formatDateOnly("", "MMM d")).toBe("");
+    expect(relativeTime("garbage", new Date())).toBe("never");
+    expect(formatMoney("abc")).toBe("abc");
+  });
+});

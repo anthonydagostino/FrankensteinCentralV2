@@ -117,7 +117,7 @@ export interface PublicConfig {
 }
 export interface StatusRow { module: string; status: ModuleStatus; configured: boolean; fetched_at: string | null; last_attempt: string | null; stale: boolean; error: string | null; interval: number; mocked: boolean | null; setup_hint: string[] }
 export interface SettingsData { values: Record<string, string>; card_accounts: Record<string, { id: string; name: string; type: string; role: string | null; pinned: boolean } | null>; accounts: { id: string; name: string; type: string; role: string | null }[]; catalog_last_verified: string }
-export interface Me { authenticated: boolean; mode: "session" | "kiosk" | null; read_only: boolean }
+export interface Me { authenticated: boolean; mode: "session" | "kiosk" | null; read_only: boolean; password_configured: boolean }
 
 // ---- recurring charges
 export interface RecurringItem {

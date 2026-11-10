@@ -9,15 +9,11 @@ import { PlexWidget } from "../widgets/Plex";
 import { TrainingWidget } from "../widgets/Training";
 import { WeatherWidget } from "../widgets/Weather";
 
-const RELOAD_MS = 6 * 60 * 60 * 1000;
 const IDLE_MS = 5000;
 
 export function Kiosk({ config }: { config?: PublicConfig }) {
   const [idle, setIdle] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => window.location.reload(), RELOAD_MS);
-    return () => clearTimeout(t);
-  }, []);
+  // the periodic reload that picks up new builds lives in KioskGate (App.tsx) so it also runs while locked
   useEffect(() => {
     let timer = window.setTimeout(() => setIdle(true), IDLE_MS);
     const wake = () => {
