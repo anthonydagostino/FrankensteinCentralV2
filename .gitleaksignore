@@ -1,0 +1,4 @@
+# Known false positives, by fingerprint (commit:file:rule:line). Both are the dummy value a redaction
+# unit test used before it was changed; the commits are permanent history and carry no real secret.
+414c94846c8f3654f39a3135ad52a61d98f5f223:backend/tests/test_units.py:generic-api-key:264
+c8cfeee9d77e6d17e3b1ecf897c9671a5679924d:backend/tests/test_units.py:generic-api-key:264
