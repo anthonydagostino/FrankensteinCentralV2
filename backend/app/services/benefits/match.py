@@ -32,12 +32,14 @@ def attribute(benefit: Benefit, items: list[Classified]) -> None:
     eligible = [p for p in purchases if p.eligible]
     credited_by_period: dict[str, Decimal] = {}
 
-    def period_cap(key: str, sample_date: date) -> Decimal:
+    def period_cap(sample_date: date) -> Decimal:
+        """The benefit's cap for the period that contains `sample_date`."""
         return cap_for(benefit, period_for(kind, sample_date))
 
     def close_period_if_full(key: str, sample_date: date) -> None:
         # once the cap is hit, leftover purchase amounts in that period can never earn more credit
-        if credited_by_period.get(key, Decimal("0")) + TOLERANCE >= period_cap(key, sample_date):
+        """Zero every purchase's remaining amount once credits reached the period cap."""
+        if credited_by_period.get(key, Decimal("0")) + TOLERANCE >= period_cap(sample_date):
             for p in eligible:
                 if p.period_key == key:
                     p.remaining_unmatched = Decimal("0")
@@ -52,7 +54,7 @@ def attribute(benefit: Benefit, items: list[Classified]) -> None:
                     break
                 if (cr.date - p.date).days > CREDIT_LOOKBACK_DAYS:
                     continue
-                if credited_by_period.get(p.period_key or "", Decimal("0")) + TOLERANCE >= period_cap(p.period_key or "", p.date):
+                if credited_by_period.get(p.period_key or "", Decimal("0")) + TOLERANCE >= period_cap(p.date):
                     continue
                 if p.remaining_unmatched + TOLERANCE >= cr.amount:
                     p.remaining_unmatched = max(Decimal("0"), p.remaining_unmatched - cr.amount)
@@ -104,9 +106,9 @@ def attribute(benefit: Benefit, items: list[Classified]) -> None:
 
     # clawbacks: most recent prior credit with the same amount, else the most recent prior credit
     for cb in clawbacks:
-        prior = [c for c in credits if c.date <= cb.date]
-        same = [c for c in prior if c.amount == cb.amount and not c.extra.get("clawed_back")]
-        target = (same or [c for c in prior if not c.extra.get("clawed_back")] or [None])[-1]
+        prior = [c for c in credits if c.date <= cb.date and not c.extra.get("clawed_back")]
+        same_amount = [c for c in prior if c.amount == cb.amount]
+        target: Classified | None = (same_amount or prior)[-1] if (same_amount or prior) else None
         if target is not None:
             target.extra["clawed_back"] = True
             cb.matched_purchase = target.matched_purchase

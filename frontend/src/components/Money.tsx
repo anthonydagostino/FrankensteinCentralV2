@@ -1,7 +1,19 @@
 import { formatMoney } from "../lib/format";
-import { usePrivacy } from "../lib/privacy";
+import { usePrivacy } from "../lib/privacyContext";
 
-export function Money({ value, whole, sign, className = "", href }: { value: string | number | null | undefined; whole?: boolean; sign?: boolean; className?: string; href?: string | null }) {
+export function Money({
+  value,
+  whole,
+  sign,
+  className = "",
+  href,
+}: {
+  value: string | number | null | undefined;
+  whole?: boolean;
+  sign?: boolean;
+  className?: string;
+  href?: string | null;
+}) {
   const { blurred } = usePrivacy();
   const text = formatMoney(value, { whole, sign });
   const inner = <span className={`tabular ${blurred ? "privacy-blur" : ""} ${className}`}>{text}</span>;

@@ -1,4 +1,8 @@
+"""Liveness, public config, integration status, and UI settings routes."""
+
 from __future__ import annotations
+
+from typing import Any
 
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel
@@ -12,19 +16,19 @@ router = APIRouter(prefix="/api", tags=["core"])
 
 
 @router.get("/health")
-async def health(request: Request):
+async def health(request: Request) -> dict[str, Any]:
     state: AppState | None = getattr(request.app.state, "fc", None)
-    return {"status": "ok", "time": iso(utcnow()), "modules": len(state.cache.all_status()) if state else 0}
+    return {"status": "ok", "time": iso(utcnow()), "modules": len(state.cache.modules()) if state else 0}
 
 
 @router.get("/config/public", dependencies=[Depends(require_read)])
-async def public_config(state: AppState = Depends(get_state)):
+async def public_config(state: AppState = Depends(get_state)) -> dict[str, Any]:
     return state.public_config()
 
 
 @router.get("/status", dependencies=[Depends(require_read)])
-async def status(state: AppState = Depends(get_state)):
-    rows = []
+async def status(state: AppState = Depends(get_state)) -> dict[str, Any]:
+    rows: list[dict[str, Any]] = []
     for row in state.cache.all_status():
         integration = state.integrations.get(row["module"])
         rows.append({**row, "mocked": integration.is_mocked() if integration else None, "setup_hint": integration.setup_hint() if integration else []})
@@ -32,7 +36,7 @@ async def status(state: AppState = Depends(get_state)):
 
 
 @router.get("/settings", dependencies=[Depends(require_read)])
-async def get_settings_view(state: AppState = Depends(get_state)):
+async def get_settings_view(state: AppState = Depends(get_state)) -> dict[str, Any]:
     accounts = (state.firefly_data() or {}).get("accounts") or []
     return {
         "values": state.db.all_settings(),
@@ -50,7 +54,7 @@ ALLOWED_KEYS = {"privacy_blur", "weather_location", "kiosk_privacy_blur"}
 
 
 @router.post("/settings", dependencies=[Depends(require_write)])
-async def set_settings(body: SettingsBody, state: AppState = Depends(get_state)):
+async def set_settings(body: SettingsBody, state: AppState = Depends(get_state)) -> dict[str, Any]:
     for key, value in body.values.items():
         ok = key in ALLOWED_KEYS or key.startswith("card_account:")
         if not ok:

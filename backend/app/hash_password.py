@@ -3,7 +3,7 @@
 import getpass
 import sys
 
-import bcrypt
+from .auth import hash_password
 
 
 def main() -> None:
@@ -15,7 +15,7 @@ def main() -> None:
     if not first:
         print("Password must not be empty", file=sys.stderr)
         sys.exit(1)
-    print(bcrypt.hashpw(first.encode("utf-8"), bcrypt.gensalt()).decode("utf-8"))
+    print(hash_password(first))
 
 
 if __name__ == "__main__":

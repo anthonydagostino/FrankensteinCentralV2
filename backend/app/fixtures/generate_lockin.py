@@ -7,6 +7,7 @@ import math
 import random
 from datetime import date, timedelta
 from pathlib import Path
+from typing import Any
 
 HERE = Path(__file__).resolve().parent
 ANCHOR = date(2026, 10, 25)
@@ -14,9 +15,9 @@ ROTATION = ["pushA", "pullA", "legsA", "pushB", "pullB", "legsB"]
 NAMES = {"pushA": "Push A", "pullA": "Pull A", "legsA": "Legs A", "pushB": "Push B", "pullB": "Pull B", "legsB": "Legs B"}
 
 
-def build() -> tuple[dict, dict]:
+def build() -> tuple[dict[str, Any], dict[str, Any]]:
     rnd = random.Random(11)
-    weigh_ins = []
+    weigh_ins: list[dict[str, Any]] = []
     # 60 days of morning weigh-ins trending from 152.0 up toward 156 with daily noise, a few days skipped
     for i in range(60, -1, -1):
         d = ANCHOR - timedelta(days=i)
@@ -26,14 +27,12 @@ def build() -> tuple[dict, dict]:
         w = base + math.sin(i / 2.3) * 0.5 + rnd.uniform(-0.6, 0.6)
         weigh_ins.append({"id": f"w-{d.isoformat()}", "date": d.isoformat(), "weightLb": round(w, 1), "updatedAt": 1761000000000 + i, "deleted": False})
     # four weeks of training: 5 or 6 sessions per week following the rotation, this week has 4 so far (Sunday)
-    sessions = []
+    sessions: list[dict[str, Any]] = []
     idx = 0
     for week_back in range(4, -1, -1):
         monday = ANCHOR - timedelta(days=ANCHOR.weekday()) - timedelta(weeks=week_back)
-        if week_back == 0:
-            train_days = [0, 1, 3, 4]  # Mon, Tue, Thu, Fri done; Sunday still open
-        else:
-            train_days = [0, 1, 2, 4, 5] if week_back % 2 else [0, 1, 2, 3, 4, 5]
+        # this week: Mon, Tue, Thu, Fri done and Sunday still open; past weeks alternate 5 and 6 sessions
+        train_days = [0, 1, 3, 4] if week_back == 0 else ([0, 1, 2, 4, 5] if week_back % 2 else [0, 1, 2, 3, 4, 5])
         for dow in train_days:
             d = monday + timedelta(days=dow)
             if d > ANCHOR:
@@ -41,12 +40,26 @@ def build() -> tuple[dict, dict]:
             key = ROTATION[idx % 6]
             idx += 1
             started = 1761000000000 + len(sessions) * 10000
-            sessions.append({"id": f"s-{d.isoformat()}", "date": d.isoformat(), "templateKey": key, "startedAt": started, "completedAt": started + 3600000, "notes": "", "updatedAt": started, "deleted": False})
+            sessions.append(
+                {
+                    "id": f"s-{d.isoformat()}",
+                    "date": d.isoformat(),
+                    "templateKey": key,
+                    "startedAt": started,
+                    "completedAt": started + 3600000,
+                    "notes": "",
+                    "updatedAt": started,
+                    "deleted": False,
+                }
+            )
     last = sessions[-1]
-    next_key = ROTATION[(ROTATION.index(last["templateKey"]) + 1) % 6]
-    this_week = [s for s in sessions if s["date"] >= (ANCHOR - timedelta(days=ANCHOR.weekday())).isoformat()]
-    recent = [w["weightLb"] for w in weigh_ins if w["date"] > (ANCHOR - timedelta(days=7)).isoformat()]
-    prev = [w["weightLb"] for w in weigh_ins if (ANCHOR - timedelta(days=14)).isoformat() < w["date"] <= (ANCHOR - timedelta(days=7)).isoformat()]
+    next_key = ROTATION[(ROTATION.index(str(last["templateKey"])) + 1) % 6]
+    week_start = (ANCHOR - timedelta(days=ANCHOR.weekday())).isoformat()
+    d7 = (ANCHOR - timedelta(days=7)).isoformat()
+    d14 = (ANCHOR - timedelta(days=14)).isoformat()
+    this_week = [s for s in sessions if str(s["date"]) >= week_start]
+    recent = [w["weightLb"] for w in weigh_ins if w["date"] > d7]
+    prev = [w["weightLb"] for w in weigh_ins if d14 < w["date"] <= d7]
     avg7 = round(sum(recent) / len(recent), 1)
     avg7_prev = round(sum(prev) / len(prev), 1)
     summary = {
@@ -60,7 +73,13 @@ def build() -> tuple[dict, dict]:
         "trainingStreakWeeks": 4,
         "lastSession": {"date": last["date"], "templateKey": last["templateKey"], "templateName": NAMES[last["templateKey"]]},
         "nextSession": {"templateKey": next_key, "templateName": NAMES[next_key]},
-        "weight": {"latest": {"date": weigh_ins[-1]["date"], "weightLb": weigh_ins[-1]["weightLb"]}, "avg7": avg7, "avg7Prev": avg7_prev, "weeklyChangeLb": round(avg7 - avg7_prev, 1), "targetWeeklyChangeLb": 0.5},
+        "weight": {
+            "latest": {"date": weigh_ins[-1]["date"], "weightLb": weigh_ins[-1]["weightLb"]},
+            "avg7": avg7,
+            "avg7Prev": avg7_prev,
+            "weeklyChangeLb": round(avg7 - avg7_prev, 1),
+            "targetWeeklyChangeLb": 0.5,
+        },
     }
     export = {"exportedAt": "2026-10-25T12:00:00.000Z", "version": "0.2.1", "weighIns": weigh_ins, "sessions": sessions, "sets": []}
     return summary, export

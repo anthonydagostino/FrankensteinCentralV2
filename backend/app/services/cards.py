@@ -2,20 +2,22 @@
 
 from __future__ import annotations
 
-import re
 from datetime import date, timedelta
 from decimal import Decimal
+from typing import Any
 
 from ..config_loader import CardConfig
 from ..db import Database
-from ..util import money, money_str
-from .finance import is_card_account, owed_amount
+from ..util import compile_pattern, money, money_str
+from .benefits.classify import Classified
+from .finance import owed_amount
 
 ZERO = Decimal("0.00")
 
 
-def resolve_card_accounts(cards: list[CardConfig], accounts: list[dict], db: Database | None) -> dict[str, dict | None]:
-    out: dict[str, dict | None] = {}
+def resolve_card_accounts(cards: list[CardConfig], accounts: list[dict[str, Any]], db: Database | None) -> dict[str, dict[str, Any] | None]:
+    """Map each configured card to a Firefly account: a pinned setting wins, then the configured id, then the name regex."""
+    out: dict[str, dict[str, Any] | None] = {}
     by_id = {a["id"]: a for a in accounts}
     for card in cards:
         chosen = None
@@ -25,20 +27,29 @@ def resolve_card_accounts(cards: list[CardConfig], accounts: list[dict], db: Dat
         elif card.firefly_account_id is not None and str(card.firefly_account_id) in by_id:
             chosen = by_id[str(card.firefly_account_id)]
         elif card.firefly_account_match:
-            try:
-                rx = re.compile(card.firefly_account_match)
-            except re.error:
-                rx = re.compile(re.escape(card.firefly_account_match), re.I)
+            rx = compile_pattern(card.firefly_account_match)
             for a in accounts:
                 if rx.search(a["name"]):
                     chosen = a
                     break
-        out[card.id] = {"id": chosen["id"], "name": chosen["name"], "type": chosen["type"], "role": chosen.get("role"), "pinned": bool(pinned)} if chosen else None
+        out[card.id] = (
+            {"id": chosen["id"], "name": chosen["name"], "type": chosen["type"], "role": chosen.get("role"), "pinned": bool(pinned)} if chosen else None
+        )
     return out
 
 
-def card_metrics(card: CardConfig, account: dict | None, accounts: list[dict], transactions: list[dict], classified: list, benefits_card: dict | None, today: date, links: dict) -> dict:
-    base = {"id": card.id, "label": card.label, "annual_fee": money_str(card.annual_fee), "account": account}
+def card_metrics(
+    card: CardConfig,
+    account: dict[str, Any] | None,
+    accounts: list[dict[str, Any]],
+    transactions: list[dict[str, Any]],
+    classified: list[Classified],
+    benefits_card: dict[str, Any] | None,
+    today: date,
+    links: dict[str, Any],
+) -> dict[str, Any]:
+    """Balance, spend, largest purchase, last credit, and fee offset for one card."""
+    base: dict[str, Any] = {"id": card.id, "label": card.label, "annual_fee": money_str(card.annual_fee), "account": account}
     if account is None:
         base.update({"configured": False, "message": "No Firefly account matched. Pin one on the Settings page."})
         return base
@@ -63,13 +74,16 @@ def card_metrics(card: CardConfig, account: dict | None, accounts: list[dict], t
         "spend_month": money_str(sum((money(t["amount"]) for t in this_month), ZERO)),
         "spend_30d": money_str(sum((money(t["amount"]) for t in recent), ZERO)),
         "largest_purchase": {"description": largest["description"], "amount": largest["amount"], "date": largest["date"]} if largest else None,
-        "last_credit": {"description": last_credit.description, "amount": money_str(last_credit.amount), "date": last_credit.date.isoformat(), "benefit_id": last_credit.benefit_id} if last_credit else None,
+        "last_credit": {
+            "description": last_credit.description,
+            "amount": money_str(last_credit.amount),
+            "date": last_credit.date.isoformat(),
+            "benefit_id": last_credit.benefit_id,
+        }
+        if last_credit
+        else None,
         "captured_ytd": money_str(captured),
         "fee_offset": float(round(captured / fee, 4)) if fee > 0 else None,
         "still_available": benefits_card["still_available"] if benefits_card else None,
         "url": links.get("account_template", "").format(id=aid) if links.get("account_template") else None,
     }
-
-
-def is_card(acct: dict) -> bool:
-    return is_card_account(acct)

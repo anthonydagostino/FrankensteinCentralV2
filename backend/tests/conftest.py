@@ -11,8 +11,8 @@ os.environ.setdefault("MOCK_MODE", "true")
 os.environ.setdefault("SECRET_KEY", "test-secret-key-that-is-long-enough")
 os.environ.setdefault("KIOSK_TOKEN", "kiosk-token-for-tests-1234567890")
 
-from app.config_loader import get_benefits_catalog, get_dashboard_config  # noqa: E402
-from app.services.benefits.engine import BenefitsEngine  # noqa: E402
+from app.config_loader import get_benefits_catalog, get_dashboard_config
+from app.services.benefits.engine import BenefitsEngine
 
 PLAT = {"id": "3", "name": "Amex Platinum"}
 GOLD = {"id": "4", "name": "Amex Gold"}
@@ -26,7 +26,19 @@ def tx(d: str, kind: str, amount: str, description: str, account: str = "3", jid
     _jid[0] += 1
     jid = jid or _jid[0]
     acct_name = "Amex Platinum" if account == "3" else "Amex Gold"
-    base = {"journal_id": jid, "group_id": str(9000 + jid), "date": d, "amount": amount, "description": description, "category_name": "", "budget_name": "", "tags": [], "notes": notes, "external_id": None, "currency_code": "USD"}
+    base = {
+        "journal_id": jid,
+        "group_id": str(9000 + jid),
+        "date": d,
+        "amount": amount,
+        "description": description,
+        "category_name": "",
+        "budget_name": "",
+        "tags": [],
+        "notes": notes,
+        "external_id": None,
+        "currency_code": "USD",
+    }
     if kind in ("purchase", "withdrawal"):
         base.update(type="withdrawal", source_id=account, source_name=acct_name, destination_id="500", destination_name="Merchant")
     elif kind == "deposit":

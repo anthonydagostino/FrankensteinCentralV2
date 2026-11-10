@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import logging
 import sys
+from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -35,7 +36,8 @@ from .state import AppState
 log = logging.getLogger("frankenstein")
 
 
-def build_state(settings: Settings | None = None, db_path: str | None = None, start_scheduler: bool = True) -> AppState:
+def build_state(settings: Settings | None = None, db_path: str | None = None) -> AppState:
+    """Load config, open the database, and register every integration with the scheduler (not started yet)."""
     settings = settings or get_settings()
     try:
         config = get_dashboard_config()
@@ -65,7 +67,7 @@ def build_state(settings: Settings | None = None, db_path: str | None = None, st
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     configure_logging()
     settings = get_settings()
     install_redaction(settings.secret_values())
@@ -101,9 +103,21 @@ app.include_router(benefits_routes.router)
 
 
 @app.exception_handler(Exception)
-async def unhandled(request: Request, exc: Exception):
+async def unhandled(request: Request, exc: Exception) -> JSONResponse:
     log.exception("unhandled error on %s", request.url.path)
     return JSONResponse({"detail": f"Internal error: {exc.__class__.__name__}"}, status_code=500)
+
+
+@app.middleware("http")
+async def security_headers(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
+    """Conservative headers for a same-origin app: no framing, no MIME sniffing, API responses never cached."""
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    response.headers.setdefault("Referrer-Policy", "same-origin")
+    if request.url.path.startswith("/api/") and "Cache-Control" not in response.headers:
+        response.headers["Cache-Control"] = "no-store"
+    return response
 
 
 def mount_static(application: FastAPI) -> None:
@@ -114,11 +128,11 @@ def mount_static(application: FastAPI) -> None:
         application.mount("/assets", StaticFiles(directory=static_dir / "assets"), name="assets")
 
     @application.get("/{full_path:path}", include_in_schema=False)
-    async def spa(full_path: str, request: Request):
+    async def spa(full_path: str, request: Request) -> Response:
         if full_path.startswith("api/"):
             return JSONResponse({"detail": "Not found"}, status_code=404)
-        candidate = static_dir / full_path
-        if full_path and candidate.is_file() and candidate.resolve().is_relative_to(static_dir.resolve()):
+        candidate = (static_dir / full_path).resolve()
+        if full_path and candidate.is_relative_to(static_dir.resolve()) and candidate.is_file():
             return FileResponse(candidate)
         if full_path.rstrip("/") == "kiosk" and "token" in request.query_params:
             # /kiosk?token=... sets the read-only kiosk cookie and drops the token from the URL.
@@ -130,7 +144,8 @@ def mount_static(application: FastAPI) -> None:
                 return response
         if not index.exists():
             return JSONResponse({"detail": "Frontend not built. Run npm run build in frontend/."}, status_code=503)
-        return FileResponse(index)
+        # index.html must revalidate so a new build reaches the kiosk; hashed assets under /assets cache freely
+        return FileResponse(index, headers={"Cache-Control": "no-cache"})
 
 
 mount_static(app)

@@ -1,9 +1,11 @@
 import { ArrowDownRight, ArrowUpRight, Dumbbell, ExternalLink, Flame, Minus } from "lucide-react";
+import { useMemo } from "react";
 import { Area, AreaChart, ResponsiveContainer, Tooltip, YAxis } from "recharts";
 import { useTraining } from "../api/hooks";
 import type { TrainingData } from "../api/types";
 import { Chip } from "../components/Bars";
 import { Card } from "../components/Card";
+import { TOOLTIP_STYLE } from "../lib/ui";
 import { formatDateOnly } from "../lib/format";
 
 function signed(n: number | null | undefined): string {
@@ -34,9 +36,11 @@ export function TrainingBody({ data, large }: { data: TrainingData; large?: bool
   const w = data.weight;
   const change = w.weekly_change;
   const streakTone = data.streak_risk === "safe" ? "good" : data.streak_risk === "at_risk" ? "warn" : data.streak_risk === "lost" ? "bad" : "neutral";
-  const series = (data.weight_series ?? []).map((p) => ({ ...p, label: formatDateOnly(p.date) }));
-  const min = series.length ? Math.min(...series.map((p) => p.weight)) : 0;
-  const max = series.length ? Math.max(...series.map((p) => p.weight)) : 0;
+  const { series, min, max } = useMemo(() => {
+    const points = (data.weight_series ?? []).map((p) => ({ ...p, label: formatDateOnly(p.date) }));
+    const weights = points.map((p) => p.weight);
+    return { series: points, min: weights.length ? Math.min(...weights) : 0, max: weights.length ? Math.max(...weights) : 0 };
+  }, [data.weight_series]);
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
@@ -57,7 +61,9 @@ export function TrainingBody({ data, large }: { data: TrainingData; large?: bool
 
       <div className="rounded-lg bg-ink-800/60 p-3">
         <div className="text-[11px] uppercase tracking-wide text-ink-400">{data.trained_today ? "Done today" : "Next up"}</div>
-        <div className={`${large ? "text-2xl" : "text-xl"} font-semibold text-ink-200`}>{data.trained_today ? data.last_session?.name : data.next_session?.name ?? "Rest"}</div>
+        <div className={`${large ? "text-2xl" : "text-xl"} font-semibold text-ink-200`}>
+          {(data.trained_today ? data.last_session?.name : data.next_session?.name) ?? "Rest"}
+        </div>
         <div className="mt-1 text-xs text-ink-400">
           {data.last_session ? `Last: ${data.last_session.name} on ${formatDateOnly(data.last_session.date, "EEE, MMM d")}` : "No sessions logged yet"}
         </div>
@@ -85,7 +91,7 @@ export function TrainingBody({ data, large }: { data: TrainingData; large?: bool
         <div className="rounded-lg bg-ink-800/40 p-2">
           <div className="text-ink-400">Weekly change</div>
           <div className={`tabular inline-flex items-center gap-0.5 text-base font-semibold ${w.on_track === false ? "text-amber-300" : "text-ink-200"}`}>
-            {change === null ? <Minus size={12} /> : change > 0 ? <ArrowUpRight size={14} /> : change < 0 ? <ArrowDownRight size={14} /> : <Minus size={12} />}
+            {change ? change > 0 ? <ArrowUpRight size={14} /> : <ArrowDownRight size={14} /> : <Minus size={12} />}
             {change !== null ? `${signed(change)} lb` : "--"}
           </div>
           <div className="text-[10px] text-ink-500">target {signed(w.target_weekly_change)} lb/wk</div>
@@ -103,7 +109,11 @@ export function TrainingBody({ data, large }: { data: TrainingData; large?: bool
                 </linearGradient>
               </defs>
               <YAxis hide domain={[Math.floor(min - 1), Math.ceil(max + 1)]} />
-              <Tooltip contentStyle={{ background: "#171e1a", border: "1px solid #2f3a33", fontSize: 12 }} labelFormatter={(_, p) => (p && p[0] ? String((p[0].payload as { label: string }).label) : "")} formatter={(v: number) => [`${v} lb`, "Weight"]} />
+              <Tooltip
+                contentStyle={TOOLTIP_STYLE}
+                labelFormatter={(_, p) => (p && p[0] ? String((p[0].payload as { label: string }).label) : "")}
+                formatter={(v: number) => [`${v} lb`, "Weight"]}
+              />
               <Area type="monotone" dataKey="weight" stroke="#60a5fa" fill="url(#weight)" strokeWidth={1.5} isAnimationActive={false} />
             </AreaChart>
           </ResponsiveContainer>
@@ -111,7 +121,12 @@ export function TrainingBody({ data, large }: { data: TrainingData; large?: bool
       )}
 
       {data.public_url && (
-        <a href={data.public_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md bg-accent/15 px-3 py-1.5 text-sm font-medium text-accent hover:bg-accent/25">
+        <a
+          href={data.public_url}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1 rounded-md bg-accent/15 px-3 py-1.5 text-sm font-medium text-accent hover:bg-accent/25"
+        >
           <Dumbbell size={14} /> Open Lock-In <ExternalLink size={12} />
         </a>
       )}
@@ -122,7 +137,15 @@ export function TrainingBody({ data, large }: { data: TrainingData; large?: bool
 export function TrainingWidget({ kiosk }: { kiosk?: boolean }) {
   const q = useTraining();
   return (
-    <Card title="Lock-In" icon={<Dumbbell size={14} />} envelope={q.data} error={q.error} onRetry={() => q.refetch()} kiosk={kiosk} actions={q.data?.data?.version ? <span className="text-[11px] text-ink-400">v{q.data.data.version}</span> : null}>
+    <Card
+      title="Lock-In"
+      icon={<Dumbbell size={14} />}
+      envelope={q.data}
+      error={q.error}
+      onRetry={() => q.refetch()}
+      kiosk={kiosk}
+      actions={q.data?.data?.version ? <span className="text-[11px] text-ink-400">v{q.data.data.version}</span> : null}
+    >
       {(d) => <TrainingBody data={d} large={kiosk} />}
     </Card>
   );

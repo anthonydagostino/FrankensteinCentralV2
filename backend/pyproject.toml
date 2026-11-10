@@ -26,14 +26,19 @@ dev = [
   "pytest-asyncio>=0.23",
   "respx>=0.21",
   "freezegun>=1.5",
+  "ruff>=0.6",
+  "mypy>=1.11",
 ]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
   "pytest>=8.2",
   "pytest-asyncio>=0.23",
+  "pytest-cov>=7.1",
   "respx>=0.21",
   "freezegun>=1.5",
+  "ruff>=0.6",
+  "mypy>=1.11",
 ]
 
 [build-system]
@@ -47,3 +52,8 @@ packages = ["app"]
 asyncio_mode = "auto"
 testpaths = ["tests"]
 filterwarnings = ["ignore::DeprecationWarning"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true

@@ -2,36 +2,41 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 from decimal import Decimal
 from typing import Any
 
 import httpx
 
-from ..util import iso, money, money_str, today_local, utcnow
-from .base import BaseIntegration, Degraded, describe_error, load_fixture, make_client, request
+from ..config_loader import DashboardConfig
+from ..settings import Settings
+from ..util import iso, money, today_local, utcnow
+from .base import BaseIntegration, Degraded, bearer_headers, describe_error, load_fixture, make_client, request, shift_date
 
 log = logging.getLogger("frankenstein.firefly")
 
-MAX_PAGES = 50
+FIREFLY_ACCEPT = "application/vnd.api+json, application/json"
+MAX_PAGES = 200  # 100 rows each: a cap of 20,000 rows per listing before the refresh is marked degraded
 FIXTURE_ANCHOR = date(2026, 10, 20)
 
 
-def _headers(token: str) -> dict[str, str]:
-    return {"Authorization": f"Bearer {token}", "Accept": "application/vnd.api+json, application/json"}
-
-
 def _dec(value: Any) -> Decimal:
+    """Money that tolerates a null or malformed Firefly amount (one bad split must not fail the refresh)."""
     try:
         return money(value)
     except Exception:
         return Decimal("0.00")
 
 
-def flatten_transactions(groups: list[dict]) -> list[dict]:
+def _money_str(value: Any) -> str:
+    return f"{_dec(value):.2f}"
+
+
+def flatten_transactions(groups: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Flatten Firefly transaction groups into split rows keyed by transaction_journal_id."""
-    rows: list[dict] = []
+    rows: list[dict[str, Any]] = []
     for group in groups:
         gid = str(group.get("id"))
         attrs = group.get("attributes", {}) or {}
@@ -43,7 +48,7 @@ def flatten_transactions(groups: list[dict]) -> list[dict]:
                     "group_id": gid,
                     "type": split.get("type"),
                     "date": raw_date[:10],
-                    "amount": money_str(split.get("amount")),
+                    "amount": _money_str(split.get("amount")),
                     "description": split.get("description") or "",
                     "source_id": str(split.get("source_id")) if split.get("source_id") is not None else None,
                     "source_name": split.get("source_name") or "",
@@ -63,7 +68,9 @@ def flatten_transactions(groups: list[dict]) -> list[dict]:
     return rows
 
 
-def normalize_accounts(items: list[dict]) -> list[dict]:
+def normalize_accounts(items: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Active accounts with balances as two decimal strings. credit_limit is Firefly's virtual balance, which this
+    dashboard uses as the limit for credit card accounts (Firefly has no dedicated field)."""
     out = []
     for item in items:
         a = item.get("attributes", {}) or {}
@@ -77,9 +84,9 @@ def normalize_accounts(items: list[dict]) -> list[dict]:
                 "role": a.get("account_role") or "",
                 "liability_type": a.get("liability_type"),
                 "currency": a.get("currency_code") or "USD",
-                "balance": money_str(a.get("current_balance")),
+                "balance": _money_str(a.get("current_balance")),
                 "balance_date": (a.get("current_balance_date") or "")[:10] or None,
-                "credit_limit": money_str(a.get("virtual_balance")) if a.get("virtual_balance") not in (None, "", "0", "0.0", "0.00", "0.000000") else None,
+                "credit_limit": _money_str(a.get("virtual_balance")) if a.get("virtual_balance") not in (None, "", "0", "0.0", "0.00", "0.000000") else None,
                 "include_net_worth": a.get("include_net_worth", True),
                 "notes": a.get("notes") or "",
             }
@@ -87,10 +94,16 @@ def normalize_accounts(items: list[dict]) -> list[dict]:
     return out
 
 
-def normalize_summary(raw: dict) -> dict:
+def normalize_summary(raw: Any) -> dict[str, str | None]:
     """Summary basic returns keys like net-worth-in-USD. Take the first currency variant of each."""
     out: dict[str, str | None] = {"net_worth": None, "spent": None, "earned": None, "bills_unpaid": None, "left_to_spend": None, "currency": None}
-    mapping = {"net-worth-in-": "net_worth", "spent-in-": "spent", "earned-in-": "earned", "bills-unpaid-in-": "bills_unpaid", "left-to-spend-in-": "left_to_spend"}
+    mapping = {
+        "net-worth-in-": "net_worth",
+        "spent-in-": "spent",
+        "earned-in-": "earned",
+        "bills-unpaid-in-": "bills_unpaid",
+        "left-to-spend-in-": "left_to_spend",
+    }
     items = raw.values() if isinstance(raw, dict) else raw
     for item in items:
         key = str(item.get("key", ""))
@@ -99,21 +112,23 @@ def normalize_summary(raw: dict) -> dict:
                 value = item.get("monetary_value")
                 if value is None:
                     value = item.get("value_parsed")
-                out[name] = money_str(value)
+                out[name] = _money_str(value)
                 out["currency"] = out["currency"] or item.get("currency_code")
     return out
 
 
-def normalize_insight(raw: list[dict]) -> list[dict]:
+def normalize_insight(raw: Any) -> list[dict[str, Any]]:
+    """Insight endpoints return a list of {name, difference}; amounts are made positive and sorted descending."""
     out = []
     for item in raw or []:
         amount = _dec(item.get("difference_float", item.get("difference")))
-        out.append({"id": str(item.get("id")), "name": item.get("name") or "(none)", "amount": money_str(abs(amount))})
+        out.append({"id": str(item.get("id")), "name": item.get("name") or "(none)", "amount": _money_str(abs(amount))})
     out.sort(key=lambda x: Decimal(x["amount"]), reverse=True)
     return out
 
 
-def normalize_budgets(budgets: list[dict], limits: dict[str, list[dict]]) -> list[dict]:
+def normalize_budgets(budgets: list[dict[str, Any]], limits: dict[str, list[dict[str, Any]]]) -> list[dict[str, Any]]:
+    """Budgets with this month's limit and spent totals summed over their budget limits."""
     out = []
     for b in budgets:
         a = b.get("attributes", {}) or {}
@@ -130,11 +145,12 @@ def normalize_budgets(budgets: list[dict], limits: dict[str, list[dict]]) -> lis
             # Firefly also reports spent on the budget itself for the period
             for s in a.get("spent", []) or []:
                 spent_total += abs(_dec(s.get("sum")))
-        out.append({"id": bid, "name": a.get("name") or "", "limit": money_str(limit_total), "spent": money_str(spent_total)})
+        out.append({"id": bid, "name": a.get("name") or "", "limit": _money_str(limit_total), "spent": _money_str(spent_total)})
     return out
 
 
-def normalize_bills(raw: list[dict]) -> list[dict]:
+def normalize_bills(raw: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Active bills (Firefly calls them subscriptions in newer versions) with the next expected date."""
     out = []
     for b in raw:
         a = b.get("attributes", {}) or {}
@@ -149,8 +165,8 @@ def normalize_bills(raw: list[dict]) -> list[dict]:
             {
                 "id": str(b.get("id")),
                 "name": a.get("name") or "",
-                "amount_min": money_str(a.get("amount_min")),
-                "amount_max": money_str(a.get("amount_max")),
+                "amount_min": _money_str(a.get("amount_min")),
+                "amount_max": _money_str(a.get("amount_max")),
                 "next_expected": (next_expected or "")[:10] or None,
                 "paid_this_period": bool(paid),
                 "repeat_freq": a.get("repeat_freq"),
@@ -160,9 +176,20 @@ def normalize_bills(raw: list[dict]) -> list[dict]:
 
 
 def window_start(today: date) -> date:
-    """Transactions window start: Jan 1 of this year minus 60 days (also covers finance needs)."""
-    jan1 = date(today.year, 1, 1)
-    return min(jan1 - timedelta(days=60), today - timedelta(days=60))
+    """Transactions window start: Jan 1 of the current year minus 60 days (spec 8.5.5).
+
+    The window follows the current year only, so a benefits view of an earlier year sees just the
+    rows that fall inside it (see DECISIONS.md).
+    """
+    return date(today.year, 1, 1) - timedelta(days=60)
+
+
+class Truncated(Exception):
+    """A paged listing hit MAX_PAGES; `items` holds the rows fetched so far."""
+
+    def __init__(self, items: list[dict[str, Any]], message: str) -> None:
+        super().__init__(message)
+        self.items = items
 
 
 class FireflyIntegration(BaseIntegration):
@@ -170,52 +197,63 @@ class FireflyIntegration(BaseIntegration):
     interval_seconds = 10 * 60
     required_env = ["FIREFLY_URL", "FIREFLY_TOKEN"]
 
+    def __init__(self, settings: Settings, config: DashboardConfig) -> None:
+        super().__init__(settings, config)
+        self._logged_version: str | None = None
+
     def _base(self) -> str:
         return self.settings.firefly_url.rstrip("/") + "/api/v1"
 
-    async def _get(self, client: httpx.AsyncClient, path: str, **params: Any) -> dict:
+    async def _get(self, client: httpx.AsyncClient, path: str, **params: Any) -> dict[str, Any]:
         resp = await request(client, "GET", f"{self._base()}{path}", params=params, service="Firefly")
         resp.raise_for_status()
-        return resp.json()
+        payload: dict[str, Any] = resp.json()
+        return payload
 
-    async def _paged(self, client: httpx.AsyncClient, path: str, **params: Any) -> list[dict]:
-        items: list[dict] = []
+    async def _paged(self, client: httpx.AsyncClient, path: str, **params: Any) -> list[dict[str, Any]]:
+        """Every page of a listing. Raises Truncated (with the rows so far) past MAX_PAGES."""
+        items: list[dict[str, Any]] = []
         page = 1
         while True:
             payload = await self._get(client, path, page=page, limit=100, **params)
             items.extend(payload.get("data", []) or [])
-            total_pages = int((payload.get("meta", {}).get("pagination", {}) or {}).get("total_pages", 1) or 1)
+            total_pages = int(((payload.get("meta") or {}).get("pagination") or {}).get("total_pages") or 1)
             if page >= total_pages:
                 break
             page += 1
             if page > MAX_PAGES:
-                log.warning("Firefly %s hit the %d page cap, data truncated", path, MAX_PAGES)
-                break
+                raise Truncated(items, f"{path} truncated at {MAX_PAGES} pages")
         return items
 
-    async def fetch(self) -> dict:
+    async def fetch(self) -> dict[str, Any]:
         today = today_local()
         start = window_start(today)
         month_start = today.replace(day=1)
         month_end = (month_start + timedelta(days=40)).replace(day=1) - timedelta(days=1)
         errors: list[str] = []
-        async with make_client(timeout=20.0, headers=_headers(self.settings.firefly_token)) as client:
+        async with make_client(timeout=20.0, headers=bearer_headers(self.settings.firefly_token, FIREFLY_ACCEPT)) as client:
             about = await self._get(client, "/about")
-            version = (about.get("data", {}) or {}).get("version")
-            log.info("Firefly III version %s", version)
+            version = (about.get("data") or {}).get("version")
+            if version != self._logged_version:
+                log.info("Firefly III version %s", version)
+                self._logged_version = version
 
             assets = await self._paged(client, "/accounts", type="asset")
             liabilities = await self._paged(client, "/accounts", type="liabilities")
             accounts = normalize_accounts(assets + liabilities)
 
-            groups = await self._paged(client, "/transactions", start=start.isoformat(), end=today.isoformat(), type="all")
+            try:
+                groups = await self._paged(client, "/transactions", start=start.isoformat(), end=today.isoformat(), type="all")
+            except Truncated as exc:
+                groups = exc.items
+                errors.append(f"transactions: {exc}")
             transactions = flatten_transactions(groups)
 
-            summary: dict = {}
-            categories: list[dict] = []
-            merchants: list[dict] = []
-            budgets: list[dict] = []
-            bills: list[dict] = []
+            summary: dict[str, str | None] = {}
+            categories: list[dict[str, Any]] = []
+            merchants: list[dict[str, Any]] = []
+            budgets: list[dict[str, Any]] = []
+            bills: list[dict[str, Any]] = []
             try:
                 summary = normalize_summary(await self._get(client, "/summary/basic", start=month_start.isoformat(), end=month_end.isoformat()))
             except Exception as exc:
@@ -230,13 +268,16 @@ class FireflyIntegration(BaseIntegration):
                 errors.append(f"merchants: {describe_error(exc, 'Firefly')}")
             try:
                 raw_budgets = await self._paged(client, "/budgets")
-                limits: dict[str, list[dict]] = {}
-                for b in raw_budgets:
-                    bid = str(b.get("id"))
+
+                async def limits_for(bid: str) -> list[dict[str, Any]]:
                     try:
-                        limits[bid] = (await self._get(client, f"/budgets/{bid}/limits", start=month_start.isoformat(), end=month_end.isoformat())).get("data", [])
+                        payload = await self._get(client, f"/budgets/{bid}/limits", start=month_start.isoformat(), end=month_end.isoformat())
+                        return payload.get("data") or []
                     except Exception:
-                        limits[bid] = []
+                        return []
+
+                ids = [str(b.get("id")) for b in raw_budgets]
+                limits = dict(zip(ids, await asyncio.gather(*(limits_for(bid) for bid in ids)), strict=True))
                 budgets = normalize_budgets(raw_budgets, limits)
             except Exception as exc:
                 errors.append(f"budgets: {describe_error(exc, 'Firefly')}")
@@ -262,30 +303,24 @@ class FireflyIntegration(BaseIntegration):
         return data
 
     # ------------------------------------------------------------------
-    def mock(self) -> dict:
+    def mock(self) -> dict[str, Any]:
         today = today_local()
         delta = today - FIXTURE_ANCHOR
         fx = load_fixture("firefly/firefly.json")
 
-        def shift(value: str | None) -> str | None:
-            if not value:
-                return value
-            try:
-                d = date.fromisoformat(value[:10])
-            except ValueError:
-                return value
-            return (d + delta).isoformat() + value[10:]
+        def _shift(value: str | None) -> str | None:
+            return shift_date(value, delta)
 
         groups = fx["transactions"]["data"]
         for g in groups:
             for split in g["attributes"]["transactions"]:
-                split["date"] = shift(split["date"])
+                split["date"] = _shift(split["date"])
         accounts = normalize_accounts(fx["accounts"]["data"])
         for a in accounts:
-            a["balance_date"] = shift(a["balance_date"])
+            a["balance_date"] = _shift(a["balance_date"])
         bills = normalize_bills(fx["bills"]["data"])
         for b in bills:
-            b["next_expected"] = shift(b["next_expected"])
+            b["next_expected"] = _shift(b["next_expected"])
         return {
             "about": {"version": fx["about"]["data"]["version"]},
             "accounts": accounts,
@@ -303,7 +338,8 @@ class FireflyIntegration(BaseIntegration):
 # --------------------------------------------------------------------------
 # Optional: Firefly Data Importer auto import trigger
 # --------------------------------------------------------------------------
-async def trigger_importer(settings) -> dict:
+async def trigger_importer(settings: Settings) -> dict[str, Any]:
+    """Ask the Firefly Data Importer to run its configured auto import."""
     url = settings.firefly_importer_url.rstrip("/") + "/autoimport"
     params = {"directory": settings.firefly_importer_dir, "secret": settings.firefly_importer_secret}
     async with make_client(timeout=30.0) as client:
@@ -314,10 +350,10 @@ async def trigger_importer(settings) -> dict:
 # --------------------------------------------------------------------------
 # Optional: tag write back
 # --------------------------------------------------------------------------
-async def add_tags_to_group(settings, group_id: str, journal_id: int, new_tags: list[str]) -> bool:
+async def add_tags_to_group(settings: Settings, group_id: str, journal_id: int, new_tags: list[str]) -> bool:
     """PUT the full split array back with extra tags on the given journal. Never drops splits or tags."""
     base = settings.firefly_url.rstrip("/") + "/api/v1"
-    async with make_client(timeout=20.0, headers=_headers(settings.firefly_token)) as client:
+    async with make_client(timeout=20.0, headers=bearer_headers(settings.firefly_token, FIREFLY_ACCEPT)) as client:
         resp = await request(client, "GET", f"{base}/transactions/{group_id}", service="Firefly")
         resp.raise_for_status()
         group = resp.json().get("data", {})

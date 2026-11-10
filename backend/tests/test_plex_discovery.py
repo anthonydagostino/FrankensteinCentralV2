@@ -30,7 +30,15 @@ SHARED = {
         {"protocol": "https", "address": "relay.plex.direct", "port": 8443, "uri": "https://1ada.relay.plex.direct:8443", "local": False, "relay": True},
     ],
 }
-OWNED = {"name": "Mine", "provides": "server", "owned": True, "presence": False, "clientIdentifier": "own", "accessToken": "own-token", "connections": [{"protocol": "http", "address": "10.0.0.5", "port": 32400, "uri": "http://10.0.0.5:32400", "local": True, "relay": False}]}
+OWNED = {
+    "name": "Mine",
+    "provides": "server",
+    "owned": True,
+    "presence": False,
+    "clientIdentifier": "own",
+    "accessToken": "own-token",
+    "connections": [{"protocol": "http", "address": "10.0.0.5", "port": 32400, "uri": "http://10.0.0.5:32400", "local": True, "relay": False}],
+}
 PLAYER = {"name": "Living Room", "provides": "player", "connections": []}
 
 
@@ -81,7 +89,12 @@ async def test_discovers_shared_server_and_uses_its_access_token():
 @respx.mock
 async def test_falls_back_to_relay_and_rediscovers_after_failure():
     respx.get("https://plex.tv/api/v2/resources").mock(return_value=httpx.Response(200, json=[SHARED]))
-    for dead in ("https://73-1-2-3.1ada.plex.direct:12345", "https://73.1.2.3:12345", "https://192-168-4-20.1ada.plex.direct:32400", "https://192.168.4.20:32400"):
+    for dead in (
+        "https://73-1-2-3.1ada.plex.direct:12345",
+        "https://73.1.2.3:12345",
+        "https://192-168-4-20.1ada.plex.direct:32400",
+        "https://192.168.4.20:32400",
+    ):
         respx.get(f"{dead}/identity").mock(side_effect=httpx.ConnectError("no route"))
     relay = "https://1ada.relay.plex.direct:8443"
     _mock_server(relay)

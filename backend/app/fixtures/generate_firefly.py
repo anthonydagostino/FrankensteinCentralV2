@@ -9,9 +9,11 @@ from __future__ import annotations
 import json
 import random
 from collections import defaultdict
+from collections.abc import Iterator
 from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
 
 HERE = Path(__file__).resolve().parent
 ANCHOR = date(2026, 10, 20)
@@ -45,25 +47,43 @@ def revenue_id(name: str) -> int:
     return _revenue_ids[name]
 
 
-rows: list[dict] = []
+rows: list[dict[str, Any]] = []
 _jid = 1000
 
 
-def add(day: date, kind: str, amount: str, description: str, *, src: int | str, dst: int | str, category: str = "", budget: str = "", tags=None, notes: str = ""):
+def _account(ref: int | str) -> tuple[int, str, str]:
+    """(id, name, type) for an internal account id."""
+    aid = int(ref)
+    return aid, ACCOUNT_NAME[aid], ACCOUNT_TYPE[aid]
+
+
+def add(
+    day: date,
+    kind: str,
+    amount: str,
+    description: str,
+    *,
+    src: int | str,
+    dst: int | str,
+    category: str = "",
+    budget: str = "",
+    tags: list[str] | None = None,
+    notes: str = "",
+) -> None:
     """src/dst: int for an asset/liability account id, str for an expense or revenue account name."""
     global _jid
     if day < START or day > ANCHOR:
         return
     _jid += 1
     if kind == "withdrawal":
-        source_id, source_name, source_type = src, ACCOUNT_NAME[src], ACCOUNT_TYPE[src]
-        destination_id, destination_name, destination_type = expense_id(dst), dst, "Expense account"
+        source_id, source_name, source_type = _account(src)
+        destination_id, destination_name, destination_type = expense_id(str(dst)), str(dst), "Expense account"
     elif kind == "deposit":
-        source_id, source_name, source_type = revenue_id(src), src, "Revenue account"
-        destination_id, destination_name, destination_type = dst, ACCOUNT_NAME[dst], ACCOUNT_TYPE[dst]
+        source_id, source_name, source_type = revenue_id(str(src)), str(src), "Revenue account"
+        destination_id, destination_name, destination_type = _account(dst)
     else:
-        source_id, source_name, source_type = src, ACCOUNT_NAME[src], ACCOUNT_TYPE[src]
-        destination_id, destination_name, destination_type = dst, ACCOUNT_NAME[dst], ACCOUNT_TYPE[dst]
+        source_id, source_name, source_type = _account(src)
+        destination_id, destination_name, destination_type = _account(dst)
     rows.append(
         {
             "user": "1",
@@ -95,21 +115,21 @@ def add(day: date, kind: str, amount: str, description: str, *, src: int | str, 
     )
 
 
-def months():
+def months() -> Iterator[date]:
     d = date(START.year, START.month, 1)
     while d <= ANCHOR:
         yield d
         d = (d + timedelta(days=32)).replace(day=1)
 
 
-def build() -> dict:
+def build() -> dict[str, Any]:
     rnd = random.Random(7)
     PLAT, GOLD, DISC, CHK, SAV, LOAN = 3, 4, 5, 1, 2, 6
 
     for m in months():
         y, mo = m.year, m.month
 
-        def dt(day: int) -> date:
+        def dt(day: int, y: int = y, mo: int = mo) -> date:
             return date(y, mo, min(day, 28))
 
         # Checking: payroll, rent, utilities, savings transfer, loan payment
@@ -141,10 +161,37 @@ def build() -> dict:
         add(dt(11), "deposit", "9.99", "UBER ONE CREDIT", src="American Express", dst=PLAT, category="Statement credit")
         # Platinum: everyday spend
         for _ in range(3):
-            add(dt(rnd.randint(2, 27)), "withdrawal", f"{rnd.uniform(38, 140):.2f}", "WEGMANS OCEAN NJ", src=PLAT, dst="Wegmans", category="Groceries", budget="Groceries")
+            add(
+                dt(rnd.randint(2, 27)),
+                "withdrawal",
+                f"{rnd.uniform(38, 140):.2f}",
+                "WEGMANS OCEAN NJ",
+                src=PLAT,
+                dst="Wegmans",
+                category="Groceries",
+                budget="Groceries",
+            )
         for _ in range(2):
-            add(dt(rnd.randint(2, 27)), "withdrawal", f"{rnd.uniform(22, 95):.2f}", "AMAZON.COM*MKTPL", src=PLAT, dst="Amazon", category="Shopping", budget="Shopping")
-        add(dt(rnd.randint(2, 27)), "withdrawal", f"{rnd.uniform(60, 180):.2f}", "COSTCO WHSE #0233", src=PLAT, dst="Costco", category="Groceries", budget="Groceries")
+            add(
+                dt(rnd.randint(2, 27)),
+                "withdrawal",
+                f"{rnd.uniform(22, 95):.2f}",
+                "AMAZON.COM*MKTPL",
+                src=PLAT,
+                dst="Amazon",
+                category="Shopping",
+                budget="Shopping",
+            )
+        add(
+            dt(rnd.randint(2, 27)),
+            "withdrawal",
+            f"{rnd.uniform(60, 180):.2f}",
+            "COSTCO WHSE #0233",
+            src=PLAT,
+            dst="Costco",
+            category="Groceries",
+            budget="Groceries",
+        )
         add(dt(rnd.randint(2, 27)), "withdrawal", f"{rnd.uniform(45, 110):.2f}", "SHELL OIL 574", src=PLAT, dst="Shell", category="Gas", budget="Gas")
         # Platinum payment
         add(dt(25), "transfer", f"{rnd.uniform(1400, 2600):.2f}", "AMEX EPAYMENT ACH PMT", src=CHK, dst=PLAT)
@@ -157,9 +204,27 @@ def build() -> dict:
             add(dt(15), "withdrawal", "5.10", "DUNKIN #341209", src=GOLD, dst="Dunkin", category="Dining", budget="Dining")
             add(dt(18), "deposit", "7.00", "DUNKIN CREDIT", src="American Express", dst=GOLD, category="Statement credit")
         for _ in range(4):
-            add(dt(rnd.randint(2, 27)), "withdrawal", f"{rnd.uniform(18, 88):.2f}", rnd.choice(["CHIPOTLE 2210", "SURF TACO TOMS RIVER", "XINA RESTAURANT", "BUBBAKOO'S BURRITOS"]), src=GOLD, dst="Restaurants", category="Dining", budget="Dining")
+            add(
+                dt(rnd.randint(2, 27)),
+                "withdrawal",
+                f"{rnd.uniform(18, 88):.2f}",
+                rnd.choice(["CHIPOTLE 2210", "SURF TACO TOMS RIVER", "XINA RESTAURANT", "BUBBAKOO'S BURRITOS"]),
+                src=GOLD,
+                dst="Restaurants",
+                category="Dining",
+                budget="Dining",
+            )
         for _ in range(2):
-            add(dt(rnd.randint(2, 27)), "withdrawal", f"{rnd.uniform(40, 120):.2f}", "SHOPRITE TOMS RIVER", src=GOLD, dst="ShopRite", category="Groceries", budget="Groceries")
+            add(
+                dt(rnd.randint(2, 27)),
+                "withdrawal",
+                f"{rnd.uniform(40, 120):.2f}",
+                "SHOPRITE TOMS RIVER",
+                src=GOLD,
+                dst="ShopRite",
+                category="Groceries",
+                budget="Groceries",
+            )
         add(dt(24), "transfer", f"{rnd.uniform(350, 800):.2f}", "AMEX EPAYMENT ACH PMT", src=CHK, dst=GOLD)
 
         # Discover
@@ -216,7 +281,14 @@ def build() -> dict:
 
     groups = []
     for idx, r in enumerate(rows):
-        groups.append({"type": "transactions", "id": str(5000 + idx), "attributes": {"created_at": r["date"], "updated_at": r["date"], "user": "1", "group_title": None, "transactions": [r]}, "links": {"self": f"/api/v1/transactions/{5000 + idx}"}})
+        groups.append(
+            {
+                "type": "transactions",
+                "id": str(5000 + idx),
+                "attributes": {"created_at": r["date"], "updated_at": r["date"], "user": "1", "group_title": None, "transactions": [r]},
+                "links": {"self": f"/api/v1/transactions/{5000 + idx}"},
+            }
+        )
 
     accounts = []
     for aid, name, atype, role, balance, ltype in ACCOUNTS:
@@ -263,39 +335,166 @@ def build() -> dict:
 
     net_worth = sum(Decimal(a[4]) for a in ACCOUNTS)
     summary = {
-        "net-worth-in-USD": {"key": "net-worth-in-USD", "title": "Net worth in USD", "monetary_value": f"{net_worth:.2f}", "currency_code": "USD", "value_parsed": f"${net_worth:,.2f}"},
-        "spent-in-USD": {"key": "spent-in-USD", "title": "Spent in USD", "monetary_value": f"{-spent_total:.2f}", "currency_code": "USD", "value_parsed": f"-${spent_total:,.2f}"},
-        "earned-in-USD": {"key": "earned-in-USD", "title": "Earned in USD", "monetary_value": f"{earned_total:.2f}", "currency_code": "USD", "value_parsed": f"${earned_total:,.2f}"},
-        "bills-unpaid-in-USD": {"key": "bills-unpaid-in-USD", "title": "Bills unpaid", "monetary_value": "195.49", "currency_code": "USD", "value_parsed": "$195.49"},
-        "left-to-spend-in-USD": {"key": "left-to-spend-in-USD", "title": "Left to spend", "monetary_value": f"{Decimal('1500.00') - budget_totals.get('Groceries', Decimal(0)) - budget_totals.get('Dining', Decimal(0)) - budget_totals.get('Gas', Decimal(0)) - budget_totals.get('Shopping', Decimal(0)):.2f}", "currency_code": "USD", "value_parsed": ""},
+        "net-worth-in-USD": {
+            "key": "net-worth-in-USD",
+            "title": "Net worth in USD",
+            "monetary_value": f"{net_worth:.2f}",
+            "currency_code": "USD",
+            "value_parsed": f"${net_worth:,.2f}",
+        },
+        "spent-in-USD": {
+            "key": "spent-in-USD",
+            "title": "Spent in USD",
+            "monetary_value": f"{-spent_total:.2f}",
+            "currency_code": "USD",
+            "value_parsed": f"-${spent_total:,.2f}",
+        },
+        "earned-in-USD": {
+            "key": "earned-in-USD",
+            "title": "Earned in USD",
+            "monetary_value": f"{earned_total:.2f}",
+            "currency_code": "USD",
+            "value_parsed": f"${earned_total:,.2f}",
+        },
+        "bills-unpaid-in-USD": {
+            "key": "bills-unpaid-in-USD",
+            "title": "Bills unpaid",
+            "monetary_value": "195.49",
+            "currency_code": "USD",
+            "value_parsed": "$195.49",
+        },
+        "left-to-spend-in-USD": {
+            "key": "left-to-spend-in-USD",
+            "title": "Left to spend",
+            "monetary_value": f"{Decimal('1500.00') - budget_totals.get('Groceries', Decimal(0)) - budget_totals.get('Dining', Decimal(0)) - budget_totals.get('Gas', Decimal(0)) - budget_totals.get('Shopping', Decimal(0)):.2f}",
+            "currency_code": "USD",
+            "value_parsed": "",
+        },
     }
 
-    insight_category = [{"id": str(i + 1), "name": k, "difference": f"{-v:.2f}", "difference_float": float(-v), "currency_id": "1", "currency_code": "USD"} for i, (k, v) in enumerate(sorted(cat_totals.items(), key=lambda kv: -kv[1]))]
-    insight_expense = [{"id": str(expense_id(k)), "name": k, "difference": f"{-v:.2f}", "difference_float": float(-v), "currency_id": "1", "currency_code": "USD"} for k, v in sorted(merch_totals.items(), key=lambda kv: -kv[1])]
+    insight_category = [
+        {"id": str(i + 1), "name": k, "difference": f"{-v:.2f}", "difference_float": float(-v), "currency_id": "1", "currency_code": "USD"}
+        for i, (k, v) in enumerate(sorted(cat_totals.items(), key=lambda kv: -kv[1]))
+    ]
+    insight_expense = [
+        {"id": str(expense_id(k)), "name": k, "difference": f"{-v:.2f}", "difference_float": float(-v), "currency_id": "1", "currency_code": "USD"}
+        for k, v in sorted(merch_totals.items(), key=lambda kv: -kv[1])
+    ]
 
-    budget_defs = [("1", "Groceries", "600.00"), ("2", "Dining", "400.00"), ("3", "Gas", "200.00"), ("4", "Shopping", "300.00"), ("5", "Housing", "1850.00"), ("6", "Utilities", "200.00")]
+    budget_defs = [
+        ("1", "Groceries", "600.00"),
+        ("2", "Dining", "400.00"),
+        ("3", "Gas", "200.00"),
+        ("4", "Shopping", "300.00"),
+        ("5", "Housing", "1850.00"),
+        ("6", "Utilities", "200.00"),
+    ]
     budgets = {"data": [{"type": "budgets", "id": bid, "attributes": {"active": True, "name": name, "spent": []}} for bid, name, _ in budget_defs]}
     budget_limits = {
-        bid: [{"type": "budget_limits", "id": f"9{bid}", "attributes": {"budget_id": bid, "start": month_start.isoformat(), "end": ANCHOR.replace(day=28).isoformat(), "amount": limit, "spent": f"{-budget_totals.get(name, Decimal(0)):.2f}", "currency_code": "USD"}}]
+        bid: [
+            {
+                "type": "budget_limits",
+                "id": f"9{bid}",
+                "attributes": {
+                    "budget_id": bid,
+                    "start": month_start.isoformat(),
+                    "end": ANCHOR.replace(day=28).isoformat(),
+                    "amount": limit,
+                    "spent": f"{-budget_totals.get(name, Decimal(0)):.2f}",
+                    "currency_code": "USD",
+                },
+            }
+        ]
         for bid, name, limit in budget_defs
     }
 
     bills = {
         "data": [
-            {"type": "bills", "id": "1", "attributes": {"active": True, "name": "Rent", "amount_min": "1850.00", "amount_max": "1850.00", "repeat_freq": "monthly", "next_expected_match": "2026-11-01T00:00:00-04:00", "pay_dates": ["2026-11-01T00:00:00-04:00"], "paid_dates": []}},
-            {"type": "bills", "id": "2", "attributes": {"active": True, "name": "Verizon Wireless", "amount_min": "85.00", "amount_max": "85.00", "repeat_freq": "monthly", "next_expected_match": "2026-10-28T00:00:00-04:00", "pay_dates": ["2026-10-28T00:00:00-04:00"], "paid_dates": []}},
-            {"type": "bills", "id": "3", "attributes": {"active": True, "name": "JCP&L Electric", "amount_min": "80.00", "amount_max": "110.00", "repeat_freq": "monthly", "next_expected_match": "2026-10-30T00:00:00-04:00", "pay_dates": ["2026-10-30T00:00:00-04:00"], "paid_dates": []}},
-            {"type": "bills", "id": "4", "attributes": {"active": True, "name": "Netflix", "amount_min": "15.49", "amount_max": "15.49", "repeat_freq": "monthly", "next_expected_match": "2026-11-03T00:00:00-04:00", "pay_dates": ["2026-11-03T00:00:00-04:00"], "paid_dates": []}},
-            {"type": "bills", "id": "5", "attributes": {"active": True, "name": "Car insurance", "amount_min": "142.00", "amount_max": "142.00", "repeat_freq": "monthly", "next_expected_match": "2026-11-15T00:00:00-04:00", "pay_dates": ["2026-11-15T00:00:00-04:00"], "paid_dates": []}},
+            {
+                "type": "bills",
+                "id": "1",
+                "attributes": {
+                    "active": True,
+                    "name": "Rent",
+                    "amount_min": "1850.00",
+                    "amount_max": "1850.00",
+                    "repeat_freq": "monthly",
+                    "next_expected_match": "2026-11-01T00:00:00-04:00",
+                    "pay_dates": ["2026-11-01T00:00:00-04:00"],
+                    "paid_dates": [],
+                },
+            },
+            {
+                "type": "bills",
+                "id": "2",
+                "attributes": {
+                    "active": True,
+                    "name": "Verizon Wireless",
+                    "amount_min": "85.00",
+                    "amount_max": "85.00",
+                    "repeat_freq": "monthly",
+                    "next_expected_match": "2026-10-28T00:00:00-04:00",
+                    "pay_dates": ["2026-10-28T00:00:00-04:00"],
+                    "paid_dates": [],
+                },
+            },
+            {
+                "type": "bills",
+                "id": "3",
+                "attributes": {
+                    "active": True,
+                    "name": "JCP&L Electric",
+                    "amount_min": "80.00",
+                    "amount_max": "110.00",
+                    "repeat_freq": "monthly",
+                    "next_expected_match": "2026-10-30T00:00:00-04:00",
+                    "pay_dates": ["2026-10-30T00:00:00-04:00"],
+                    "paid_dates": [],
+                },
+            },
+            {
+                "type": "bills",
+                "id": "4",
+                "attributes": {
+                    "active": True,
+                    "name": "Netflix",
+                    "amount_min": "15.49",
+                    "amount_max": "15.49",
+                    "repeat_freq": "monthly",
+                    "next_expected_match": "2026-11-03T00:00:00-04:00",
+                    "pay_dates": ["2026-11-03T00:00:00-04:00"],
+                    "paid_dates": [],
+                },
+            },
+            {
+                "type": "bills",
+                "id": "5",
+                "attributes": {
+                    "active": True,
+                    "name": "Car insurance",
+                    "amount_min": "142.00",
+                    "amount_max": "142.00",
+                    "repeat_freq": "monthly",
+                    "next_expected_match": "2026-11-15T00:00:00-04:00",
+                    "pay_dates": ["2026-11-15T00:00:00-04:00"],
+                    "paid_dates": [],
+                },
+            },
         ]
     }
 
     return {
         "_anchor": ANCHOR.isoformat(),
         "about": {"data": {"version": "6.1.25", "api_version": "2.1.0", "php_version": "8.3.12", "os": "Linux", "driver": "mysql"}},
-        "accounts": {"data": accounts, "meta": {"pagination": {"total": len(accounts), "count": len(accounts), "per_page": 100, "current_page": 1, "total_pages": 1}}},
+        "accounts": {
+            "data": accounts,
+            "meta": {"pagination": {"total": len(accounts), "count": len(accounts), "per_page": 100, "current_page": 1, "total_pages": 1}},
+        },
         "summary": summary,
-        "transactions": {"data": groups, "meta": {"pagination": {"total": len(groups), "count": len(groups), "per_page": 1000, "current_page": 1, "total_pages": 1}}},
+        "transactions": {
+            "data": groups,
+            "meta": {"pagination": {"total": len(groups), "count": len(groups), "per_page": 1000, "current_page": 1, "total_pages": 1}},
+        },
         "insight_category": insight_category,
         "insight_expense": insight_expense,
         "budgets": budgets,

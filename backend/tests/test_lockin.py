@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import copy
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 
 import httpx
 import pytest
@@ -14,7 +14,7 @@ from app.integrations.lockin import LockInIntegration, build_training
 from app.services.attention import build_attention
 from app.settings import Settings
 
-NOW = datetime(2026, 10, 25, 16, 0, tzinfo=timezone.utc)
+NOW = datetime(2026, 10, 25, 16, 0, tzinfo=UTC)
 
 
 def settings(**overrides) -> Settings:
@@ -88,16 +88,40 @@ async def test_fetch_degraded_without_export():
 def test_attention_rules_for_training():
     cache = Cache(None)
     cache.configure("lockin", 300, True)
-    cache.set_ok("lockin", {"streak_risk": "at_risk", "sessions_needed_for_streak": 1, "days_left_in_week": 1, "next_session": {"name": "Legs A"}, "weighed_today": False, "phase": {"deload": True}, "public_url": "https://lockin.ts.net", "streak_weeks": 4})
+    cache.set_ok(
+        "lockin",
+        {
+            "streak_risk": "at_risk",
+            "sessions_needed_for_streak": 1,
+            "days_left_in_week": 1,
+            "next_session": {"name": "Legs A"},
+            "weighed_today": False,
+            "phase": {"deload": True},
+            "public_url": "https://lockin.ts.net",
+            "streak_weeks": 4,
+        },
+    )
     items = build_attention(cache, None, None, NOW)  # 16:00 UTC is noon in New York
     titles = [i["title"] for i in items]
     assert "Streak at risk: 1 session in 1 day" in titles
     assert "Log your weight" in titles and "Deload week" in titles
     assert all(i["link"] == "https://lockin.ts.net" for i in items if i["source"] == "lockin")
-    cache.set_ok("lockin", {"streak_risk": "lost", "sessions_needed_for_streak": 2, "days_left_in_week": 1, "sessions_this_week": 3, "streak_min_sessions": 5, "streak_weeks": 4, "weighed_today": True, "phase": {"deload": False}})
+    cache.set_ok(
+        "lockin",
+        {
+            "streak_risk": "lost",
+            "sessions_needed_for_streak": 2,
+            "days_left_in_week": 1,
+            "sessions_this_week": 3,
+            "streak_min_sessions": 5,
+            "streak_weeks": 4,
+            "weighed_today": True,
+            "phase": {"deload": False},
+        },
+    )
     titles = [i["title"] for i in build_attention(cache, None, None, NOW)]
     assert "4 week streak ends this week" in titles and "Log your weight" not in titles
     # before 10 AM local there is no weigh-in nag
-    early = datetime(2026, 10, 25, 12, 0, tzinfo=timezone.utc)  # 8 AM New York
+    early = datetime(2026, 10, 25, 12, 0, tzinfo=UTC)  # 8 AM New York
     cache.set_ok("lockin", {"streak_risk": "ok", "weighed_today": False, "phase": {}})
     assert build_attention(cache, None, None, early) == []

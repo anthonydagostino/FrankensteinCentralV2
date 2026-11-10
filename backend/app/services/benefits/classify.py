@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import date, timedelta
+from datetime import date
 from decimal import Decimal
 from typing import Any
 
@@ -46,7 +46,8 @@ class Classified:
     credited: Decimal = Decimal("0")
     extra: dict[str, Any] = field(default_factory=dict)
 
-    def as_evidence(self) -> dict:
+    def as_evidence(self) -> dict[str, Any]:
+        """The row as shown in the benefits UI evidence list."""
         out = {
             "journal_id": self.journal_id,
             "date": self.date.isoformat(),
@@ -67,7 +68,7 @@ class Classified:
         return out
 
 
-def text_of(row: dict, account_id: str | None = None) -> str:
+def text_of(row: dict[str, Any], account_id: str | None = None) -> str:
     """Description, notes, and the counterparty name. The card's own account name is left out."""
     parts = [str(row.get("description") or ""), str(row.get("notes") or "")]
     if account_id is None or str(row.get("source_id")) != str(account_id):
@@ -77,12 +78,12 @@ def text_of(row: dict, account_id: str | None = None) -> str:
     return " ".join(parts).lower()
 
 
-def own_text(row: dict) -> str:
+def own_text(row: dict[str, Any]) -> str:
     """Description and notes only, used for generic credit markers."""
     return " ".join(str(row.get(k) or "") for k in ("description", "notes")).lower()
 
 
-def direction(row: dict, account_id: str) -> str:
+def direction(row: dict[str, Any], account_id: str) -> str:
     """inflow, outflow, payment, or none relative to the card account."""
     t = row.get("type")
     src = str(row.get("source_id")) if row.get("source_id") is not None else None
@@ -99,7 +100,7 @@ def direction(row: dict, account_id: str) -> str:
     return "none"
 
 
-def _base(row: dict, kind: str, account_name: str) -> Classified:
+def _base(row: dict[str, Any], kind: str, account_name: str) -> Classified:
     return Classified(
         journal_id=int(row.get("journal_id") or 0),
         group_id=str(row.get("group_id") or ""),
@@ -111,7 +112,9 @@ def _base(row: dict, kind: str, account_name: str) -> Classified:
     )
 
 
-def classify_card(rows: list[dict], account_id: str, account_name: str, benefits: list[Benefit], overrides: dict[int, dict]) -> list[Classified]:
+def classify_card(
+    rows: list[dict[str, Any]], account_id: str, account_name: str, benefits: list[Benefit], overrides: dict[int, dict[str, Any]]
+) -> list[Classified]:
     """Classify every split that touches the card account. Purchases first, then deposits in date order."""
     rows = sorted(rows, key=lambda r: (str(r["date"])[:10], int(r.get("journal_id") or 0)))
     out: list[Classified] = []
@@ -149,40 +152,33 @@ def classify_card(rows: list[dict], account_id: str, account_name: str, benefits
                     purchases_by_benefit.setdefault(c.benefit_id, []).append(c)
                 out.append(c)
                 continue
-        matched = False
-        for b in benefits:
-            if b.tracking == "manual":
-                continue
-            # clawback: looks like a credit description on a withdrawal, or reversal/adjustment with the merchant
-            if (b.matches_credit(text) and CLAWBACK_MARKERS.search(text)) or (REVERSAL_MARKERS.search(text) and b.matches_merchant(text)):
-                c.kind = "credit_clawback"
-                c.benefit_id = b.id
+        # clawback: looks like a credit description on a withdrawal, or a reversal/adjustment naming the merchant
+        clawback = bool(CLAWBACK_MARKERS.search(text))
+        reversal = bool(REVERSAL_MARKERS.search(text))
+        matched = next(
+            (b for b in benefits if b.tracking != "manual" and ((clawback and b.matches_credit(text)) or (reversal and b.matches_merchant(text)))),
+            None,
+        )
+        if matched:
+            c.kind = "credit_clawback"
+            c.benefit_id = matched.id
+            c.confidence = "high"
+        else:
+            # purchase: first benefit whose merchant patterns match; exclude patterns make it ineligible but still attributed
+            matched = next((b for b in benefits if b.tracking == "matched" and b.purchase_patterns and b.matches_merchant(text)), None)
+            if matched:
+                c.kind = "purchase"
+                c.benefit_id = matched.id
                 c.confidence = "high"
-                matched = True
-                break
-        if not matched:
-            for b in benefits:
-                if b.tracking != "matched" or not b.purchase_patterns:
-                    continue
-                if b.matches_merchant(text) and not b.matches_exclude(text):
-                    c.kind = "purchase"
-                    c.benefit_id = b.id
-                    c.eligible = b.is_active_on(c.date)
-                    c.confidence = "high"
+                if matched.matches_exclude(text):
+                    c.eligible = False
+                    c.note = "excluded by pattern (gift card, outlet, or similar)"
+                else:
+                    c.eligible = matched.is_active_on(c.date)
                     c.remaining_unmatched = c.amount
                     if not c.eligible:
                         c.note = "outside the benefit's active dates"
-                    purchases_by_benefit.setdefault(b.id, []).append(c)
-                    matched = True
-                    break
-                if b.matches_merchant(text) and b.matches_exclude(text):
-                    c.kind = "purchase"
-                    c.benefit_id = b.id
-                    c.eligible = False
-                    c.confidence = "high"
-                    c.note = "excluded by pattern (gift card, outlet, or similar)"
-                    matched = True
-                    break
+                    purchases_by_benefit.setdefault(matched.id, []).append(c)
         out.append(c)
 
     # pass 2: inflows (statement credits, refunds, unclassified deposits)
@@ -231,11 +227,7 @@ def classify_card(rows: list[dict], account_id: str, account_name: str, benefits
             for b in benefits:
                 if b.tracking != "matched" or not b.matches_merchant(text):
                     continue
-                prior = [
-                    p
-                    for p in purchases_by_benefit.get(b.id, [])
-                    if p.eligible and 0 <= (c.date - p.date).days <= CREDIT_LOOKBACK_DAYS
-                ]
+                prior = [p for p in purchases_by_benefit.get(b.id, []) if p.eligible and 0 <= (c.date - p.date).days <= CREDIT_LOOKBACK_DAYS]
                 cap = b.cap
                 exact = [p for p in prior if p.amount == c.amount]
                 if exact and c.amount > cap:
@@ -268,5 +260,4 @@ def suggest_pattern(description: str) -> str:
     text = re.sub(r"\s+", " ", text)
     escaped = re.escape(text)
     escaped = re.sub(r"(\\?\d)+", r"\\d+", escaped)
-    escaped = escaped.replace("\\ ", " ?")
-    return escaped
+    return escaped.replace("\\ ", " ?")

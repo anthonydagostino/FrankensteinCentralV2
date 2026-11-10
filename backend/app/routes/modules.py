@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from typing import Any
+
+from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
 
 from ..auth import require_read, require_write
@@ -15,7 +17,7 @@ router = APIRouter(prefix="/api", tags=["modules"], dependencies=[Depends(requir
 
 
 @router.get("/weather")
-async def weather(location: str | None = None, state: AppState = Depends(get_state)):
+async def weather(location: str | None = None, state: AppState = Depends(get_state)) -> dict[str, Any]:
     env = state.cache.envelope("weather")
     data = env.get("data") or {}
     locs = data.get("locations") or {}
@@ -28,7 +30,7 @@ async def weather(location: str | None = None, state: AppState = Depends(get_sta
 
 
 @router.get("/calendar")
-async def calendar(days: int = Query(7, ge=1, le=31), state: AppState = Depends(get_state)):
+async def calendar(days: int = Query(7, ge=1, le=31), state: AppState = Depends(get_state)) -> dict[str, Any]:
     env = state.cache.envelope("calendar")
     data = env.get("data")
     if data:
@@ -37,12 +39,12 @@ async def calendar(days: int = Query(7, ge=1, le=31), state: AppState = Depends(
 
 
 @router.get("/plex")
-async def plex(state: AppState = Depends(get_state)):
+async def plex(state: AppState = Depends(get_state)) -> dict[str, Any]:
     return state.cache.envelope("plex")
 
 
 @router.get("/plex/image")
-async def plex_image(path: str, w: int = Query(300, ge=16, le=2000), h: int = Query(450, ge=16, le=2000), state: AppState = Depends(get_state)):
+async def plex_image(path: str, w: int = Query(300, ge=16, le=2000), h: int = Query(450, ge=16, le=2000), state: AppState = Depends(get_state)) -> Response:
     if not path.startswith("/library/") or ".." in path:
         raise HTTPException(status_code=400, detail="path must start with /library/")
     integration = state.integrations.get("plex")
@@ -51,7 +53,7 @@ async def plex_image(path: str, w: int = Query(300, ge=16, le=2000), h: int = Qu
         svg = _placeholder_svg(path, w, h)
         return Response(content=svg, media_type="image/svg+xml", headers={"Cache-Control": "public, max-age=86400"})
     url = f"{base}/photo/:/transcode"
-    params = {"width": w, "height": h, "minSize": 1, "upscale": 1, "url": path}
+    params: dict[str, str | int] = {"width": w, "height": h, "minSize": 1, "upscale": 1, "url": path}
     async with make_client(headers=integration.headers()) as client:
         resp = await client.get(url, params=params)
     if resp.status_code != 200:
@@ -60,6 +62,7 @@ async def plex_image(path: str, w: int = Query(300, ge=16, le=2000), h: int = Qu
 
 
 def _placeholder_svg(path: str, w: int, h: int) -> str:
+    """Deterministic gradient poster for mock mode, so the layout looks right without a Plex server."""
     seed = sum(ord(c) for c in path)
     hue = seed % 360
     return (
@@ -72,17 +75,17 @@ def _placeholder_svg(path: str, w: int, h: int) -> str:
 
 
 @router.get("/vault")
-async def vault(state: AppState = Depends(get_state)):
+async def vault(state: AppState = Depends(get_state)) -> dict[str, Any]:
     return state.cache.envelope("vault")
 
 
 @router.get("/containers")
-async def containers(state: AppState = Depends(get_state)):
+async def containers(state: AppState = Depends(get_state)) -> dict[str, Any]:
     return state.cache.envelope("docker")
 
 
 @router.post("/containers/{cid}/restart", dependencies=[Depends(require_write)])
-async def restart(cid: str, state: AppState = Depends(get_state)):
+async def restart(cid: str, state: AppState = Depends(get_state)) -> dict[str, Any]:
     if not state.settings.docker_allow_restart:
         raise HTTPException(status_code=403, detail="Container restarts are disabled (DOCKER_ALLOW_RESTART=false)")
     if not cid.isalnum() or len(cid) > 64:
@@ -98,16 +101,16 @@ async def restart(cid: str, state: AppState = Depends(get_state)):
 
 
 @router.get("/lockin")
-async def lockin(state: AppState = Depends(get_state)):
+async def lockin(state: AppState = Depends(get_state)) -> dict[str, Any]:
     return state.cache.envelope("lockin")
 
 
 @router.get("/probes")
-async def probes(state: AppState = Depends(get_state)):
+async def probes(state: AppState = Depends(get_state)) -> dict[str, Any]:
     return state.cache.envelope("probes")
 
 
 @router.get("/attention")
-async def attention(request: Request, location: str | None = None, state: AppState = Depends(get_state)):
+async def attention(location: str | None = None, state: AppState = Depends(get_state)) -> dict[str, Any]:
     items = state.attention(location)
     return {"module": "attention", "status": "ok", "configured": True, "fetched_at": None, "stale": False, "error": None, "data": {"items": items}}

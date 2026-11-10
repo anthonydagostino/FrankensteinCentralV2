@@ -1,21 +1,34 @@
 import { useProbes } from "../api/hooks";
 import { StatusDot } from "../components/Card";
+import { PANEL_CLASS } from "../lib/ui";
 
+/** One line of health pills for the configured probes; it never blocks the page, so errors stay small. */
 export function ServiceHealthRow() {
   const q = useProbes();
   const env = q.data;
   if (!env || env.status === "disabled" || !env.data) {
-    return <div className="rounded-xl border border-ink-700 bg-ink-900/80 px-4 py-2 text-xs text-ink-500">{env?.status === "disabled" ? "No health probes configured" : "Probing services"}</div>;
+    const text =
+      q.error && !env ? `Service health unavailable: ${q.error.message}` : env?.status === "disabled" ? "No health probes configured" : "Probing services";
+    return (
+      <div className={`${PANEL_CLASS} flex items-center gap-3 px-4 py-2 text-xs text-ink-500`}>
+        <span>{text}</span>
+        {q.error && !env && (
+          <button type="button" onClick={() => q.refetch()} className="rounded border border-ink-700 px-2 py-0.5 text-ink-300 hover:border-accent/50">
+            Retry
+          </button>
+        )}
+      </div>
+    );
   }
   return (
-    <div className="flex flex-wrap items-center gap-2 rounded-xl border border-ink-700 bg-ink-900/80 px-3 py-2" aria-label="Service health">
+    <section className={`${PANEL_CLASS} flex flex-wrap items-center gap-2 px-3 py-2`} aria-label="Service health">
       <span className="text-[11px] font-semibold uppercase tracking-wide text-ink-400">Services</span>
       {env.data.probes.map((p) => {
         const content = (
           <>
             <StatusDot status={p.ok ? "ok" : "error"} />
             <span className="text-ink-200">{p.name}</span>
-            <span className="tabular text-ink-400">{p.ok && p.latency_ms !== null ? `${p.latency_ms} ms` : p.error ?? "down"}</span>
+            <span className="tabular text-ink-400">{p.ok && p.latency_ms !== null ? `${p.latency_ms} ms` : (p.error ?? "down")}</span>
           </>
         );
         const cls = "inline-flex items-center gap-1.5 rounded-full border border-ink-700 bg-ink-800 px-2.5 py-1 text-xs";
@@ -30,6 +43,6 @@ export function ServiceHealthRow() {
         );
       })}
       {env.stale && <span className="text-[11px] text-amber-300">stale</span>}
-    </div>
+    </section>
   );
 }

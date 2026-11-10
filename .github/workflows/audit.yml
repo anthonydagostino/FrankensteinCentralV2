@@ -1,0 +1,118 @@
+name: Claude audit
+
+# Tier 3: a weekly full audit on a branch of its own, delivered as a pull request.
+# Only schedule and manual runs start it, so its own commits and pull request can never re-trigger it.
+
+on:
+  schedule:
+    - cron: "20 6 * * 1" # Mondays 06:20 UTC
+  workflow_dispatch:
+
+concurrency:
+  group: claude-audit
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  AUDIT_LABEL: claude-audit
+  DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    steps:
+      - name: Skip while a previous audit pull request is still open
+        id: open
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          n=$(gh pr list --repo "$GITHUB_REPOSITORY" --state open --label "$AUDIT_LABEL" --json number --jq length)
+          echo "count=$n" >> "$GITHUB_OUTPUT"
+          [ "$n" = 0 ] || echo "::notice::$n audit pull request(s) still open, skipping this run"
+
+      - if: steps.open.outputs.count == '0'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ env.DEFAULT_BRANCH }}
+          fetch-depth: 0
+      # The audit prompt runs the test suite, so both toolchains are installed first.
+      - if: steps.open.outputs.count == '0'
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+      - if: steps.open.outputs.count == '0'
+        uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - if: steps.open.outputs.count == '0'
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - if: steps.open.outputs.count == '0'
+        run: |
+          (cd backend && uv sync --frozen)
+          (cd frontend && npm ci)
+
+      - name: Create the audit branch
+        if: steps.open.outputs.count == '0'
+        id: branch
+        run: |
+          name="audit/$(date -u +%F)"
+          git ls-remote --exit-code --heads origin "$name" >/dev/null && name="$name-$GITHUB_RUN_NUMBER"
+          git switch -c "$name"
+          git config user.name "Claude audit"
+          git config user.email "noreply@anthropic.com"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          { echo 'prompt<<PROMPT_EOF'; cat .ci/prompts/full-audit.md; echo 'PROMPT_EOF'; } >> "$GITHUB_OUTPUT"
+
+      # GITHUB_TOKEN has contents: read here, so Claude can commit locally but has no token that can push.
+      - name: Run the audit
+        if: steps.open.outputs.count == '0'
+        id: claude
+        continue-on-error: true
+        uses: anthropics/claude-code-action@4fa93a88de49bbef68b10eb15aabedf28ca0e1ed # v1.0.271
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          prompt: ${{ steps.branch.outputs.prompt }}
+          claude_args: >-
+            --max-turns 300
+            --max-budget-usd 25
+            --allowedTools "Read,Glob,Grep,Edit,Write,MultiEdit,Bash(git add:*),Bash(git commit:*),Bash(git status:*),Bash(git diff:*),Bash(git log:*),Bash(git show:*),Bash(uv run:*),Bash(uv sync:*),Bash(uv lock:*),Bash(npm run:*),Bash(npm test:*),Bash(npm ci:*),Bash(npm audit:*),Bash(npx:*),Bash(scripts/test.sh:*),Bash(ls:*),Bash(cat:*),Bash(head:*),Bash(tail:*),Bash(wc:*),Bash(find:*),Bash(grep:*)"
+            --disallowedTools "Bash(git push:*),Bash(git checkout:*),Bash(git switch:*),Bash(git reset:*),Bash(git branch:*),Bash(git remote:*),Bash(git rebase:*),Bash(gh:*),Bash(curl:*),Bash(wget:*)"
+            --json-schema '{"type":"object","properties":{"report":{"type":"string","description":"The final audit report in Markdown"}},"required":["report"]}'
+
+      # The push token is only present in this step, after Claude has finished.
+      - name: Push the branch and open the pull request
+        if: steps.open.outputs.count == '0'
+        env:
+          GH_TOKEN: ${{ secrets.AUDIT_PUSH_TOKEN }}
+          BRANCH: ${{ steps.branch.outputs.name }}
+          STRUCTURED: ${{ steps.claude.outputs.structured_output }}
+          CLAUDE_RESULT: ${{ steps.claude.outcome }}
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            git add -A && git commit -qm "Audit: changes left uncommitted by the run"
+          fi
+          if [ "$(git rev-list --count "origin/$DEFAULT_BRANCH..HEAD")" = 0 ]; then
+            echo "::notice::The audit made no changes, no pull request opened (Claude step: $CLAUDE_RESULT)"
+            exit 0
+          fi
+          git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${BRANCH}"
+          gh label create "$AUDIT_LABEL" --force --color 5319e7 --description "Opened by the scheduled Claude audit"
+          report=$(printf '%s' "$STRUCTURED" | jq -r '.report // empty' 2>/dev/null || true)
+          [ -n "$report" ] || report="The audit step ended with status: $CLAUDE_RESULT and returned no report. See the workflow run log."
+          {
+            printf '%s\n\n' "$report"
+            echo "---"
+            echo "Opened by the Claude audit workflow, run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          } > body.md
+          gh pr create --repo "$GITHUB_REPOSITORY" --base "$DEFAULT_BRANCH" --head "$BRANCH" \
+            --title "Claude audit $(date -u +%F)" --body-file body.md \
+            --label "$AUDIT_LABEL" --assignee "$GITHUB_REPOSITORY_OWNER"

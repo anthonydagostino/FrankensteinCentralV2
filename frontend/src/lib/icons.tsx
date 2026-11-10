@@ -1,6 +1,40 @@
 import {
-  AlertTriangle, BadgeDollarSign, Calendar, CalendarCheck, CalendarClock, CircleHelp, Cloud, CloudDrizzle, CloudFog, CloudHail, CloudLightning, CloudMoon, CloudRain, CloudRainWind, CloudSnow, CloudSun,
-  Container, Database, Dumbbell, Scale, DatabaseBackup, DatabaseZap, HeartPulse, KeyRound, Link, Moon, Receipt, ShieldOff, Sun, Tv, Umbrella, Wallet, Wind, Snowflake, SunMedium, type LucideIcon,
+  AlertTriangle,
+  BadgeDollarSign,
+  Calendar,
+  CalendarCheck,
+  CalendarClock,
+  CircleHelp,
+  Cloud,
+  CloudDrizzle,
+  CloudFog,
+  CloudHail,
+  CloudLightning,
+  CloudMoon,
+  CloudRain,
+  CloudRainWind,
+  CloudSnow,
+  CloudSun,
+  Container,
+  Database,
+  Dumbbell,
+  Scale,
+  DatabaseBackup,
+  DatabaseZap,
+  HeartPulse,
+  KeyRound,
+  Link,
+  Moon,
+  Receipt,
+  ShieldOff,
+  Sun,
+  Tv,
+  Umbrella,
+  Wallet,
+  Wind,
+  Snowflake,
+  SunMedium,
+  type LucideIcon,
 } from "lucide-react";
 
 const MAP: Record<string, LucideIcon> = {
@@ -42,12 +76,7 @@ const MAP: Record<string, LucideIcon> = {
   link: Link,
 };
 
-export function iconFor(name: string | null | undefined): LucideIcon {
-  if (!name) return Cloud;
-  return MAP[name] ?? Link;
-}
-
 export function DynamicIcon({ name, className, size }: { name: string | null | undefined; className?: string; size?: number }) {
-  const Icon = iconFor(name);
+  const Icon: LucideIcon = name ? (MAP[name] ?? Link) : Cloud;
   return <Icon className={className} size={size} aria-hidden="true" />;
 }

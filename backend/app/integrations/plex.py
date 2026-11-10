@@ -11,14 +11,17 @@ from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime
-from typing import Any, Callable
+from collections.abc import Callable
+from datetime import UTC, datetime
+from typing import Any
 from urllib.parse import quote
 
 import httpx
 
+from ..config_loader import DashboardConfig
+from ..settings import Settings
 from ..util import iso, utcnow
-from .base import BaseIntegration, Degraded, TokenRejected, describe_error, load_fixture, make_client, request
+from .base import BaseIntegration, Degraded, TokenRejected, describe_error, fresh, load_fixture, make_client, request
 
 log = logging.getLogger("frankenstein.plex")
 
@@ -29,6 +32,7 @@ CONNECT_TIMEOUT = 6.0
 
 
 def plex_headers(token: str, client_id: str) -> dict[str, str]:
+    """Plex API headers; the token travels in X-Plex-Token, never in the URL."""
     return {
         "X-Plex-Token": token,
         "Accept": "application/json",
@@ -40,7 +44,7 @@ def plex_headers(token: str, client_id: str) -> dict[str, str]:
     }
 
 
-def _episode_label(item: dict) -> str | None:
+def _episode_label(item: dict[str, Any]) -> str | None:
     if item.get("type") != "episode":
         return None
     season = item.get("parentIndex")
@@ -50,11 +54,11 @@ def _episode_label(item: dict) -> str | None:
     return f"S{int(season):02d}E{int(ep):02d}"
 
 
-def _poster(item: dict) -> str | None:
+def _poster(item: dict[str, Any]) -> str | None:
     return item.get("grandparentThumb") or item.get("thumb") or item.get("parentThumb")
 
 
-def _item(item: dict) -> dict:
+def _item(item: dict[str, Any]) -> dict[str, Any]:
     kind = item.get("type")
     title = item.get("title")
     show = item.get("grandparentTitle")
@@ -76,14 +80,15 @@ def _item(item: dict) -> dict:
         "subtitle": subtitle,
         "year": item.get("year"),
         "thumb": _poster(item),
-        "added_at": iso(datetime.fromtimestamp(int(added), tz=utcnow().tzinfo)) if added else None,
+        "added_at": iso(datetime.fromtimestamp(int(added), tz=UTC)) if added else None,
         "view_offset": item.get("viewOffset"),
         "duration": item.get("duration"),
-        "progress": int(round(100 * int(item.get("viewOffset") or 0) / int(item["duration"]))) if item.get("duration") else None,
+        "progress": round(100 * int(item.get("viewOffset") or 0) / int(item["duration"])) if item.get("duration") else None,
     }
 
 
-def parse_sessions(raw: dict) -> list[dict]:
+def parse_sessions(raw: dict[str, Any]) -> list[dict[str, Any]]:
+    """Now playing rows from /status/sessions: title, user, player, progress, and transcoding flag."""
     out = []
     for s in (raw.get("MediaContainer", {}) or {}).get("Metadata", []) or []:
         duration = int(s.get("duration") or 0)
@@ -95,35 +100,43 @@ def parse_sessions(raw: dict) -> list[dict]:
                 "rating_key": str(s.get("ratingKey")),
                 "type": s.get("type"),
                 "title": s.get("grandparentTitle") or s.get("title"),
-                "subtitle": f"{_episode_label(s) or ''} {s.get('title')}".strip() if s.get("type") == "episode" else (str(s.get("year")) if s.get("year") else None),
+                "subtitle": f"{_episode_label(s) or ''} {s.get('title')}".strip()
+                if s.get("type") == "episode"
+                else (str(s.get("year")) if s.get("year") else None),
                 "thumb": _poster(s),
                 "user": (s.get("User", {}) or {}).get("title"),
                 "player": player.get("title") or player.get("product"),
                 "state": player.get("state", "playing"),
-                "progress": int(round(100 * offset / duration)) if duration else 0,
+                "progress": round(100 * offset / duration) if duration else 0,
                 "view_offset": offset,
                 "duration": duration,
-                "transcoding": "TranscodeSession" in s and bool(s.get("TranscodeSession")),
+                "transcoding": bool(s.get("TranscodeSession")),
             }
         )
     return out
 
 
-def parse_rail(raw: dict, limit: int = 12) -> list[dict]:
+def parse_rail(raw: dict[str, Any], limit: int = 12) -> list[dict[str, Any]]:
+    """The first `limit` library items of a hub response as poster rows."""
     items = (raw.get("MediaContainer", {}) or {}).get("Metadata", []) or []
     return [_item(i) for i in items[:limit]]
 
 
-def deep_links(public_url: str, machine_id: str | None) -> dict:
+def deep_links(public_url: str, machine_id: str | None) -> dict[str, str]:
+    """Plex Web links for the server and an item template keyed by rating_key."""
     base = public_url.rstrip("/")
     server = f"{base}/#!/media/{machine_id}/com.plexapp.plugins.library" if machine_id else base
-    return {"server": server, "item_template": f"{base}/#!/server/{machine_id}/details?key=" + quote("/library/metadata/", safe="") + "{rating_key}" if machine_id else base}
+    return {
+        "server": server,
+        "item_template": f"{base}/#!/server/{machine_id}/details?key=" + quote("/library/metadata/", safe="") + "{rating_key}" if machine_id else base,
+    }
 
 
 # --------------------------------------------------------------------------
 # plex.tv discovery
 # --------------------------------------------------------------------------
-def pick_server(resources: list[dict], preferred_name: str = "") -> dict | None:
+def pick_server(resources: list[dict[str, Any]], preferred_name: str = "") -> dict[str, Any] | None:
+    """The plex.tv resource to use: the one named in PLEX_SERVER_NAME, else an owned server, else one that is online, else the first."""
     servers = [r for r in resources if "server" in str(r.get("provides", ""))]
     if not servers:
         return None
@@ -136,11 +149,11 @@ def pick_server(resources: list[dict], preferred_name: str = "") -> dict | None:
     return (owned or present or servers)[0]
 
 
-def ordered_connections(resource: dict) -> list[str]:
+def ordered_connections(resource: dict[str, Any]) -> list[str]:
     """Candidate base URLs: public first, then local, then relay. Each connection yields its plex.direct uri and a raw address form."""
     conns = list(resource.get("connections") or [])
 
-    def rank(c: dict) -> tuple[int, int]:
+    def rank(c: dict[str, Any]) -> tuple[int, int]:
         return (1 if c.get("relay") else 0, 1 if c.get("local") else 0)
 
     urls: list[str] = []
@@ -160,13 +173,13 @@ class PlexIntegration(BaseIntegration):
     interval_seconds = 30
     required_env = ["PLEX_TOKEN"]
 
-    def __init__(self, settings, config, client_id_provider: Callable[[], str] | None = None):
+    def __init__(self, settings: Settings, config: DashboardConfig, client_id_provider: Callable[[], str] | None = None) -> None:
         super().__init__(settings, config)
         self._client_id_provider = client_id_provider
         self._client_id: str | None = None
-        self._rails: tuple[datetime, dict] | None = None
+        self._rails: tuple[datetime, dict[str, Any]] | None = None
         # resolved connection: (when, base url, server token, server meta)
-        self._resolved: tuple[datetime, str, str, dict] | None = None
+        self._resolved: tuple[datetime, str, str, dict[str, Any]] | None = None
 
     # -- identity --------------------------------------------------------
     def is_configured(self) -> bool:
@@ -176,6 +189,7 @@ class PlexIntegration(BaseIntegration):
         return ["PLEX_TOKEN", "PLEX_URL (optional, discovered through plex.tv when empty)"]
 
     def client_id(self) -> str:
+        """Stable X-Plex-Client-Identifier for this install."""
         if self._client_id:
             return self._client_id
         if self._client_id_provider:
@@ -185,11 +199,13 @@ class PlexIntegration(BaseIntegration):
         return self._client_id
 
     def base_url(self) -> str | None:
+        """PLEX_URL when set, otherwise the connection chosen through plex.tv discovery."""
         if self.settings.plex_url:
             return self.settings.plex_url.rstrip("/")
         return self._resolved[1] if self._resolved else None
 
     def server_token(self) -> str:
+        """The token to send to the server: PLEX_TOKEN directly, or the per-server access token from plex.tv."""
         if self.settings.plex_url or not self._resolved:
             return self.settings.plex_token
         return self._resolved[2]
@@ -197,11 +213,12 @@ class PlexIntegration(BaseIntegration):
     def headers(self) -> dict[str, str]:
         return plex_headers(self.server_token(), self.client_id())
 
-    def server_meta(self) -> dict:
+    def server_meta(self) -> dict[str, Any]:
+        """Name, owner, and connection details of the discovered server for the widget header."""
         return self._resolved[3] if self._resolved else {}
 
     # -- discovery -------------------------------------------------------
-    async def _discover(self, client: httpx.AsyncClient) -> tuple[str, str, dict]:
+    async def _discover(self, client: httpx.AsyncClient) -> tuple[str, str, dict[str, Any]]:
         headers = plex_headers(self.settings.plex_token, self.client_id())
         resp = await request(client, "GET", PLEX_TV_RESOURCES, params={"includeHttps": 1, "includeRelay": 1}, headers=headers, service="plex.tv")
         resp.raise_for_status()
@@ -210,13 +227,23 @@ class PlexIntegration(BaseIntegration):
         if server is None:
             raise RuntimeError("plex.tv lists no server for this account (own one or ask for a share)")
         token = server.get("accessToken") or self.settings.plex_token
-        meta = {"name": server.get("name"), "owned": bool(server.get("owned")), "shared_by": server.get("sourceTitle") if not server.get("owned") else None, "machine_id": server.get("clientIdentifier"), "platform": server.get("platform")}
+        meta = {
+            "name": server.get("name"),
+            "owned": bool(server.get("owned")),
+            "shared_by": server.get("sourceTitle") if not server.get("owned") else None,
+            "machine_id": server.get("clientIdentifier"),
+            "platform": server.get("platform"),
+        }
         tried: list[str] = []
         for base in ordered_connections(server):
             try:
                 r = await client.get(f"{base}/identity", headers=plex_headers(token, self.client_id()), timeout=CONNECT_TIMEOUT)
                 if r.status_code == 200:
-                    meta["via"] = "relay" if ".plex.direct" in base and any(c.get("relay") and c.get("uri") == base for c in server.get("connections") or []) else "direct"
+                    meta["via"] = (
+                        "relay"
+                        if ".plex.direct" in base and any(c.get("relay") and c.get("uri") == base for c in server.get("connections") or [])
+                        else "direct"
+                    )
                     log.info("Plex server %s reachable (%s)", meta["name"], meta["via"])
                     return base, token, meta
                 if r.status_code in (401, 403):
@@ -239,20 +266,23 @@ class PlexIntegration(BaseIntegration):
         return base, token
 
     # -- calls -----------------------------------------------------------
-    async def _get(self, client: httpx.AsyncClient, base: str, token: str, path: str, **kwargs: Any) -> dict:
+    async def _get(self, client: httpx.AsyncClient, base: str, token: str, path: str, **kwargs: Any) -> dict[str, Any]:
         headers = {**plex_headers(token, self.client_id()), **kwargs.pop("headers", {})}
         resp = await request(client, "GET", f"{base}{path}", headers=headers, service="Plex", **kwargs)
         resp.raise_for_status()
-        return resp.json()
+        payload: dict[str, Any] = resp.json()
+        return payload
 
-    async def _fetch_rails(self, client: httpx.AsyncClient, base: str, token: str) -> dict:
+    async def _fetch_rails(self, client: httpx.AsyncClient, base: str, token: str) -> dict[str, Any]:
         now = utcnow()
-        if self._rails and (now - self._rails[0]).total_seconds() < RAILS_TTL:
+        if self._rails and fresh(self._rails[0], now, RAILS_TTL):
             return self._rails[1]
-        rails: dict = {"recently_added": [], "on_deck": [], "libraries": []}
+        rails: dict[str, Any] = {"recently_added": [], "on_deck": [], "libraries": []}
         errors = []
         try:
-            rails["recently_added"] = parse_rail(await self._get(client, base, token, "/library/recentlyAdded", headers={"X-Plex-Container-Start": "0", "X-Plex-Container-Size": "12"}))
+            rails["recently_added"] = parse_rail(
+                await self._get(client, base, token, "/library/recentlyAdded", headers={"X-Plex-Container-Start": "0", "X-Plex-Container-Size": "12"})
+            )
         except Exception as exc:
             errors.append(f"recently added: {describe_error(exc, 'Plex')}")
         try:
@@ -265,19 +295,22 @@ class PlexIntegration(BaseIntegration):
             for sec in sections:
                 count = None
                 try:
-                    payload = await self._get(client, base, token, f"/library/sections/{sec.get('key')}/all", headers={"X-Plex-Container-Start": "0", "X-Plex-Container-Size": "0"})
+                    payload = await self._get(
+                        client, base, token, f"/library/sections/{sec.get('key')}/all", headers={"X-Plex-Container-Start": "0", "X-Plex-Container-Size": "0"}
+                    )
                     count = (payload.get("MediaContainer", {}) or {}).get("totalSize")
-                except Exception:
-                    pass
+                except Exception as exc:  # a count is decoration; the library still lists without it
+                    log.debug("library count for %s failed: %s", sec.get("title"), exc.__class__.__name__)
                 libs.append({"key": sec.get("key"), "title": sec.get("title"), "type": sec.get("type"), "count": count})
             rails["libraries"] = libs
         except Exception as exc:
             errors.append(f"libraries: {describe_error(exc, 'Plex')}")
         rails["errors"] = errors
-        self._rails = (now, rails)
+        if not errors:
+            self._rails = (now, rails)
         return rails
 
-    async def fetch(self) -> dict:
+    async def fetch(self) -> dict[str, Any]:
         async with make_client() as client:
             base, token = await self._ensure_connection(client)
             try:
@@ -311,7 +344,7 @@ class PlexIntegration(BaseIntegration):
             raise Degraded(data, "; ".join(rails["errors"]))
         return data
 
-    def mock(self) -> dict:
+    def mock(self) -> dict[str, Any]:
         identity = load_fixture("plex/identity.json")["MediaContainer"]
         sessions = parse_sessions(load_fixture("plex/sessions.json"))
         recently = parse_rail(load_fixture("plex/recently_added.json"))
@@ -320,7 +353,15 @@ class PlexIntegration(BaseIntegration):
         counts = load_fixture("plex/section_counts.json")
         libraries = [{"key": s["key"], "title": s["title"], "type": s["type"], "count": counts.get(str(s["key"]))} for s in sections]
         return {
-            "server": {"online": True, "version": identity["version"], "machine_id": identity["machineIdentifier"], "name": "Absolute Cinema", "owned": False, "shared_by": "eddiedlugosz", "via": "direct"},
+            "server": {
+                "online": True,
+                "version": identity["version"],
+                "machine_id": identity["machineIdentifier"],
+                "name": "Absolute Cinema",
+                "owned": False,
+                "shared_by": "eddiedlugosz",
+                "via": "direct",
+            },
             "sessions": sessions,
             "recently_added": recently,
             "on_deck": on_deck,

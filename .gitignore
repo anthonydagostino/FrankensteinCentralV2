@@ -11,3 +11,7 @@ __pycache__/
 frontend/dist/
 backend/static/
 .DS_Store
+tsconfig.tsbuildinfo
+backend/coverage.xml
+backend/.coverage
+frontend/coverage/

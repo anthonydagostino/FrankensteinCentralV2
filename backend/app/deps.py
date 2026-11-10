@@ -8,4 +8,5 @@ from .state import AppState
 
 
 def get_state(request: Request) -> AppState:
-    return request.app.state.fc
+    state: AppState = request.app.state.fc
+    return state
