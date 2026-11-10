@@ -255,6 +255,19 @@ def test_log_redaction():
     assert "[redacted]" in msg
 
 
+def test_log_redaction_keeps_positional_args_for_uvicorn_access_log():
+    """uvicorn's access formatter unpacks five positional args; redaction must not drop them."""
+    from uvicorn.logging import AccessFormatter
+
+    flt = RedactingFilter([])
+    record = logging.LogRecord(
+        "uvicorn.access", logging.INFO, "", 0, '%s - "%s %s HTTP/%s" %d', ("127.0.0.1:1", "GET", "/kiosk?token=abcdef123456", "1.1", 303), None
+    )
+    flt.filter(record)
+    line = AccessFormatter().format(record)
+    assert "abcdef123456" not in line and "[redacted]" in line and "303" in line
+
+
 def test_log_redaction_covers_tracebacks():
     flt = RedactingFilter(["supersecrettoken123"])
     try:

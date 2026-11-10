@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+from typing import Any
 
 _PATTERNS = [
     re.compile(r"(X-Plex-Token=)[^&\s\"']+", re.I),
@@ -30,15 +31,17 @@ class RedactingFilter(logging.Filter):
                 text = text.replace(secret, "[redacted]")
         return text
 
+    def _redact_value(self, value: Any) -> Any:
+        return self.redact(value) if isinstance(value, str) else value
+
     def filter(self, record: logging.LogRecord) -> bool:
-        try:
-            msg = record.getMessage()
-        except Exception:
-            return True
-        redacted = self.redact(msg)
-        if redacted != msg:
-            record.msg = redacted
-            record.args = ()
+        # args are redacted in place rather than folded into msg: uvicorn's access formatter unpacks them by position
+        if isinstance(record.args, tuple):
+            record.args = tuple(self._redact_value(a) for a in record.args)
+        elif isinstance(record.args, dict):
+            record.args = {k: self._redact_value(v) for k, v in record.args.items()}
+        if isinstance(record.msg, str):
+            record.msg = self.redact(record.msg)
         if record.exc_info:
             # tracebacks carry request URLs (httpx errors), so they are rendered and redacted here
             record.exc_text = self.redact(logging.Formatter().formatException(record.exc_info))
