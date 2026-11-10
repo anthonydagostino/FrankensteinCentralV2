@@ -177,7 +177,7 @@ jobs:
             echo "Get the diff with: gh pr diff $PR. Post each finding with the inline comment tool on the exact line."
             echo "If nothing is worth raising, post one comment with: gh pr comment $PR --body '<!-- claude-diff-review --> ...'"
             echo
-            git show "origin/$BASE:.ci/prompts/diff-review.md"
+            git show "origin/$BASE:.ci/prompts/diff-review.md" 2>/dev/null || cat .ci/prompts/diff-review.md
             echo 'PROMPT_EOF'
           } >> "$GITHUB_OUTPUT"
       - name: Remove this job's comments from the previous push
