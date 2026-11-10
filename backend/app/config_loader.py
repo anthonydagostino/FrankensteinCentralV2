@@ -6,7 +6,7 @@ from datetime import date
 from decimal import Decimal
 from functools import lru_cache
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_validator, model_validator
@@ -130,7 +130,7 @@ class BenefitConfig(StrictModel):
 
     @field_validator("period_caps", mode="before")
     @classmethod
-    def _string_keys(cls, value):
+    def _string_keys(cls, value: Any) -> Any:
         if isinstance(value, dict):
             return {str(k): v for k, v in value.items()}
         return value
@@ -159,7 +159,7 @@ def _format_validation_error(path: Path, exc: ValidationError) -> str:
     return "\n".join(lines)
 
 
-def _load_yaml(path: Path) -> dict:
+def _load_yaml(path: Path) -> dict[str, Any]:
     if not path.exists():
         raise ConfigError(f"Config file not found: {path}")
     with path.open("r", encoding="utf-8") as fh:

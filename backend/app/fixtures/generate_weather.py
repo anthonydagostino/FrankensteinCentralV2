@@ -5,15 +5,16 @@ import math
 import random
 from datetime import date, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 HERE = Path(__file__).resolve().parent
 ANCHOR = date(2026, 10, 20)
 
 
-def build_open_meteo() -> dict:
+def build_open_meteo() -> dict[str, Any]:
     rnd = random.Random(42)
     hourly_time, temps, pops, codes, winds = [], [], [], [], []
-    daily: dict[str, list] = {
+    daily: dict[str, list[Any]] = {
         "time": [],
         "weather_code": [],
         "temperature_2m_max": [],
@@ -75,7 +76,7 @@ def build_open_meteo() -> dict:
     }
 
 
-def build_nws() -> dict:
+def build_nws() -> dict[str, Any]:
     return {
         "type": "FeatureCollection",
         "features": [

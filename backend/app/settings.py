@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 from functools import lru_cache
 from pathlib import Path
+from typing import Any
 
 from dotenv import load_dotenv
 from pydantic import Field, model_validator
@@ -91,7 +92,7 @@ class Settings(BaseSettings):
 
     @model_validator(mode="before")
     @classmethod
-    def _empty_means_default(cls, values):
+    def _empty_means_default(cls, values: Any) -> Any:
         """An empty value in .env (MOCK_PLEX=) means "use the default", not an empty string."""
         if not isinstance(values, dict):
             return values

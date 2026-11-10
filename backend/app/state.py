@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import logging
 import uuid
-from collections.abc import Callable
+from collections.abc import Callable, Coroutine
 from decimal import Decimal
 from typing import Any
 
@@ -44,17 +44,17 @@ class AppState:
         self.scheduler = Scheduler(cache)
         self.engine = BenefitsEngine(catalog, config.cards)
         self.integrations: dict[str, Any] = {}
-        self._memo: dict[str, tuple[tuple, Any]] = {}  # view name -> (key it was computed for, value)
+        self._memo: dict[str, tuple[tuple[Any, ...], Any]] = {}  # view name -> (key it was computed for, value)
         self._overrides_version = 0  # bumped whenever overrides, manual usage, or UI settings change
-        self.background_tasks: set[asyncio.Task] = set()  # keeps fire-and-forget tasks alive until done
+        self.background_tasks: set[asyncio.Task[Any]] = set()  # keeps fire-and-forget tasks alive until done
 
-    def spawn(self, coro) -> None:
+    def spawn(self, coro: Coroutine[Any, Any, Any]) -> None:
         """Run a coroutine in the background without losing the task reference."""
         task = asyncio.create_task(coro)
         self.background_tasks.add(task)
         task.add_done_callback(self.background_tasks.discard)
 
-    def derived_envelope(self, module: str, builder: Callable[[], Any]) -> dict:
+    def derived_envelope(self, module: str, builder: Callable[[], Any]) -> dict[str, Any]:
         """Envelope for a view computed from the Firefly cache: same status and freshness as Firefly,
         the module name of the view, and a clear error (never a 500) if the derivation itself fails."""
         env = self.cache.envelope("firefly")
@@ -70,15 +70,16 @@ class AppState:
         return env
 
     # ---- firefly derived
-    def firefly_data(self) -> dict | None:
-        return self.cache.data("firefly")
+    def firefly_data(self) -> dict[str, Any] | None:
+        data: dict[str, Any] | None = self.cache.data("firefly")
+        return data
 
-    def card_accounts(self) -> dict[str, dict | None]:
+    def card_accounts(self) -> dict[str, dict[str, Any] | None]:
         """Firefly account per configured card id (None when unresolved), honoring pins saved in settings."""
         data = self.firefly_data() or {}
         return resolve_card_accounts(self.config.cards, data.get("accounts") or [], self.db)
 
-    def overrides(self) -> dict[int, dict]:
+    def overrides(self) -> dict[int, dict[str, Any]]:
         rows = self.db.fetchall("SELECT * FROM benefit_overrides")
         return {int(r["firefly_journal_id"]): dict(r) for r in rows}
 
@@ -93,12 +94,12 @@ class AppState:
         self._overrides_version += 1
         self._memo.clear()
 
-    def _firefly_key(self) -> tuple:
+    def _firefly_key(self) -> tuple[Any, ...]:
         """Memo key shared by every Firefly derived view: it changes on refresh, override edits, and at midnight."""
         entry = self.cache.get("firefly")
         return (iso(entry.fetched_at) if entry else None, self._overrides_version, today_local().isoformat())
 
-    def _memoized(self, name: str, key: tuple, builder: Callable[[], Any]) -> Any:
+    def _memoized(self, name: str, key: tuple[Any, ...], builder: Callable[[], Any]) -> Any:
         hit = self._memo.get(name)
         if hit is not None and hit[0] == key:
             return hit[1]
@@ -108,35 +109,37 @@ class AppState:
         self._memo[name] = (key, value)
         return value
 
-    def benefits(self, year: int | None = None) -> dict | None:
+    def benefits(self, year: int | None = None) -> dict[str, Any] | None:
         """Engine result for the year, memoized per year on the Firefly key."""
         data = self.firefly_data()
         if data is None:
             return None
         today = today_local()
         year = year or today.year
-        return self._memoized(
+        result: dict[str, Any] = self._memoized(
             f"benefits:{year}",
             self._firefly_key(),
             lambda: self.engine.compute(data.get("transactions") or [], self.card_accounts(), self.overrides(), self.manual_usage(), today, year),
         )
+        return result
 
-    def benefits_public(self, year: int | None = None) -> dict | None:
+    def benefits_public(self, year: int | None = None) -> dict[str, Any] | None:
         """The benefits view without the internal classification rows."""
         result = self.benefits(year)
         return strip_internal(result) if result else None
 
-    def finance_summary(self) -> dict | None:
+    def finance_summary(self) -> dict[str, Any] | None:
         """Finance summary view, memoized to the minute (freshness hours are reported to one decimal)."""
         data = self.firefly_data()
         if data is None:
             return None
         now = local_now()
-        return self._memoized(
+        summary: dict[str, Any] = self._memoized(
             "finance",
             (*self._firefly_key(), now.strftime("%H:%M")),
             lambda: build_summary(data, self.config, self.settings.firefly_vanity_url, now.date(), now),
         )
+        return summary
 
     def recurring_ignored(self) -> set[str]:
         raw = self.db.get_setting("recurring_ignore") or ""
@@ -152,18 +155,19 @@ class AppState:
         self.invalidate_benefits()
         return keys
 
-    def recurring(self) -> dict | None:
+    def recurring(self) -> dict[str, Any] | None:
         """Recurring charge detector output, memoized on the Firefly key (the ignore list bumps the key)."""
         data = self.firefly_data()
         if data is None:
             return None
-        return self._memoized(
+        recurring: dict[str, Any] = self._memoized(
             "recurring",
             self._firefly_key(),
             lambda: detect_recurring(data.get("transactions") or [], today_local(), self.recurring_ignored(), firefly_links(self.settings.firefly_vanity_url)),
         )
+        return recurring
 
-    def cards(self) -> dict | None:
+    def cards(self) -> dict[str, Any] | None:
         """Card balances, limits, and benefit totals for the cards widget."""
         data = self.firefly_data()
         if data is None:
@@ -190,7 +194,7 @@ class AppState:
             ]
         }
 
-    def attention(self, location: str | None = None) -> list[dict]:
+    def attention(self, location: str | None = None) -> list[dict[str, Any]]:
         """Items for the attention strip, built only from cached data so it never calls out."""
         benefits = None
         finance = None
@@ -240,7 +244,7 @@ class AppState:
         self.db.set_setting("plex_client_id", value)
         return value
 
-    def public_config(self) -> dict:
+    def public_config(self) -> dict[str, Any]:
         """Non-secret configuration for the browser: owner, timezone, locations, link tiles, cards, UI and privacy settings."""
         links = []
         for tile in self.config.links:

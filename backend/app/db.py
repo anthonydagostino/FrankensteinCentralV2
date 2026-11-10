@@ -92,7 +92,8 @@ class Database:
 
     def fetchone(self, sql: str, params: Iterable[Any] = ()) -> sqlite3.Row | None:
         with self._lock:
-            return self._conn.execute(sql, tuple(params)).fetchone()
+            row: sqlite3.Row | None = self._conn.execute(sql, tuple(params)).fetchone()
+            return row
 
     # ---- settings
     def get_setting(self, key: str, default: str | None = None) -> str | None:

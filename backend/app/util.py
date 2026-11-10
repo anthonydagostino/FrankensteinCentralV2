@@ -89,7 +89,7 @@ def dumps(data: Any) -> str:
     return json.dumps(data, cls=JSONEncoder, separators=(",", ":"))
 
 
-def compile_pattern(pattern: str) -> re.Pattern:
+def compile_pattern(pattern: str) -> re.Pattern[str]:
     """Case insensitive regex from config; an invalid pattern falls back to a literal match instead of failing startup."""
     try:
         return re.compile(pattern, re.I)

@@ -24,7 +24,7 @@ class Scheduler:
         self.cache = cache
         self.integrations: dict[str, BaseIntegration] = {}
         self.after_success: dict[str, list[Callable[[], Awaitable[None] | None]]] = {}
-        self._tasks: dict[str, asyncio.Task] = {}
+        self._tasks: dict[str, asyncio.Task[None]] = {}
         self._wake: dict[str, asyncio.Event] = {}
         self._stopping = False
 

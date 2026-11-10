@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import logging
 import sys
+from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -66,7 +67,7 @@ def build_state(settings: Settings | None = None, db_path: str | None = None) ->
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     configure_logging()
     settings = get_settings()
     install_redaction(settings.secret_values())
@@ -102,13 +103,13 @@ app.include_router(benefits_routes.router)
 
 
 @app.exception_handler(Exception)
-async def unhandled(request: Request, exc: Exception):
+async def unhandled(request: Request, exc: Exception) -> JSONResponse:
     log.exception("unhandled error on %s", request.url.path)
     return JSONResponse({"detail": f"Internal error: {exc.__class__.__name__}"}, status_code=500)
 
 
 @app.middleware("http")
-async def security_headers(request: Request, call_next):
+async def security_headers(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
     """Conservative headers for a same-origin app: no framing, no MIME sniffing, API responses never cached."""
     response = await call_next(request)
     response.headers.setdefault("X-Content-Type-Options", "nosniff")
@@ -127,7 +128,7 @@ def mount_static(application: FastAPI) -> None:
         application.mount("/assets", StaticFiles(directory=static_dir / "assets"), name="assets")
 
     @application.get("/{full_path:path}", include_in_schema=False)
-    async def spa(full_path: str, request: Request):
+    async def spa(full_path: str, request: Request) -> Response:
         if full_path.startswith("api/"):
             return JSONResponse({"detail": "Not found"}, status_code=404)
         candidate = (static_dir / full_path).resolve()

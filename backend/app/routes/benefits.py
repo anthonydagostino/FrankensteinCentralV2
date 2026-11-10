@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 from decimal import Decimal, InvalidOperation
-from typing import Literal
+from typing import Any, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
@@ -25,13 +25,13 @@ PERIOD_KEY = r"^\d{4}(-(M(0[1-9]|1[0-2])|Q[1-4]|H[12]))?$"
 
 
 @router.get("")
-async def benefits(year: int | None = Query(None, ge=2020, le=2100), state: AppState = Depends(get_state)):
+async def benefits(year: int | None = Query(None, ge=2020, le=2100), state: AppState = Depends(get_state)) -> dict[str, Any]:
     return state.derived_envelope("benefits", lambda: state.benefits_public(year))
 
 
 @router.get("/unclassified")
-async def unclassified(days: int = Query(120, ge=1, le=400), state: AppState = Depends(get_state)):
-    def build():
+async def unclassified(days: int = Query(120, ge=1, le=400), state: AppState = Depends(get_state)) -> dict[str, Any]:
+    def build() -> dict[str, Any]:
         result = state.benefits()
         rows = state.engine.unclassified(result, today_local(), days) if result else []
         for r in rows:
@@ -51,7 +51,7 @@ class OverrideBody(BaseModel):
 
 
 @router.post("/overrides", dependencies=[Depends(require_write)])
-async def save_override(body: OverrideBody, state: AppState = Depends(get_state)):
+async def save_override(body: OverrideBody, state: AppState = Depends(get_state)) -> dict[str, Any]:
     if body.classification in ("statement_credit", "purchase", "credit_clawback") and not body.benefit_id:
         raise HTTPException(status_code=400, detail="benefit_id is required for this classification")
     if body.benefit_id and body.benefit_id not in {b.id for b in state.engine.benefits}:
@@ -68,7 +68,7 @@ async def save_override(body: OverrideBody, state: AppState = Depends(get_state)
 
 
 @router.delete("/overrides/{override_id}", dependencies=[Depends(require_write)])
-async def delete_override(override_id: int, state: AppState = Depends(get_state)):
+async def delete_override(override_id: int, state: AppState = Depends(get_state)) -> dict[str, Any]:
     state.db.execute("DELETE FROM benefit_overrides WHERE id = ?", (override_id,))
     state.invalidate_benefits()
     return {"ok": True}
@@ -83,7 +83,7 @@ class ManualBody(BaseModel):
 
 
 @router.post("/manual", dependencies=[Depends(require_write)])
-async def manual_usage(body: ManualBody, state: AppState = Depends(get_state)):
+async def manual_usage(body: ManualBody, state: AppState = Depends(get_state)) -> dict[str, Any]:
     benefit = next((b for b in state.engine.benefits if b.id == body.benefit_id), None)
     if benefit is None:
         raise HTTPException(status_code=400, detail="Unknown benefit id")

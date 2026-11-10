@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Response
 from pydantic import BaseModel
@@ -19,7 +20,7 @@ class LoginBody(BaseModel):
 
 
 @router.post("/login")
-async def login(body: LoginBody, request: Request, response: Response, state: AppState = Depends(get_state)):
+async def login(body: LoginBody, request: Request, response: Response, state: AppState = Depends(get_state)) -> dict[str, Any]:
     ip = request.client.host if request.client else "unknown"
     authlib.check_rate_limit(ip)
     if not await asyncio.to_thread(authlib.verify_password, body.password, state.settings):
@@ -29,13 +30,13 @@ async def login(body: LoginBody, request: Request, response: Response, state: Ap
 
 
 @router.post("/logout")
-async def logout(response: Response):
+async def logout(response: Response) -> dict[str, Any]:
     authlib.clear_cookies(response)
     return {"ok": True}
 
 
 @router.get("/me")
-async def me(request: Request):
+async def me(request: Request) -> dict[str, Any]:
     mode = authlib.auth_mode(request)
     # password_configured is not secret and lets the login page warn when no hash is set yet
     return {"authenticated": mode is not None, "mode": mode, "read_only": mode == "kiosk", "password_configured": authlib.password_configured()}

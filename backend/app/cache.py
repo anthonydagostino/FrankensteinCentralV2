@@ -161,7 +161,7 @@ class Cache:
         age = (utcnow() - e.fetched_at).total_seconds()
         return age > STALE_MULTIPLIER * max(e.interval, 1)
 
-    def envelope(self, module: str) -> dict:
+    def envelope(self, module: str) -> dict[str, Any]:
         """The standard response envelope for a module, built from the cached entry."""
         e = self._entries.get(module)
         if e is None:
@@ -190,7 +190,7 @@ class Cache:
         """Names of every configured module."""
         return list(self._entries)
 
-    def all_status(self) -> list[dict]:
+    def all_status(self) -> list[dict[str, Any]]:
         """One status row per module for the Settings page."""
         return [
             {

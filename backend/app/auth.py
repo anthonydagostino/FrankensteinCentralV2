@@ -7,6 +7,7 @@ import hmac
 import logging
 import time
 from collections import defaultdict, deque
+from typing import Any
 
 import bcrypt
 from fastapi import HTTPException, Request, Response
@@ -78,7 +79,7 @@ def _kiosk_fingerprint(settings: Settings) -> str:
     return hashlib.sha256(settings.kiosk_token.encode("utf-8")).hexdigest()[:16]
 
 
-def _set_cookie(request: Request, response: Response, name: str, payload: dict, max_age: int, settings: Settings) -> None:
+def _set_cookie(request: Request, response: Response, name: str, payload: dict[str, Any], max_age: int, settings: Settings) -> None:
     response.set_cookie(name, _serializer(settings).dumps(payload), max_age=max_age, httponly=True, samesite="lax", secure=_secure(request), path="/")
 
 
@@ -97,7 +98,7 @@ def clear_cookies(response: Response) -> None:
     response.delete_cookie(KIOSK_COOKIE, path="/")
 
 
-def _read(request: Request, cookie: str, max_age: int, settings: Settings) -> dict | None:
+def _read(request: Request, cookie: str, max_age: int, settings: Settings) -> dict[str, Any] | None:
     """Verified payload of a signed cookie, or None when missing, tampered with, or older than max_age."""
     raw = request.cookies.get(cookie)
     if not raw:

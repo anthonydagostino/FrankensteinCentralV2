@@ -15,7 +15,7 @@ ROTATION = ["pushA", "pullA", "legsA", "pushB", "pullB", "legsB"]
 NAMES = {"pushA": "Push A", "pullA": "Pull A", "legsA": "Legs A", "pushB": "Push B", "pullB": "Pull B", "legsB": "Legs B"}
 
 
-def build() -> tuple[dict, dict]:
+def build() -> tuple[dict[str, Any], dict[str, Any]]:
     rnd = random.Random(11)
     weigh_ins: list[dict[str, Any]] = []
     # 60 days of morning weigh-ins trending from 152.0 up toward 156 with daily noise, a few days skipped
@@ -27,7 +27,7 @@ def build() -> tuple[dict, dict]:
         w = base + math.sin(i / 2.3) * 0.5 + rnd.uniform(-0.6, 0.6)
         weigh_ins.append({"id": f"w-{d.isoformat()}", "date": d.isoformat(), "weightLb": round(w, 1), "updatedAt": 1761000000000 + i, "deleted": False})
     # four weeks of training: 5 or 6 sessions per week following the rotation, this week has 4 so far (Sunday)
-    sessions: list[dict] = []
+    sessions: list[dict[str, Any]] = []
     idx = 0
     for week_back in range(4, -1, -1):
         monday = ANCHOR - timedelta(days=ANCHOR.weekday()) - timedelta(weeks=week_back)

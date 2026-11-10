@@ -9,9 +9,11 @@ from __future__ import annotations
 import json
 import random
 from collections import defaultdict
+from collections.abc import Iterator
 from datetime import date, timedelta
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
 
 HERE = Path(__file__).resolve().parent
 ANCHOR = date(2026, 10, 20)
@@ -45,7 +47,7 @@ def revenue_id(name: str) -> int:
     return _revenue_ids[name]
 
 
-rows: list[dict] = []
+rows: list[dict[str, Any]] = []
 _jid = 1000
 
 
@@ -56,8 +58,18 @@ def _account(ref: int | str) -> tuple[int, str, str]:
 
 
 def add(
-    day: date, kind: str, amount: str, description: str, *, src: int | str, dst: int | str, category: str = "", budget: str = "", tags=None, notes: str = ""
-):
+    day: date,
+    kind: str,
+    amount: str,
+    description: str,
+    *,
+    src: int | str,
+    dst: int | str,
+    category: str = "",
+    budget: str = "",
+    tags: list[str] | None = None,
+    notes: str = "",
+) -> None:
     """src/dst: int for an asset/liability account id, str for an expense or revenue account name."""
     global _jid
     if day < START or day > ANCHOR:
@@ -103,14 +115,14 @@ def add(
     )
 
 
-def months():
+def months() -> Iterator[date]:
     d = date(START.year, START.month, 1)
     while d <= ANCHOR:
         yield d
         d = (d + timedelta(days=32)).replace(day=1)
 
 
-def build() -> dict:
+def build() -> dict[str, Any]:
     rnd = random.Random(7)
     PLAT, GOLD, DISC, CHK, SAV, LOAN = 3, 4, 5, 1, 2, 6
 
