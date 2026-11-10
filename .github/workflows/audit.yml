@@ -106,10 +106,10 @@ jobs:
           fi
           git push "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${BRANCH}"
           gh label create "$AUDIT_LABEL" --force --color 5319e7 --description "Opened by the scheduled Claude audit"
+          report=$(printf '%s' "$STRUCTURED" | jq -r '.report // empty' 2>/dev/null || true)
+          [ -n "$report" ] || report="The audit step ended with status: $CLAUDE_RESULT and returned no report. See the workflow run log."
           {
-            printf '%s' "$STRUCTURED" | jq -r '.report // empty' 2>/dev/null \
-              || echo "The audit step ended with status: $CLAUDE_RESULT. See the workflow run log for details."
-            echo
+            printf '%s\n\n' "$report"
             echo "---"
             echo "Opened by the Claude audit workflow, run $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           } > body.md
