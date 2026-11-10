@@ -7,7 +7,10 @@ import logging
 import os
 import time
 from pathlib import Path
+from typing import Any
 
+from ..config_loader import DashboardConfig
+from ..settings import Settings
 from ..util import iso, utcnow
 from .base import BaseIntegration, describe_error, make_client, request
 
@@ -17,7 +20,7 @@ log = logging.getLogger("frankenstein.vault")
 BACKUP_TTL = 5 * 60
 
 
-def backup_status(directory: str) -> dict | None:
+def backup_status(directory: str) -> dict[str, Any] | None:
     """Age of the newest file under the backup directory (synchronous: walks the whole tree)."""
     if not directory:
         return None
@@ -48,11 +51,11 @@ class VaultwardenIntegration(BaseIntegration):
     interval_seconds = 60
     required_env = ["VAULTWARDEN_URL"]
 
-    def __init__(self, settings, config):
+    def __init__(self, settings: Settings, config: DashboardConfig) -> None:
         super().__init__(settings, config)
-        self._backup: tuple[float, dict | None] | None = None
+        self._backup: tuple[float, dict[str, Any] | None] | None = None
 
-    async def _backup_status(self) -> dict | None:
+    async def _backup_status(self) -> dict[str, Any] | None:
         """backup_status() off the event loop, rescanned at most every BACKUP_TTL seconds."""
         now = time.monotonic()
         if self._backup is None or now - self._backup[0] > BACKUP_TTL:
@@ -60,11 +63,11 @@ class VaultwardenIntegration(BaseIntegration):
             self._backup = (now, result)
         return self._backup[1]
 
-    def _public(self) -> dict:
+    def _public(self) -> dict[str, str | None]:
         public = self.settings.vaultwarden_public_url.rstrip("/")
         return {"public_url": public or None, "admin_url": f"{public}/admin" if public else None}
 
-    async def fetch(self) -> dict:
+    async def fetch(self) -> dict[str, Any]:
         base = self.settings.vaultwarden_url.rstrip("/")
         online = False
         latency_ms = None
@@ -97,7 +100,7 @@ class VaultwardenIntegration(BaseIntegration):
             **self._public(),
         }
 
-    def mock(self) -> dict:
+    def mock(self) -> dict[str, Any]:
         return {
             "online": True,
             "latency_ms": 38,

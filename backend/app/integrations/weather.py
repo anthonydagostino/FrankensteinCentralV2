@@ -6,7 +6,10 @@ import logging
 from datetime import date, datetime, timedelta
 from typing import Any
 
-from ..config_loader import Location
+import httpx
+
+from ..config_loader import DashboardConfig, Location
+from ..settings import Settings
 from ..util import iso, local_tz, utcnow
 from .base import BaseIntegration, Degraded, describe_error, fresh, load_fixture, make_client, request, shift_date
 from .wmo import describe
@@ -38,7 +41,7 @@ def _r(value: Any) -> int | None:
         return None
 
 
-def parse_forecast(raw: dict, now: datetime, units: str = "imperial") -> dict:
+def parse_forecast(raw: dict[str, Any], now: datetime, units: str = "imperial") -> dict[str, Any]:
     """Turn an Open-Meteo response into the dashboard shape (without alerts)."""
     tz = local_tz()
     cur = raw.get("current", {}) or {}
@@ -72,7 +75,7 @@ def parse_forecast(raw: dict, now: datetime, units: str = "imperial") -> dict:
             continue
     local_now = now.astimezone(tz)
     start_hour = local_now.replace(minute=0, second=0, microsecond=0)
-    next_12h: list[dict] = []
+    next_12h: list[dict[str, Any]] = []
     for idx, t in enumerate(times):
         try:
             ht = datetime.fromisoformat(t)
@@ -99,7 +102,7 @@ def parse_forecast(raw: dict, now: datetime, units: str = "imperial") -> dict:
         if len(next_12h) >= 12:
             break
 
-    daily: list[dict] = []
+    daily: list[dict[str, Any]] = []
     for idx, d in enumerate(daily_raw.get("time", []) or []):
         dl, di = describe((daily_raw.get("weather_code") or [None])[idx], True)
         daily.append(
@@ -139,7 +142,7 @@ def parse_forecast(raw: dict, now: datetime, units: str = "imperial") -> dict:
 SEVERITY_ORDER = {"Extreme": 0, "Severe": 1, "Moderate": 2, "Minor": 3, "Unknown": 4}
 
 
-def parse_alerts(raw: dict) -> list[dict]:
+def parse_alerts(raw: dict[str, Any]) -> list[dict[str, Any]]:
     """NWS GeoJSON features to flat alert dicts, most severe first."""
     alerts = []
     for feature in raw.get("features", []) or []:
@@ -167,9 +170,9 @@ class WeatherIntegration(BaseIntegration):
     interval_seconds = 5 * 60  # NWS cadence; forecast is re-fetched every 15 minutes
     required_env: list[str] = []  # no credentials needed
 
-    def __init__(self, settings, config):
+    def __init__(self, settings: Settings, config: DashboardConfig) -> None:
         super().__init__(settings, config)
-        self._forecast_cache: dict[str, tuple[datetime, dict]] = {}
+        self._forecast_cache: dict[str, tuple[datetime, dict[str, Any]]] = {}
         self._aqi_cache: dict[str, tuple[datetime, int | None]] = {}
 
     def is_configured(self) -> bool:
@@ -178,7 +181,7 @@ class WeatherIntegration(BaseIntegration):
     def setup_hint(self) -> list[str]:
         return ["NWS_USER_AGENT"]
 
-    async def _forecast(self, client, loc: Location, now: datetime) -> dict:
+    async def _forecast(self, client: httpx.AsyncClient, loc: Location, now: datetime) -> dict[str, Any]:
         cached = self._forecast_cache.get(loc.name)
         if cached and fresh(cached[0], now, FORECAST_TTL):
             return cached[1]
@@ -194,11 +197,11 @@ class WeatherIntegration(BaseIntegration):
         }
         resp = await request(client, "GET", OPEN_METEO, params=params, service="Open-Meteo")
         resp.raise_for_status()
-        raw = resp.json()
+        raw: dict[str, Any] = resp.json()
         self._forecast_cache[loc.name] = (now, raw)
         return raw
 
-    async def _aqi(self, client, loc: Location, now: datetime) -> int | None:
+    async def _aqi(self, client: httpx.AsyncClient, loc: Location, now: datetime) -> int | None:
         cached = self._aqi_cache.get(loc.name)
         if cached and (now - cached[0]).total_seconds() < FORECAST_TTL * 4:
             return cached[1]
@@ -214,20 +217,20 @@ class WeatherIntegration(BaseIntegration):
         self._aqi_cache[loc.name] = (now, aqi)
         return aqi
 
-    async def _alerts(self, client, loc: Location) -> list[dict]:
+    async def _alerts(self, client: httpx.AsyncClient, loc: Location) -> list[dict[str, Any]]:
         headers = {"User-Agent": self.settings.nws_user_agent, "Accept": "application/geo+json"}
         resp = await request(client, "GET", NWS_ALERTS, params={"point": f"{loc.lat},{loc.lon}"}, headers=headers, service="NWS")
         resp.raise_for_status()
         return parse_alerts(resp.json())
 
-    async def fetch(self) -> dict:
+    async def fetch(self) -> dict[str, Any]:
         now = utcnow()
         units = self.config.weather.units
-        out: dict[str, dict] = {}
+        out: dict[str, dict[str, Any]] = {}
         errors: list[str] = []
         async with make_client() as client:
             for loc in self.config.weather.locations:
-                entry: dict = {"location": loc.name, "lat": loc.lat, "lon": loc.lon}
+                entry: dict[str, Any] = {"location": loc.name, "lat": loc.lat, "lon": loc.lon}
                 try:
                     raw = await self._forecast(client, loc, now)
                     entry.update(parse_forecast(raw, now, units))
@@ -250,7 +253,7 @@ class WeatherIntegration(BaseIntegration):
             raise Degraded(data, "; ".join(errors))
         return data
 
-    def mock(self) -> dict:
+    def mock(self) -> dict[str, Any]:
         now = utcnow()
         units = self.config.weather.units
         raw = load_fixture("weather/open_meteo.json")
@@ -270,7 +273,7 @@ class WeatherIntegration(BaseIntegration):
         return {"locations": out, "default": self.config.weather.default_location.name, "units": units}
 
 
-def _shift_forecast_dates(raw: dict, now: datetime) -> dict:
+def _shift_forecast_dates(raw: dict[str, Any], now: datetime) -> dict[str, Any]:
     """Re-base a fixture anchored on FIXTURE_ANCHOR so hourly/daily arrays cover today."""
     tz = local_tz()
     anchor = date.fromisoformat(raw.get("_anchor", FIXTURE_ANCHOR))

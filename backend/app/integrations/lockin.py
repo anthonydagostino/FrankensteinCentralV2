@@ -27,7 +27,9 @@ def week_start(d: date) -> date:
     return d - timedelta(days=d.weekday())
 
 
-def build_training(summary: dict, export: dict | None, today: date, now: datetime, public_url: str | None, version: str | None) -> dict:
+def build_training(
+    summary: dict[str, Any], export: dict[str, Any] | None, today: date, now: datetime, public_url: str | None, version: str | None
+) -> dict[str, Any]:
     """Turn Lock-In's summary (plus the optional export) into the dashboard shape."""
     weight = summary.get("weight") or {}
     latest = weight.get("latest") or None
@@ -51,8 +53,8 @@ def build_training(summary: dict, export: dict | None, today: date, now: datetim
     else:
         streak_risk = "ok"
 
-    week: list[dict] | None = None
-    weight_series: list[dict] | None = None
+    week: list[dict[str, Any]] | None = None
+    weight_series: list[dict[str, Any]] | None = None
     trained_today = False
     if export:
         done_dates = {s["date"] for s in export.get("sessions") or [] if s.get("date") and s.get("completedAt") is not None and not s.get("deleted")}
@@ -127,7 +129,7 @@ class LockInIntegration(BaseIntegration):
         resp.raise_for_status()
         return resp.json()
 
-    async def fetch(self) -> dict:
+    async def fetch(self) -> dict[str, Any]:
         today = today_local()
         version = None
         errors: list[str] = []
@@ -147,7 +149,7 @@ class LockInIntegration(BaseIntegration):
             raise Degraded(data, "; ".join(errors))
         return data
 
-    def mock(self) -> dict:
+    def mock(self) -> dict[str, Any]:
         today = today_local()
         delta = today - FIXTURE_ANCHOR
         summary = load_fixture("lockin/summary.json")

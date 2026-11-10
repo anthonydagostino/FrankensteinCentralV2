@@ -6,9 +6,12 @@ import asyncio
 import logging
 import re
 from datetime import UTC, datetime
+from typing import Any
 
 import httpx
 
+from ..config_loader import DashboardConfig
+from ..settings import Settings
 from ..util import iso, utcnow
 from .base import BaseIntegration, Degraded, describe_error, fresh, load_fixture, make_client, request
 
@@ -53,7 +56,7 @@ def _parse_time(value: str | None) -> datetime | None:
         return None
 
 
-def build_container(item: dict, inspect: dict | None, previous_restarts: dict[str, int], now: datetime) -> dict:
+def build_container(item: dict[str, Any], inspect: dict[str, Any] | None, previous_restarts: dict[str, int], now: datetime) -> dict[str, Any]:
     """One container row from the list entry plus its optional inspect payload."""
     cid = item.get("Id", "")
     names = item.get("Names") or []
@@ -103,9 +106,9 @@ def build_container(item: dict, inspect: dict | None, previous_restarts: dict[st
     }
 
 
-def group_containers(containers: list[dict]) -> list[dict]:
+def group_containers(containers: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """Visible containers grouped by compose project (Standalone when none), projects and names sorted."""
-    groups: dict[str, list[dict]] = {}
+    groups: dict[str, list[dict[str, Any]]] = {}
     for c in containers:
         if c["hidden"]:
             continue
@@ -117,7 +120,7 @@ def group_containers(containers: list[dict]) -> list[dict]:
     return out
 
 
-def summarize(containers: list[dict], info: dict | None) -> dict:
+def summarize(containers: list[dict[str, Any]], info: dict[str, Any] | None) -> dict[str, Any]:
     """Counts by state and health for the header row, plus the daemon version and its total container count when known."""
     visible = [c for c in containers if not c["hidden"]]
     return {
@@ -137,13 +140,13 @@ class DockerIntegration(BaseIntegration):
     interval_seconds = 15
     required_env = ["DOCKER_HOST"]
 
-    def __init__(self, settings, config):
+    def __init__(self, settings: Settings, config: DashboardConfig) -> None:
         super().__init__(settings, config)
-        self._inspect_cache: dict[str, tuple[datetime, str, dict]] = {}
+        self._inspect_cache: dict[str, tuple[datetime, str, dict[str, Any]]] = {}
         self._previous_restarts: dict[str, int] = {}
-        self._info: tuple[datetime, dict] | None = None
+        self._info: tuple[datetime, dict[str, Any]] | None = None
 
-    async def _inspect(self, client: httpx.AsyncClient, cid: str, state: str, now: datetime, sem: asyncio.Semaphore) -> dict | None:
+    async def _inspect(self, client: httpx.AsyncClient, cid: str, state: str, now: datetime, sem: asyncio.Semaphore) -> dict[str, Any] | None:
         """Inspect payload for a container, cached for INSPECT_TTL unless the list state changed since."""
         cached = self._inspect_cache.get(cid)
         if cached and cached[1] == state and fresh(cached[0], now, INSPECT_TTL):
@@ -152,7 +155,7 @@ class DockerIntegration(BaseIntegration):
             try:
                 resp = await request(client, "GET", f"{self._base()}/containers/{cid}/json", retries=0, service="Docker")
                 resp.raise_for_status()
-                data = resp.json()
+                data: dict[str, Any] = resp.json()
             except Exception as exc:
                 log.debug("inspect %s failed: %s", cid[:12], exc)
                 return cached[2] if cached else None
@@ -162,7 +165,7 @@ class DockerIntegration(BaseIntegration):
     def _base(self) -> str:
         return proxy_base(self.settings.docker_host)
 
-    async def fetch(self) -> dict:
+    async def fetch(self) -> dict[str, Any]:
         now = utcnow()
         errors: list[str] = []
         async with make_client(timeout=8.0) as client:
@@ -198,7 +201,7 @@ class DockerIntegration(BaseIntegration):
             raise Degraded(data, "; ".join(errors))
         return data
 
-    def mock(self) -> dict:
+    def mock(self) -> dict[str, Any]:
         now = utcnow()
         items = load_fixture("docker/containers.json")
         inspects = load_fixture("docker/inspect.json")
@@ -224,7 +227,7 @@ class DockerIntegration(BaseIntegration):
         }
 
 
-async def restart_container(settings, cid: str) -> int:
+async def restart_container(settings: Settings, cid: str) -> int:
     """POST a restart through the socket proxy; returns the HTTP status (204 on success)."""
     async with make_client(timeout=30.0) as client:
         resp = await client.post(f"{proxy_base(settings.docker_host)}/containers/{cid}/restart")

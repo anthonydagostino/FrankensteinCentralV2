@@ -4,12 +4,15 @@ from __future__ import annotations
 
 import logging
 import re
-from datetime import date, datetime, time, timedelta
+from datetime import date, datetime, time, timedelta, tzinfo
 from typing import Any
 
+import httpx
 import recurring_ical_events
 from icalendar import Calendar
 
+from ..config_loader import DashboardConfig
+from ..settings import Settings
 from ..util import iso, local_tz, strip_html, utcnow
 from .base import BaseIntegration, Degraded, describe_error, load_fixture, make_client, request
 
@@ -19,14 +22,15 @@ URL_RE = re.compile(r"https?://[^\s<>\"')\]]+", re.I)
 JOIN_HINTS = ("zoom.us", "meet.google.com", "teams.microsoft.com", "webex.com", "gotomeeting", "whereby.com")
 
 
-def _as_aware(value: Any, tz) -> datetime | None:
+def _as_aware(value: Any, tz: tzinfo) -> datetime | None:
     """Convert an icalendar DTSTART/DTEND value to an aware datetime in the local zone."""
     if value is None:
         return None
     if isinstance(value, datetime):
-        if value.tzinfo is None:
-            value = value.replace(tzinfo=tz)
-        return value.astimezone(tz)
+        dt: datetime = value
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=tz)
+        return dt.astimezone(tz)
     if isinstance(value, date):
         return datetime.combine(value, time.min, tzinfo=tz)
     return None
@@ -46,11 +50,11 @@ def _first_url(*texts: str | None) -> str | None:
     return candidates[0].rstrip(".,;")
 
 
-def parse_feed(ics_text: str, feed_name: str, color: str, window_start: datetime, window_end: datetime) -> list[dict]:
+def parse_feed(ics_text: str, feed_name: str, color: str, window_start: datetime, window_end: datetime) -> list[dict[str, Any]]:
     """Expand one iCal feed into event dicts within the window. Canceled events are skipped."""
     tz = local_tz()
     cal = Calendar.from_ical(ics_text)
-    events: list[dict] = []
+    events: list[dict[str, Any]] = []
     for ev in recurring_ical_events.of(cal, components=["VEVENT"]).between(window_start, window_end):
         status = str(ev.get("STATUS", "")).upper()
         if status == "CANCELLED":
@@ -94,7 +98,7 @@ def parse_feed(ics_text: str, feed_name: str, color: str, window_start: datetime
     return events
 
 
-def build_output(all_events: list[dict], now: datetime, lookahead_days: int) -> dict:
+def build_output(all_events: list[dict[str, Any]], now: datetime, lookahead_days: int) -> dict[str, Any]:
     """Group de-duplicated events by local day, pick the next event, and count events per date for the month grid."""
     tz = local_tz()
     local_now = now.astimezone(tz)
@@ -102,7 +106,7 @@ def build_output(all_events: list[dict], now: datetime, lookahead_days: int) -> 
 
     # de-duplicate across feeds: same UID and same start
     seen: set[tuple[str, str]] = set()
-    unique: list[dict] = []
+    unique: list[dict[str, Any]] = []
     for ev in sorted(all_events, key=lambda e: (e["start"], e["title"])):
         key = (ev["uid"], ev["start"].isoformat())
         if key in seen:
@@ -110,7 +114,7 @@ def build_output(all_events: list[dict], now: datetime, lookahead_days: int) -> 
         seen.add(key)
         unique.append(ev)
 
-    days: list[dict] = []
+    days: list[dict[str, Any]] = []
     density: dict[str, int] = {}
     for offset in range(lookahead_days):
         day = today + timedelta(days=offset)
@@ -166,7 +170,7 @@ class CalendarIntegration(BaseIntegration):
     name = "calendar"
     interval_seconds = 5 * 60
 
-    def __init__(self, settings, config):
+    def __init__(self, settings: Settings, config: DashboardConfig) -> None:
         super().__init__(settings, config)
         self._conditional: dict[str, dict[str, str]] = {}  # feed name -> {etag, last_modified, body}
 
@@ -191,7 +195,7 @@ class CalendarIntegration(BaseIntegration):
         end = local + timedelta(days=self.config.calendar.lookahead_days + 1)
         return start, end
 
-    async def _download(self, client, name: str, url: str) -> str:
+    async def _download(self, client: httpx.AsyncClient, name: str, url: str) -> str:
         state = self._conditional.get(name, {})
         headers = {}
         if state.get("etag"):
@@ -206,10 +210,10 @@ class CalendarIntegration(BaseIntegration):
         self._conditional[name] = {"etag": resp.headers.get("ETag", ""), "last_modified": resp.headers.get("Last-Modified", ""), "body": body}
         return body
 
-    async def fetch(self) -> dict:
+    async def fetch(self) -> dict[str, Any]:
         now = utcnow()
         w_start, w_end = self._window(now)
-        events: list[dict] = []
+        events: list[dict[str, Any]] = []
         errors: list[str] = []
         feeds = self._feeds()
         async with make_client(timeout=20.0) as client:
@@ -227,12 +231,12 @@ class CalendarIntegration(BaseIntegration):
             raise Degraded(data, "; ".join(errors))
         return data
 
-    def mock(self) -> dict:
+    def mock(self) -> dict[str, Any]:
         now = utcnow()
         w_start, w_end = self._window(now)
         feeds = self.config.calendar.feeds or []
         fixture_files = ["calendar/personal.ics", "calendar/second.ics"]
-        events: list[dict] = []
+        events: list[dict[str, Any]] = []
         feed_meta = []
         for idx, fname in enumerate(fixture_files):
             if idx < len(feeds):

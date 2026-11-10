@@ -23,7 +23,7 @@ FIXTURES = Path(__file__).resolve().parent.parent / "fixtures"
 class Degraded(Exception):
     """Raised by fetch() when only part of the data could be loaded."""
 
-    def __init__(self, data: dict, message: str):
+    def __init__(self, data: dict[str, Any], message: str) -> None:
         super().__init__(message)
         self.data = data
         self.message = message
@@ -53,10 +53,10 @@ class BaseIntegration:
     def setup_hint(self) -> list[str]:
         return list(self.required_env)
 
-    async def fetch(self) -> dict:  # pragma: no cover - overridden
+    async def fetch(self) -> dict[str, Any]:  # pragma: no cover - overridden
         raise NotImplementedError
 
-    def mock(self) -> dict:  # pragma: no cover - overridden
+    def mock(self) -> dict[str, Any]:  # pragma: no cover - overridden
         raise NotImplementedError
 
 
