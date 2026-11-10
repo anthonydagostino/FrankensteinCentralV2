@@ -149,6 +149,14 @@ scripts/test.sh                                         # everything, same as CI
 
 Dependency audits: `cd backend && uv run --with pip-audit python -m pip_audit --skip-editable` and `cd frontend && npm audit`.
 
+### Pipeline
+
+* **Tier 1** (`.github/workflows/ci.yml`): on every push and pull request, in parallel: ruff format and lint, mypy strict, pytest with coverage, prettier, eslint, tsc, vitest with coverage, a trivy audit of both lockfiles (fails on high and critical), a gitleaks secret scan of the pushed commits, and a build of the production Docker image. Coverage reports are run artifacts.
+* **Tier 2** (same file, `claude-review` job): after Tier 1 is green on a pull request, Claude reviews the diff with `.ci/prompts/diff-review.md` and posts inline comments. It is read only and advisory, so it never fails the run. Drafts, bot authors, forks, and docs or lockfile only diffs are skipped.
+* **Tier 3** (`.github/workflows/audit.yml`): every Monday, or by hand from the Actions tab, Claude runs `.ci/prompts/full-audit.md` on an `audit/<date>` branch and opens a labeled pull request with its report, unless one is still open.
+
+Secrets: `ANTHROPIC_API_KEY` (Tiers 2 and 3) and `AUDIT_PUSH_TOKEN` (Tier 3, a fine grained token with contents and pull requests write so the audit pull request triggers Tiers 1 and 2).
+
 Regenerate fixtures with `python -m app.fixtures.generate_firefly`, `generate_weather`, and `generate_lockin` from `backend/`. Fixtures are anchored on 2026-10-20 and shifted to today at runtime so the mock dashboard always looks current.
 
 ## Future ideas (not built)
