@@ -17,7 +17,11 @@ function SessionCard({ s, data, large }: { s: PlexSession; data: PlexData; large
   const img = poster(s.thumb, 120, 180);
   return (
     <a href={itemLink(data, s.rating_key)} target="_blank" rel="noreferrer" className="flex gap-3 rounded-lg bg-ink-800/60 p-2 hover:bg-ink-800">
-      {img ? <img src={img} alt="" className={`${large ? "h-32 w-[86px]" : "h-24 w-16"} shrink-0 rounded object-cover`} loading="lazy" /> : <div className="h-24 w-16 rounded bg-ink-700" />}
+      {img ? (
+        <img src={img} alt="" className={`${large ? "h-32 w-[86px]" : "h-24 w-16"} shrink-0 rounded object-cover`} loading="lazy" />
+      ) : (
+        <div className="h-24 w-16 rounded bg-ink-700" />
+      )}
       <div className="min-w-0 flex-1">
         <div className={`truncate ${large ? "text-lg" : "text-sm"} font-semibold text-ink-200`}>{s.title}</div>
         {s.subtitle && <div className="truncate text-xs text-ink-300">{s.subtitle}</div>}
@@ -44,8 +48,19 @@ function Rail({ title, items, data }: { title: string; items: PlexItem[]; data: 
         {items.map((it) => {
           const img = poster(it.thumb, 120, 180);
           return (
-            <a key={it.rating_key} href={itemLink(data, it.rating_key)} target="_blank" rel="noreferrer" className="w-20 shrink-0" title={`${it.title}${it.subtitle ? `, ${it.subtitle}` : ""}`}>
-              {img ? <img src={img} alt="" className="h-[120px] w-20 rounded object-cover" loading="lazy" /> : <div className="h-[120px] w-20 rounded bg-ink-700" />}
+            <a
+              key={it.rating_key}
+              href={itemLink(data, it.rating_key)}
+              target="_blank"
+              rel="noreferrer"
+              className="w-20 shrink-0"
+              title={`${it.title}${it.subtitle ? `, ${it.subtitle}` : ""}`}
+            >
+              {img ? (
+                <img src={img} alt="" className="h-[120px] w-20 rounded object-cover" loading="lazy" />
+              ) : (
+                <div className="h-[120px] w-20 rounded bg-ink-700" />
+              )}
               {it.progress !== null && it.progress > 0 && <ProgressBar value={it.progress} height="h-1" className="mt-0.5" label="Progress" />}
               <div className="mt-1 truncate text-[11px] text-ink-200">{it.title}</div>
               {it.subtitle && <div className="truncate text-[10px] text-ink-400">{it.subtitle}</div>}
@@ -67,12 +82,18 @@ export function PlexBody({ data, kiosk, onlyNowPlaying }: { data: PlexData; kios
         </span>
         {data.server.shared_by && <Chip tone="info">shared by {data.server.shared_by}</Chip>}
         {data.server.via === "relay" && <Chip tone="warn">via Plex relay</Chip>}
-        {!onlyNowPlaying && data.libraries.map((l) => (
-          <Chip key={l.key}>
-            {l.title}: {l.count ?? "?"}
-          </Chip>
-        ))}
-        <a href={data.links.server} target="_blank" rel="noreferrer" className="ml-auto inline-flex items-center gap-1 rounded-md bg-accent/15 px-3 py-1.5 text-sm font-medium text-accent hover:bg-accent/25">
+        {!onlyNowPlaying &&
+          data.libraries.map((l) => (
+            <Chip key={l.key}>
+              {l.title}: {l.count ?? "?"}
+            </Chip>
+          ))}
+        <a
+          href={data.links.server}
+          target="_blank"
+          rel="noreferrer"
+          className="ml-auto inline-flex items-center gap-1 rounded-md bg-accent/15 px-3 py-1.5 text-sm font-medium text-accent hover:bg-accent/25"
+        >
           <Tv size={14} /> Open Plex <ExternalLink size={12} />
         </a>
       </div>

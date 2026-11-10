@@ -2,39 +2,13 @@ import { ChevronDown } from "lucide-react";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useBenefits } from "../api/hooks";
-import type { BenefitCard, BenefitOut, BenefitStatus, BenefitsData } from "../api/types";
-import { Chip, SplitBar, type ChipTone } from "../components/Bars";
+import type { BenefitCard, BenefitOut, BenefitsData } from "../api/types";
+import { Chip, SplitBar } from "../components/Bars";
 import { Card } from "../components/Card";
 import { FeeOffset } from "../components/FeeOffset";
 import { Money } from "../components/Money";
-import { pct, toNumber } from "../lib/format";
-
-const STATUS_ORDER: Record<BenefitStatus, number> = { pending: 1, unused: 2, manual: 2, partial: 3, used: 4, expired_unused: 5, expired_partial: 5 };
-const STATUS_LABEL: Record<BenefitStatus, string> = { used: "Used", partial: "Partial", pending: "Pending", unused: "Unused", expired_unused: "Expired", expired_partial: "Expired, partial", manual: "Mark by hand" };
-
-/** Expiring soon first, then pending, unused, partial, used; ties broken by the larger remaining amount. */
-export function sortBenefits(list: BenefitOut[]): BenefitOut[] {
-  return [...list].sort((a, b) => {
-    const ca = a.current;
-    const cb = b.current;
-    if (!ca && !cb) return 0;
-    if (!ca) return 1;
-    if (!cb) return -1;
-    if (ca.expiring_soon !== cb.expiring_soon) return ca.expiring_soon ? -1 : 1;
-    if (STATUS_ORDER[ca.status] !== STATUS_ORDER[cb.status]) return STATUS_ORDER[ca.status] - STATUS_ORDER[cb.status];
-    return toNumber(cb.remaining) - toNumber(ca.remaining);
-  });
-}
-
-export function statusTone(status: BenefitStatus): ChipTone {
-  if (status === "used") return "good";
-  if (status === "pending") return "warn";
-  if (status === "partial") return "info";
-  if (status.startsWith("expired")) return "bad";
-  return "neutral";
-}
-
-export const statusLabel = (status: BenefitStatus): string => STATUS_LABEL[status];
+import { sortBenefits } from "../lib/benefits";
+import { pct } from "../lib/format";
 
 function Row({ b, large }: { b: BenefitOut; large?: boolean }) {
   const c = b.current;
@@ -79,7 +53,12 @@ function CardBlock({ card, large }: { card: BenefitCard; large?: boolean }) {
         ))}
       </ul>
       {used.length > 0 && (
-        <button type="button" onClick={() => setShowUsed(!showUsed)} className="mt-1 inline-flex items-center gap-1 text-[11px] text-ink-400 hover:text-ink-200" aria-expanded={showUsed}>
+        <button
+          type="button"
+          onClick={() => setShowUsed(!showUsed)}
+          className="mt-1 inline-flex items-center gap-1 text-[11px] text-ink-400 hover:text-ink-200"
+          aria-expanded={showUsed}
+        >
           <ChevronDown size={12} className={showUsed ? "rotate-180" : ""} /> {used.length} fully used this period
         </button>
       )}

@@ -6,7 +6,14 @@ import { Chip } from "../components/Bars";
 import { Card } from "../components/Card";
 import { humanDuration } from "../lib/format";
 
-const STATE_COLOR: Record<string, string> = { running: "bg-accent", restarting: "bg-amber-400", paused: "bg-sky-400", exited: "bg-red-500", dead: "bg-red-600", created: "bg-ink-400" };
+const STATE_COLOR: Record<string, string> = {
+  running: "bg-accent",
+  restarting: "bg-amber-400",
+  paused: "bg-sky-400",
+  exited: "bg-red-500",
+  dead: "bg-red-600",
+  created: "bg-ink-400",
+};
 
 function isProblem(c: ContainerRow): boolean {
   return c.state !== "running" || c.health === "unhealthy" || c.restart_increased;
@@ -48,10 +55,18 @@ function Row({ c, allowRestart, readOnly }: { c: ContainerRow; allowRestart: boo
           {c.restart_count}
         </span>
       )}
-      {allowRestart && !readOnly && (
-        confirm ? (
+      {allowRestart &&
+        !readOnly &&
+        (confirm ? (
           <span className="flex items-center gap-1 text-[11px]">
-            <button type="button" className="rounded bg-red-500/20 px-2 py-0.5 text-red-200" onClick={() => { restart.mutate(c.id); setConfirm(false); }}>
+            <button
+              type="button"
+              className="rounded bg-red-500/20 px-2 py-0.5 text-red-200"
+              onClick={() => {
+                restart.mutate(c.id);
+                setConfirm(false);
+              }}
+            >
               Confirm
             </button>
             <button type="button" className="text-ink-400" onClick={() => setConfirm(false)}>
@@ -59,11 +74,15 @@ function Row({ c, allowRestart, readOnly }: { c: ContainerRow; allowRestart: boo
             </button>
           </span>
         ) : (
-          <button type="button" className="rounded p-1 text-ink-400 hover:bg-ink-700 hover:text-ink-200" title="Restart container" onClick={() => setConfirm(true)}>
+          <button
+            type="button"
+            className="rounded p-1 text-ink-400 hover:bg-ink-700 hover:text-ink-200"
+            title="Restart container"
+            onClick={() => setConfirm(true)}
+          >
             <RotateCw size={13} />
           </button>
-        )
-      )}
+        ))}
     </li>
   );
 }
@@ -74,7 +93,12 @@ export function ContainersBody({ data, readOnly, summaryOnly }: { data: Containe
   const groups = useMemo(() => {
     const f = filter.trim().toLowerCase();
     return data.groups
-      .map((g) => ({ ...g, containers: g.containers.filter((c) => (!f || c.display_name.toLowerCase().includes(f) || (c.image ?? "").toLowerCase().includes(f)) && (!problemsOnly || isProblem(c))) }))
+      .map((g) => ({
+        ...g,
+        containers: g.containers.filter(
+          (c) => (!f || c.display_name.toLowerCase().includes(f) || (c.image ?? "").toLowerCase().includes(f)) && (!problemsOnly || isProblem(c)),
+        ),
+      }))
       .filter((g) => g.containers.length > 0);
   }, [data.groups, filter, problemsOnly]);
   const s = data.summary;
@@ -91,7 +115,13 @@ export function ContainersBody({ data, readOnly, summaryOnly }: { data: Containe
           <>
             <label className="ml-auto inline-flex items-center gap-1 rounded border border-ink-700 bg-ink-800 px-2 py-1 text-xs text-ink-300">
               <Search size={12} />
-              <input value={filter} onChange={(e) => setFilter(e.target.value)} placeholder="Filter" className="w-28 bg-transparent outline-none placeholder:text-ink-500" aria-label="Filter containers" />
+              <input
+                value={filter}
+                onChange={(e) => setFilter(e.target.value)}
+                placeholder="Filter"
+                className="w-28 bg-transparent outline-none placeholder:text-ink-500"
+                aria-label="Filter containers"
+              />
             </label>
             <label className="inline-flex items-center gap-1 text-xs text-ink-300">
               <input type="checkbox" checked={problemsOnly} onChange={(e) => setProblemsOnly(e.target.checked)} className="accent-[#4ade80]" /> problems only

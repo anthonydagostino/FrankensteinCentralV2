@@ -2,7 +2,17 @@ import { ProgressBar } from "./Bars";
 import { Money } from "./Money";
 
 /** "Captured of fee (percent)" line with its progress bar; green once the fee is covered. */
-export function FeeOffset({ captured, fee, offset, className = "" }: { captured: string | undefined; fee: string; offset: number | null | undefined; className?: string }) {
+export function FeeOffset({
+  captured,
+  fee,
+  offset,
+  className = "",
+}: {
+  captured: string | undefined;
+  fee: string;
+  offset: number | null | undefined;
+  className?: string;
+}) {
   const ratio = offset ?? 0;
   return (
     <div className={className}>

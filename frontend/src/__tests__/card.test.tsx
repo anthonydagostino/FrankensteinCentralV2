@@ -4,7 +4,17 @@ import type { Envelope } from "../api/types";
 import { Card } from "../components/Card";
 
 function env(overrides: Partial<Envelope<{ n: number }>>): Envelope<{ n: number }> {
-  return { module: "x", status: "ok", configured: true, fetched_at: "2026-10-20T12:00:00Z", stale: false, error: null, data: { n: 1 }, setup_hint: [], ...overrides };
+  return {
+    module: "x",
+    status: "ok",
+    configured: true,
+    fetched_at: "2026-10-20T12:00:00Z",
+    stale: false,
+    error: null,
+    data: { n: 1 },
+    setup_hint: [],
+    ...overrides,
+  };
 }
 
 describe("Card", () => {
@@ -44,8 +54,12 @@ describe("Card", () => {
     expect(screen.getByText(/^stale, /)).toBeTruthy();
     rerender(
       <Card title="Finance" envelope={env({})} error={new Error("Failed to fetch")}>
-        {(d) => <span>n=
-          {d.n}</span>}
+        {(d) => (
+          <span>
+            n=
+            {d.n}
+          </span>
+        )}
       </Card>,
     );
     expect(screen.getByText("Dashboard unreachable: Failed to fetch")).toBeTruthy();

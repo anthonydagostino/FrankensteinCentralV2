@@ -2,18 +2,31 @@ import { AlertCircle, RefreshCw, WifiOff } from "lucide-react";
 import type { ReactNode } from "react";
 import type { Envelope, ModuleStatus } from "../api/types";
 import { formatTime, relativeTime } from "../lib/format";
-import { useNow } from "./Clock";
+import { useNow } from "../lib/useNow";
 import { ErrorBoundary } from "./ErrorBoundary";
-import { PANEL_CLASS } from "./SectionLabel";
+import { PANEL_CLASS } from "../lib/ui";
 
 export function StatusDot({ status, stale }: { status: ModuleStatus | "loading"; stale?: boolean }) {
-  const color = stale ? "bg-amber-400" : status === "ok" ? "bg-accent" : status === "degraded" ? "bg-amber-400" : status === "disabled" ? "bg-ink-400" : status === "loading" ? "bg-ink-400 animate-pulse-soft" : "bg-red-500";
+  const color = stale
+    ? "bg-amber-400"
+    : status === "ok"
+      ? "bg-accent"
+      : status === "degraded"
+        ? "bg-amber-400"
+        : status === "disabled"
+          ? "bg-ink-400"
+          : status === "loading"
+            ? "bg-ink-400 animate-pulse-soft"
+            : "bg-red-500";
   return <span className={`inline-block h-2 w-2 rounded-full ${color}`} aria-label={stale ? `${status}, stale` : status} />;
 }
 
 export function StaleBadge({ fetchedAt, now }: { fetchedAt: string | null; now: Date }) {
   return (
-    <span className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-300" title={fetchedAt ? `Last update ${formatTime(fetchedAt, "MMM d, h:mm a")}` : "No data yet"}>
+    <span
+      className="rounded-full border border-amber-500/40 bg-amber-500/10 px-2 py-0.5 text-[11px] font-medium text-amber-300"
+      title={fetchedAt ? `Last update ${formatTime(fetchedAt, "MMM d, h:mm a")}` : "No data yet"}
+    >
       stale, {relativeTime(fetchedAt, now)}
     </span>
   );
@@ -49,7 +62,11 @@ export function ErrorState({ message, onRetry }: { message: string | null; onRet
       <div className="min-w-0 flex-1">
         <p className="break-words">{message ?? "Something went wrong"}</p>
         {onRetry && (
-          <button type="button" onClick={onRetry} className="mt-2 inline-flex items-center gap-1 rounded border border-red-400/40 px-2 py-1 text-xs hover:bg-red-500/20">
+          <button
+            type="button"
+            onClick={onRetry}
+            className="mt-2 inline-flex items-center gap-1 rounded border border-red-400/40 px-2 py-1 text-xs hover:bg-red-500/20"
+          >
             <RefreshCw size={12} /> Retry
           </button>
         )}
@@ -134,7 +151,15 @@ export function Card<T>({ title, icon, envelope, error, onRetry, actions, classN
         <div className="ml-auto flex items-center gap-2">{actions}</div>
       </header>
       <div className="min-w-0 flex-1 p-4">{body}</div>
-      {!kiosk && <footer className="px-4 pb-2 text-[11px] text-ink-400">{envelope?.fetched_at ? `Updated ${relativeTime(envelope.fetched_at, now)}` : envelope?.status === "disabled" ? "Not configured" : "Waiting for first refresh"}</footer>}
+      {!kiosk && (
+        <footer className="px-4 pb-2 text-[11px] text-ink-400">
+          {envelope?.fetched_at
+            ? `Updated ${relativeTime(envelope.fetched_at, now)}`
+            : envelope?.status === "disabled"
+              ? "Not configured"
+              : "Waiting for first refresh"}
+        </footer>
+      )}
     </section>
   );
 }

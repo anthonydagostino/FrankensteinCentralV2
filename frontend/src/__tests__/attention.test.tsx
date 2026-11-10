@@ -7,14 +7,31 @@ import { PrivacyProvider } from "../lib/privacy";
 import { AttentionStrip } from "../widgets/Attention";
 
 const items: AttentionItem[] = [
-  { severity: "warning", icon: "receipt", title: "Netflix went up to $17.99", detail: "Was $15.49 per month", link: "/finance", source: "recurring", time: null },
+  {
+    severity: "warning",
+    icon: "receipt",
+    title: "Netflix went up to $17.99",
+    detail: "Was $15.49 per month",
+    link: "/finance",
+    source: "recurring",
+    time: null,
+  },
   { severity: "critical", icon: "cloud-lightning", title: "Tornado Warning", detail: "until 5 PM", link: null, source: "weather", time: null },
 ];
 
 describe("AttentionStrip", () => {
   it("blurs money sources only when privacy is on", () => {
     const qc = new QueryClient();
-    qc.setQueryData(["attention", undefined], { module: "attention", status: "ok", configured: true, fetched_at: null, stale: false, error: null, data: { items }, setup_hint: [] });
+    qc.setQueryData(["attention", undefined], {
+      module: "attention",
+      status: "ok",
+      configured: true,
+      fetched_at: null,
+      stale: false,
+      error: null,
+      data: { items },
+      setup_hint: [],
+    });
     render(
       <QueryClientProvider client={qc}>
         <MemoryRouter>

@@ -9,20 +9,29 @@ import { Chip, ProgressBar, SplitBar } from "../components/Bars";
 import { Card, ErrorState, SetupHint, Skeleton } from "../components/Card";
 import { Modal } from "../components/Modal";
 import { Money } from "../components/Money";
-import { PANEL_CLASS, SectionLabel } from "../components/SectionLabel";
+import { SectionLabel } from "../components/SectionLabel";
+import { PANEL_CLASS } from "../lib/ui";
 import { formatDateOnly, pct } from "../lib/format";
-import { sortBenefits, statusLabel, statusTone } from "../widgets/Benefits";
+import { sortBenefits, statusLabel, statusTone } from "../lib/benefits";
 
 function Tile({ b, onOpen }: { b: BenefitOut; onOpen: (b: BenefitOut) => void }) {
   const c = b.current;
   return (
-    <button type="button" onClick={() => onOpen(b)} className="flex min-w-0 flex-col rounded-lg border border-ink-700 bg-ink-800/50 p-3 text-left hover:border-accent/40">
+    <button
+      type="button"
+      onClick={() => onOpen(b)}
+      className="flex min-w-0 flex-col rounded-lg border border-ink-700 bg-ink-800/50 p-3 text-left hover:border-accent/40"
+    >
       <div className="flex w-full items-start justify-between gap-2">
         <div className="min-w-0">
           <div className="truncate text-sm font-semibold text-ink-200">{b.name}</div>
           <div className="text-[11px] text-ink-400">{c ? c.label : b.active_until ? `Retired ${formatDateOnly(b.active_until)}` : "Not active"}</div>
         </div>
-        {c && <Chip tone={c.expiring_soon ? "warn" : statusTone(c.status)} className="shrink-0">{c.expiring_soon ? `${c.days_left} days left` : statusLabel(c.status)}</Chip>}
+        {c && (
+          <Chip tone={c.expiring_soon ? "warn" : statusTone(c.status)} className="shrink-0">
+            {c.expiring_soon ? `${c.days_left} days left` : statusLabel(c.status)}
+          </Chip>
+        )}
       </div>
       {c ? (
         <>
@@ -55,7 +64,12 @@ function Tile({ b, onOpen }: { b: BenefitOut; onOpen: (b: BenefitOut) => void })
 }
 
 function EvidenceDrawer({ b, onClose, onWrong }: { b: BenefitOut; onClose: () => void; onWrong: (journalId: number) => void }) {
-  const kinds: Record<string, string> = { purchase: "Purchase", statement_credit: "Statement credit", merchant_refund: "Merchant refund", credit_clawback: "Clawback" };
+  const kinds: Record<string, string> = {
+    purchase: "Purchase",
+    statement_credit: "Statement credit",
+    merchant_refund: "Merchant refund",
+    credit_clawback: "Clawback",
+  };
   return (
     <Modal title={b.name} onClose={onClose} wide>
       <div className="space-y-4 text-sm">
@@ -82,16 +96,29 @@ function EvidenceDrawer({ b, onClose, onWrong }: { b: BenefitOut; onClose: () =>
               </tr>
             </thead>
             <tbody>
-              {[...(b.current ? [b.current] : []), ...b.history].sort((x, y) => (x.start ?? "").localeCompare(y.start ?? "")).reverse().map((p) => (
-                <tr key={p.period_key} className={`border-t border-ink-800 ${b.current?.period_key === p.period_key ? "bg-accent/5" : ""}`}>
-                  <td className="py-1 text-ink-200">{p.label}</td>
-                  <td className="py-1 text-right"><Money value={p.cap} /></td>
-                  <td className="py-1 text-right text-accent"><Money value={p.used} /></td>
-                  <td className="py-1 text-right text-amber-300"><Money value={p.pending} /></td>
-                  <td className="py-1 text-right"><Money value={p.remaining} /></td>
-                  <td className="py-1 pl-2"><Chip tone={statusTone(p.status)}>{statusLabel(p.status)}</Chip></td>
-                </tr>
-              ))}
+              {[...(b.current ? [b.current] : []), ...b.history]
+                .sort((x, y) => (x.start ?? "").localeCompare(y.start ?? ""))
+                .reverse()
+                .map((p) => (
+                  <tr key={p.period_key} className={`border-t border-ink-800 ${b.current?.period_key === p.period_key ? "bg-accent/5" : ""}`}>
+                    <td className="py-1 text-ink-200">{p.label}</td>
+                    <td className="py-1 text-right">
+                      <Money value={p.cap} />
+                    </td>
+                    <td className="py-1 text-right text-accent">
+                      <Money value={p.used} />
+                    </td>
+                    <td className="py-1 text-right text-amber-300">
+                      <Money value={p.pending} />
+                    </td>
+                    <td className="py-1 text-right">
+                      <Money value={p.remaining} />
+                    </td>
+                    <td className="py-1 pl-2">
+                      <Chip tone={statusTone(p.status)}>{statusLabel(p.status)}</Chip>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -103,7 +130,9 @@ function EvidenceDrawer({ b, onClose, onWrong }: { b: BenefitOut; onClose: () =>
               <li key={e.journal_id} className="flex flex-wrap items-center gap-2 py-1.5 text-xs">
                 <span className="w-14 shrink-0 text-ink-400">{formatDateOnly(e.date)}</span>
                 <span className="w-24 shrink-0">
-                  <Chip tone={e.kind === "statement_credit" ? "good" : e.kind === "purchase" ? "neutral" : e.kind === "merchant_refund" ? "info" : "bad"}>{kinds[e.kind] ?? e.kind}</Chip>
+                  <Chip tone={e.kind === "statement_credit" ? "good" : e.kind === "purchase" ? "neutral" : e.kind === "merchant_refund" ? "info" : "bad"}>
+                    {kinds[e.kind] ?? e.kind}
+                  </Chip>
                 </span>
                 <span className="min-w-0 flex-1 truncate text-ink-200" title={e.description}>
                   {e.description}
@@ -111,10 +140,18 @@ function EvidenceDrawer({ b, onClose, onWrong }: { b: BenefitOut; onClose: () =>
                 </span>
                 <span className="shrink-0 text-ink-400">{e.period_key}</span>
                 {e.attribution === "by_credit_date" && <Info size={12} className="shrink-0 text-ink-400" aria-label="Attributed by credit date" />}
-                {e.confidence && <Chip tone={e.confidence === "high" ? "good" : e.confidence === "medium" ? "warn" : "bad"}>{e.override ? "override" : e.confidence}</Chip>}
-                <span className="w-16 shrink-0 text-right"><Money value={e.amount} /></span>
+                {e.confidence && (
+                  <Chip tone={e.confidence === "high" ? "good" : e.confidence === "medium" ? "warn" : "bad"}>{e.override ? "override" : e.confidence}</Chip>
+                )}
+                <span className="w-16 shrink-0 text-right">
+                  <Money value={e.amount} />
+                </span>
                 {e.kind !== "purchase" && (
-                  <button type="button" onClick={() => onWrong(e.journal_id)} className="shrink-0 rounded border border-ink-600 px-1.5 py-0.5 text-[10px] text-ink-300 hover:border-red-400 hover:text-red-200">
+                  <button
+                    type="button"
+                    onClick={() => onWrong(e.journal_id)}
+                    className="shrink-0 rounded border border-ink-600 px-1.5 py-0.5 text-[10px] text-ink-300 hover:border-red-400 hover:text-red-200"
+                  >
                     this is wrong
                   </button>
                 )}
@@ -154,7 +191,11 @@ function ReclassifyModal({
         </p>
         <label className="block text-xs text-ink-400">
           This is
-          <select value={cls} onChange={(e) => setCls(e.target.value)} className="mt-1 w-full rounded border border-ink-700 bg-ink-800 px-2 py-1.5 text-sm text-ink-200">
+          <select
+            value={cls}
+            onChange={(e) => setCls(e.target.value)}
+            className="mt-1 w-full rounded border border-ink-700 bg-ink-800 px-2 py-1.5 text-sm text-ink-200"
+          >
             <option value="statement_credit">a statement credit for a benefit</option>
             <option value="merchant_refund">a merchant refund</option>
             <option value="payment">a payment</option>
@@ -164,7 +205,11 @@ function ReclassifyModal({
         {needsBenefit && (
           <label className="block text-xs text-ink-400">
             Benefit
-            <select value={benefitId} onChange={(e) => setChosen(e.target.value)} className="mt-1 w-full rounded border border-ink-700 bg-ink-800 px-2 py-1.5 text-sm text-ink-200">
+            <select
+              value={benefitId}
+              onChange={(e) => setChosen(e.target.value)}
+              className="mt-1 w-full rounded border border-ink-700 bg-ink-800 px-2 py-1.5 text-sm text-ink-200"
+            >
               {benefits.map((b) => (
                 <option key={b.id} value={b.id}>
                   {cardLabels[b.card] ?? b.card}: {b.name}
@@ -176,7 +221,12 @@ function ReclassifyModal({
         {needsBenefit && (
           <label className="block text-xs text-ink-400">
             Period key (optional, for example 2026-Q4 or 2026-M10)
-            <input value={period} onChange={(e) => setPeriod(e.target.value)} className="mt-1 w-full rounded border border-ink-700 bg-ink-800 px-2 py-1.5 text-sm text-ink-200" placeholder="auto" />
+            <input
+              value={period}
+              onChange={(e) => setPeriod(e.target.value)}
+              className="mt-1 w-full rounded border border-ink-700 bg-ink-800 px-2 py-1.5 text-sm text-ink-200"
+              placeholder="auto"
+            />
           </label>
         )}
         {save.error && <p className="text-xs text-red-300">{save.error.message}</p>}
@@ -187,7 +237,12 @@ function ReclassifyModal({
           <button
             type="button"
             disabled={!canSave}
-            onClick={() => save.mutate({ journal_id: item.journal_id, classification: cls, benefit_id: needsBenefit ? benefitId : null, period_key: period.trim() || null }, { onSuccess: onClose })}
+            onClick={() =>
+              save.mutate(
+                { journal_id: item.journal_id, classification: cls, benefit_id: needsBenefit ? benefitId : null, period_key: period.trim() || null },
+                { onSuccess: onClose },
+              )
+            }
             className="rounded bg-accent/20 px-3 py-1.5 font-medium text-accent hover:bg-accent/30 disabled:opacity-50"
           >
             Save
@@ -213,57 +268,73 @@ function Unclassified({ readOnly, cardLabels }: { readOnly: boolean; cardLabels:
     <Card title="Unclassified deposits" envelope={q.data} error={q.error} onRetry={() => q.refetch()}>
       {(d) => (
         <div className="space-y-4">
-          <p className="text-xs text-ink-400">Deposits on the cards from the last 120 days that the engine could not place, plus low confidence guesses. Label them here; the pattern suggestion can be pasted into config/benefits.yaml (the file is never edited automatically).</p>
+          <p className="text-xs text-ink-400">
+            Deposits on the cards from the last 120 days that the engine could not place, plus low confidence guesses. Label them here; the pattern suggestion
+            can be pasted into config/benefits.yaml (the file is never edited automatically).
+          </p>
           {d.items.length === 0 ? (
             <p className="text-sm text-ink-500">Nothing to review</p>
           ) : (
             <div className="overflow-x-auto">
-            <table className="w-full text-xs">
-              <thead className="text-left text-ink-400">
-                <tr>
-                  <th className="py-1 font-medium">Date</th>
-                  <th className="py-1 font-medium">Description</th>
-                  <th className="hidden py-1 font-medium sm:table-cell">Account</th>
-                  <th className="py-1 text-right font-medium">Amount</th>
-                  <th className="py-1 pl-2 font-medium">Engine guess</th>
-                  <th className="py-1 pl-2 font-medium">Pattern</th>
-                  <th className="py-1"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {d.items.map((it) => (
-                  <tr key={it.journal_id} className="border-t border-ink-800">
-                    <td className="py-1.5 pr-2 text-ink-400">{formatDateOnly(it.date)}</td>
-                    <td className="max-w-[200px] truncate py-1.5 pr-2 text-ink-200" title={it.description}>{it.description}</td>
-                    <td className="hidden py-1.5 pr-2 text-ink-400 sm:table-cell">{it.account}</td>
-                    <td className="py-1.5 text-right"><Money value={it.amount} /></td>
-                    <td className="py-1.5 pl-2">{it.kind === "unclassified_deposit" ? <Chip>unclassified</Chip> : <Chip tone="warn">{it.kind.replace("_", " ")} ({it.confidence})</Chip>}</td>
-                    <td className="py-1.5 pl-2">
-                      <button
-                        type="button"
-                        className="inline-flex items-center gap-1 rounded border border-ink-700 px-1.5 py-0.5 font-mono text-[10px] text-ink-300 hover:border-accent/50"
-                        title={it.suggested_pattern}
-                        onClick={() => {
-                          navigator.clipboard
-                            ?.writeText(it.suggested_pattern)
-                            .then(() => setCopied(it.journal_id))
-                            .catch(() => setCopied(null));
-                        }}
-                      >
-                        {copied === it.journal_id ? <Check size={10} /> : <ClipboardCopy size={10} />} {it.suggested_pattern.length > 18 ? `${it.suggested_pattern.slice(0, 18)}…` : it.suggested_pattern}
-                      </button>
-                    </td>
-                    <td className="py-1.5 text-right">
-                      {!readOnly && (
-                        <button type="button" onClick={() => setEdit(it)} className="rounded bg-ink-700 px-2 py-0.5 text-ink-200 hover:bg-ink-600">
-                          Label
-                        </button>
-                      )}
-                    </td>
+              <table className="w-full text-xs">
+                <thead className="text-left text-ink-400">
+                  <tr>
+                    <th className="py-1 font-medium">Date</th>
+                    <th className="py-1 font-medium">Description</th>
+                    <th className="hidden py-1 font-medium sm:table-cell">Account</th>
+                    <th className="py-1 text-right font-medium">Amount</th>
+                    <th className="py-1 pl-2 font-medium">Engine guess</th>
+                    <th className="py-1 pl-2 font-medium">Pattern</th>
+                    <th className="py-1"></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {d.items.map((it) => (
+                    <tr key={it.journal_id} className="border-t border-ink-800">
+                      <td className="py-1.5 pr-2 text-ink-400">{formatDateOnly(it.date)}</td>
+                      <td className="max-w-[200px] truncate py-1.5 pr-2 text-ink-200" title={it.description}>
+                        {it.description}
+                      </td>
+                      <td className="hidden py-1.5 pr-2 text-ink-400 sm:table-cell">{it.account}</td>
+                      <td className="py-1.5 text-right">
+                        <Money value={it.amount} />
+                      </td>
+                      <td className="py-1.5 pl-2">
+                        {it.kind === "unclassified_deposit" ? (
+                          <Chip>unclassified</Chip>
+                        ) : (
+                          <Chip tone="warn">
+                            {it.kind.replace("_", " ")} ({it.confidence})
+                          </Chip>
+                        )}
+                      </td>
+                      <td className="py-1.5 pl-2">
+                        <button
+                          type="button"
+                          className="inline-flex items-center gap-1 rounded border border-ink-700 px-1.5 py-0.5 font-mono text-[10px] text-ink-300 hover:border-accent/50"
+                          title={it.suggested_pattern}
+                          onClick={() => {
+                            navigator.clipboard
+                              ?.writeText(it.suggested_pattern)
+                              .then(() => setCopied(it.journal_id))
+                              .catch(() => setCopied(null));
+                          }}
+                        >
+                          {copied === it.journal_id ? <Check size={10} /> : <ClipboardCopy size={10} />}{" "}
+                          {it.suggested_pattern.length > 18 ? `${it.suggested_pattern.slice(0, 18)}…` : it.suggested_pattern}
+                        </button>
+                      </td>
+                      <td className="py-1.5 text-right">
+                        {!readOnly && (
+                          <button type="button" onClick={() => setEdit(it)} className="rounded bg-ink-700 px-2 py-0.5 text-ink-200 hover:bg-ink-600">
+                            Label
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
           {d.overrides.length > 0 && (
@@ -277,7 +348,12 @@ function Unclassified({ readOnly, cardLabels }: { readOnly: boolean; cardLabels:
                     {o.benefit_id && <span className="text-ink-300">{o.benefit_id}</span>}
                     {o.period_key && <span className="text-ink-400">{o.period_key}</span>}
                     {!readOnly && (
-                      <button type="button" onClick={() => del.mutate(o.id)} className="ml-auto rounded p-1 text-ink-400 hover:text-red-300" title="Remove override">
+                      <button
+                        type="button"
+                        onClick={() => del.mutate(o.id)}
+                        className="ml-auto rounded p-1 text-ink-400 hover:text-red-300"
+                        title="Remove override"
+                      >
                         <Trash2 size={12} />
                       </button>
                     )}
@@ -295,7 +371,10 @@ function Unclassified({ readOnly, cardLabels }: { readOnly: boolean; cardLabels:
 
 function ManualRow({ b, readOnly }: { b: BenefitOut; readOnly: boolean }) {
   const manual = useManualUsage();
-  const periods = [...(b.current ? [b.current] : []), ...b.history].filter((p) => !!p.start).sort((x, y) => (y.start ?? "").localeCompare(x.start ?? "")).slice(0, 6);
+  const periods = [...(b.current ? [b.current] : []), ...b.history]
+    .filter((p) => !!p.start)
+    .sort((x, y) => (y.start ?? "").localeCompare(x.start ?? ""))
+    .slice(0, 6);
   return (
     <div className="rounded-lg bg-ink-800/50 p-3">
       <div className="text-sm font-semibold text-ink-200">{b.name}</div>
@@ -307,7 +386,14 @@ function ManualRow({ b, readOnly }: { b: BenefitOut; readOnly: boolean }) {
             <li key={p.period_key} className="flex flex-wrap items-center gap-x-3 gap-y-1 py-1.5 text-xs">
               <span className="w-28 text-ink-300">{p.label}</span>
               <label className="inline-flex items-center gap-1 text-ink-200">
-                <input type="checkbox" checked={used} disabled={readOnly} onChange={(e) => manual.mutate({ benefit_id: b.id, period_key: p.period_key, used: e.target.checked })} className="accent-[#4ade80]" /> Used
+                <input
+                  type="checkbox"
+                  checked={used}
+                  disabled={readOnly}
+                  onChange={(e) => manual.mutate({ benefit_id: b.id, period_key: p.period_key, used: e.target.checked })}
+                  className="accent-[#4ade80]"
+                />{" "}
+                Used
               </label>
               <span className="text-ink-400">
                 of <Money value={p.cap} />
@@ -347,19 +433,27 @@ function CardSection({ card, onOpen }: { card: BenefitsData["cards"][number]; on
         <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs sm:grid-cols-4">
           <div>
             <div className="text-ink-400">Captured YTD</div>
-            <div className="text-base font-semibold text-accent"><Money value={card.captured_ytd} /></div>
+            <div className="text-base font-semibold text-accent">
+              <Money value={card.captured_ytd} />
+            </div>
           </div>
           <div>
             <div className="text-ink-400">Annual fee</div>
-            <div className="text-base font-semibold text-ink-200"><Money value={card.annual_fee} /></div>
+            <div className="text-base font-semibold text-ink-200">
+              <Money value={card.annual_fee} />
+            </div>
           </div>
           <div>
             <div className="text-ink-400">Still available</div>
-            <div className="text-base font-semibold text-ink-200"><Money value={card.still_available} /></div>
+            <div className="text-base font-semibold text-ink-200">
+              <Money value={card.still_available} />
+            </div>
           </div>
           <div>
             <div className="text-ink-400">Left on the table</div>
-            <div className="text-base font-semibold text-amber-300"><Money value={card.left_on_table_ytd} /></div>
+            <div className="text-base font-semibold text-amber-300">
+              <Money value={card.left_on_table_ytd} />
+            </div>
           </div>
         </div>
       </div>
@@ -389,11 +483,21 @@ export function BenefitsPage({ readOnly }: { readOnly: boolean }) {
     <main className="mx-auto max-w-[1400px] space-y-4 px-4 py-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <h1 className="text-xl font-semibold text-ink-200">Amex benefits</h1>
-        {env?.data && <span className="text-xs text-ink-400">Catalog verified {formatDateOnly(env.data.catalog_last_verified)} · {env.data.year}</span>}
+        {env?.data && (
+          <span className="text-xs text-ink-400">
+            Catalog verified {formatDateOnly(env.data.catalog_last_verified)} · {env.data.year}
+          </span>
+        )}
       </div>
       {q.error && !env && <ErrorState message={q.error.message} onRetry={() => q.refetch()} />}
       {!env && !q.error && <Skeleton className="h-64 w-full" />}
-      {env?.status === "disabled" && <SetupHint title="Benefits" vars={env.setup_hint} message="Benefits are computed from Firefly III transactions. Set these variables in .env and restart:" />}
+      {env?.status === "disabled" && (
+        <SetupHint
+          title="Benefits"
+          vars={env.setup_hint}
+          message="Benefits are computed from Firefly III transactions. Set these variables in .env and restart:"
+        />
+      )}
       {env?.data && env.data.cards.map((card) => <CardSection key={card.card} card={card} onOpen={setOpen} />)}
       {env?.data && <Unclassified readOnly={readOnly} cardLabels={cardLabels} />}
       {env?.data && (
@@ -401,9 +505,11 @@ export function BenefitsPage({ readOnly }: { readOnly: boolean }) {
           <h2 className="text-base font-semibold text-ink-200">Manual benefits</h2>
           <p className="mb-3 text-xs text-ink-400">These credits never touch the card statement (Uber Cash lands in the Uber app), so mark them by hand.</p>
           <div className="grid gap-3 md:grid-cols-2">
-            {env.data.cards.flatMap((c) => c.benefits.filter((b) => b.tracking === "manual")).map((b) => (
-              <ManualRow key={b.id} b={b} readOnly={readOnly} />
-            ))}
+            {env.data.cards
+              .flatMap((c) => c.benefits.filter((b) => b.tracking === "manual"))
+              .map((b) => (
+                <ManualRow key={b.id} b={b} readOnly={readOnly} />
+              ))}
           </div>
         </section>
       )}

@@ -2,9 +2,9 @@ import { CheckCircle2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAttention } from "../api/hooks";
 import type { AttentionItem } from "../api/types";
-import { SEVERITY_CLASS } from "../components/SectionLabel";
+import { SEVERITY_CLASS } from "../lib/ui";
 import { DynamicIcon } from "../lib/icons";
-import { usePrivacy } from "../lib/privacy";
+import { usePrivacy } from "../lib/privacyContext";
 
 /** Sources whose titles and details carry dollar amounts, so the privacy blur must cover them. */
 const MONEY_SOURCES = new Set(["benefits", "recurring", "finance"]);
@@ -47,7 +47,9 @@ export function AttentionStrip({ location, large }: { location?: string; large?:
   }
   if (items.length === 0) {
     return (
-      <div className={`inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 ${large ? "text-base" : "text-sm"} text-accent`}>
+      <div
+        className={`inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/10 px-3 py-1 ${large ? "text-base" : "text-sm"} text-accent`}
+      >
         <CheckCircle2 size={large ? 18 : 15} /> All clear
       </div>
     );

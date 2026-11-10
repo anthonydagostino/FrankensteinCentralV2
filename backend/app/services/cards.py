@@ -9,14 +9,15 @@ from typing import Any
 from ..config_loader import CardConfig
 from ..db import Database
 from ..util import compile_pattern, money, money_str
+from .benefits.classify import Classified
 from .finance import owed_amount
 
 ZERO = Decimal("0.00")
 
 
-def resolve_card_accounts(cards: list[CardConfig], accounts: list[dict], db: Database | None) -> dict[str, dict | None]:
+def resolve_card_accounts(cards: list[CardConfig], accounts: list[dict[str, Any]], db: Database | None) -> dict[str, dict[str, Any] | None]:
     """Map each configured card to a Firefly account: a pinned setting wins, then the configured id, then the name regex."""
-    out: dict[str, dict | None] = {}
+    out: dict[str, dict[str, Any] | None] = {}
     by_id = {a["id"]: a for a in accounts}
     for card in cards:
         chosen = None
@@ -39,14 +40,14 @@ def resolve_card_accounts(cards: list[CardConfig], accounts: list[dict], db: Dat
 
 def card_metrics(
     card: CardConfig,
-    account: dict | None,
-    accounts: list[dict],
-    transactions: list[dict],
-    classified: list,
-    benefits_card: dict | None,
+    account: dict[str, Any] | None,
+    accounts: list[dict[str, Any]],
+    transactions: list[dict[str, Any]],
+    classified: list[Classified],
+    benefits_card: dict[str, Any] | None,
     today: date,
-    links: dict,
-) -> dict:
+    links: dict[str, Any],
+) -> dict[str, Any]:
     """Balance, spend, largest purchase, last credit, and fee offset for one card."""
     base: dict[str, Any] = {"id": card.id, "label": card.label, "annual_fee": money_str(card.annual_fee), "account": account}
     if account is None:

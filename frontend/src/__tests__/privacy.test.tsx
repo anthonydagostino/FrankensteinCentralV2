@@ -1,7 +1,8 @@
 import { act, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Money } from "../components/Money";
-import { PrivacyProvider, usePrivacy } from "../lib/privacy";
+import { PrivacyProvider } from "../lib/privacy";
+import { usePrivacy } from "../lib/privacyContext";
 
 function Toggle() {
   const { toggle } = usePrivacy();

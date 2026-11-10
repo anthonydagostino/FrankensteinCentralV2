@@ -7,7 +7,15 @@ import { Card } from "../components/Card";
 import { Money } from "../components/Money";
 import { formatDateOnly } from "../lib/format";
 
-const CADENCE_LABEL: Record<RecurringItem["cadence"], string> = { weekly: "weekly", biweekly: "every 2 weeks", monthly: "monthly", bimonthly: "every 2 months", quarterly: "quarterly", semiannual: "twice a year", annual: "yearly" };
+const CADENCE_LABEL: Record<RecurringItem["cadence"], string> = {
+  weekly: "weekly",
+  biweekly: "every 2 weeks",
+  monthly: "monthly",
+  bimonthly: "every 2 months",
+  quarterly: "quarterly",
+  semiannual: "twice a year",
+  annual: "yearly",
+};
 
 function dueLabel(item: RecurringItem): string {
   if (item.status === "lapsed") return `last seen ${formatDateOnly(item.last_seen)}`;
@@ -49,7 +57,12 @@ function Row({ item, readOnly }: { item: RecurringItem; readOnly: boolean }) {
       <span className="text-right">
         <span className="block text-ink-200">
           <Money value={item.amount} />
-          {item.variable && <span className="text-[11px] text-ink-400"> (<Money value={item.amount_min} /> to <Money value={item.amount_max} />)</span>}
+          {item.variable && (
+            <span className="text-[11px] text-ink-400">
+              {" "}
+              (<Money value={item.amount_min} /> to <Money value={item.amount_max} />)
+            </span>
+          )}
         </span>
         <span className="block text-[11px] text-ink-400">
           <Money value={item.annual_cost} /> / yr
@@ -87,11 +100,18 @@ export function RecurringBody({ data, readOnly }: { data: RecurringData; readOnl
           <Money value={t.annual_total} /> / year
         </Chip>
         <Chip>{t.active_count} active</Chip>
-        {t.increased_count > 0 && <Chip tone="warn">{t.increased_count} price increase{t.increased_count > 1 ? "s" : ""}</Chip>}
+        {t.increased_count > 0 && (
+          <Chip tone="warn">
+            {t.increased_count} price increase{t.increased_count > 1 ? "s" : ""}
+          </Chip>
+        )}
         {t.new_count > 0 && <Chip tone="info">{t.new_count} new</Chip>}
         {t.lapsed_count > 0 && <Chip>{t.lapsed_count} stopped</Chip>}
       </div>
-      <p className="text-[11px] text-ink-400">Charges that repeat on a schedule, found by clustering Firefly withdrawals by merchant and cadence over the last year. Transfers never count. Ignore anything that is not a subscription.</p>
+      <p className="text-[11px] text-ink-400">
+        Charges that repeat on a schedule, found by clustering Firefly withdrawals by merchant and cadence over the last year. Transfers never count. Ignore
+        anything that is not a subscription.
+      </p>
       {data.items.length === 0 && <p className="text-sm text-ink-500">No recurring charges found yet</p>}
       {needsAttention.length > 0 && (
         <ul className="divide-y divide-ink-800 rounded-lg border border-amber-500/30 bg-amber-500/5">
@@ -107,7 +127,12 @@ export function RecurringBody({ data, readOnly }: { data: RecurringData; readOnl
       </ul>
       {rest.length > 0 && (
         <>
-          <button type="button" onClick={() => setShowAll(!showAll)} className="inline-flex items-center gap-1 text-[11px] text-ink-400 hover:text-ink-200" aria-expanded={showAll}>
+          <button
+            type="button"
+            onClick={() => setShowAll(!showAll)}
+            className="inline-flex items-center gap-1 text-[11px] text-ink-400 hover:text-ink-200"
+            aria-expanded={showAll}
+          >
             <ChevronDown size={12} className={showAll ? "rotate-180" : ""} /> {rest.length} stopped or ignored
           </button>
           {showAll && (

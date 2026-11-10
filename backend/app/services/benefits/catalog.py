@@ -24,9 +24,9 @@ class Benefit:
     enrollment_required: bool
     active_from: date | None
     active_until: date | None
-    purchase_patterns: list[re.Pattern] = field(default_factory=list)
-    purchase_exclude_patterns: list[re.Pattern] = field(default_factory=list)
-    credit_patterns: list[re.Pattern] = field(default_factory=list)
+    purchase_patterns: list[re.Pattern[str]] = field(default_factory=list)
+    purchase_exclude_patterns: list[re.Pattern[str]] = field(default_factory=list)
+    credit_patterns: list[re.Pattern[str]] = field(default_factory=list)
     notes: str = ""
 
     def is_active_on(self, d: date) -> bool:
@@ -44,7 +44,7 @@ class Benefit:
         return any(p.search(text) for p in self.credit_patterns)
 
 
-def _compile(patterns: list[str]) -> list[re.Pattern]:
+def _compile(patterns: list[str]) -> list[re.Pattern[str]]:
     return [compile_pattern(p) for p in patterns]
 
 

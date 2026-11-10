@@ -35,7 +35,11 @@ export class ErrorBoundary extends Component<Props, State> {
       <section className="rounded-xl border border-red-500/40 bg-ink-900/80 p-4 text-sm text-red-200" aria-label={this.props.name}>
         <p className="font-medium">{this.props.name} could not render</p>
         <p className="mt-1 break-words text-xs opacity-80">{this.state.error.message}</p>
-        <button type="button" onClick={() => this.setState({ error: null })} className="mt-2 rounded border border-red-400/40 px-2 py-1 text-xs hover:bg-red-500/20">
+        <button
+          type="button"
+          onClick={() => this.setState({ error: null })}
+          className="mt-2 rounded border border-red-400/40 px-2 py-1 text-xs hover:bg-red-500/20"
+        >
           Retry
         </button>
       </section>

@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 from datetime import datetime
+from typing import Any
 
+from ..cache import Cache
 from ..util import local_tz as _local_tz
 
 SEVERITY_RANK = {"critical": 0, "warning": 1, "info": 2}
@@ -19,15 +21,20 @@ CADENCE_NOUN = {
 }
 
 
-def _item(severity: str, icon: str, title: str, detail: str | None, link: str | None, source: str, ts: str | None = None) -> dict:
+def _item(severity: str, icon: str, title: str, detail: str | None, link: str | None, source: str, ts: str | None = None) -> dict[str, Any]:
     return {"severity": severity, "icon": icon, "title": title, "detail": detail, "link": link, "source": source, "time": ts}
 
 
 def build_attention(
-    cache, benefits: dict | None, finance_summary: dict | None, now: datetime, location: str | None = None, recurring: dict | None = None
-) -> list[dict]:
+    cache: Cache,
+    benefits: dict[str, Any] | None,
+    finance_summary: dict[str, Any] | None,
+    now: datetime,
+    location: str | None = None,
+    recurring: dict[str, Any] | None = None,
+) -> list[dict[str, Any]]:
     """At most MAX_ITEMS items, critical first. Each rule reads only cached data so the strip never calls out."""
-    items: list[dict] = []
+    items: list[dict[str, Any]] = []
 
     # Weather alerts and badges
     weather = cache.data("weather") or {}
@@ -88,7 +95,7 @@ def build_attention(
 
     # Benefits
     if benefits:
-        per_card: dict[str, list[dict]] = {}
+        per_card: dict[str, list[dict[str, Any]]] = {}
         for e in benefits.get("expiring_soon") or []:
             per_card.setdefault(e["card_label"], []).append(e)
         for label, entries in per_card.items():

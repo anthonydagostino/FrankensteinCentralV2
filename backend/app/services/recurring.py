@@ -8,6 +8,7 @@ import statistics
 from collections import Counter, defaultdict
 from datetime import date, timedelta
 from decimal import Decimal
+from typing import Any
 
 from ..util import money, money_str
 
@@ -72,7 +73,7 @@ def _within(a: Decimal, ref: Decimal, tol: Decimal) -> bool:
     return abs(a - ref) <= ref * tol
 
 
-def detect(transactions: list[dict], today: date, ignored: set[str] | None = None, links: dict | None = None) -> dict:
+def detect(transactions: list[dict[str, Any]], today: date, ignored: set[str] | None = None, links: dict[str, Any] | None = None) -> dict[str, Any]:
     """Recurring charges found in withdrawal rows (rules in DECISIONS.md).
 
     Rows are clustered by a normalized description (plus the exact amount for pass-through merchants such as
@@ -82,7 +83,7 @@ def detect(transactions: list[dict], today: date, ignored: set[str] | None = Non
     ignored = ignored or set()
     links = links or {}
     tmpl = links.get("transaction_template")
-    clusters: dict[str, list[dict]] = defaultdict(list)
+    clusters: dict[str, list[dict[str, Any]]] = defaultdict(list)
     for t in transactions:
         if t.get("type") != "withdrawal":
             continue
@@ -92,11 +93,11 @@ def detect(transactions: list[dict], today: date, ignored: set[str] | None = Non
             key = f"{key} {money_str(t['amount'])}"
         clusters[key].append(t)
 
-    items: list[dict] = []
+    items: list[dict[str, Any]] = []
     for key, rows in clusters.items():
         rows.sort(key=lambda r: (r["date"], r["journal_id"]))
         # one charge per day per cluster: Firefly splits or duplicate imports should not create fake weekly cadence
-        by_day: dict[str, dict] = {}
+        by_day: dict[str, dict[str, Any]] = {}
         for r in rows:
             by_day.setdefault(r["date"][:10], r)
         rows = list(by_day.values())

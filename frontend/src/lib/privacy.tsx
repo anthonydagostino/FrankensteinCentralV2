@@ -1,12 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-
-interface PrivacyContextValue {
-  blurred: boolean;
-  toggle: () => void;
-  setBlurred: (value: boolean) => void;
-}
-
-const PrivacyContext = createContext<PrivacyContextValue>({ blurred: false, toggle: () => {}, setBlurred: () => {} });
+import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { PrivacyContext } from "./privacyContext";
 
 /**
  * Privacy blur for dollar amounts. The server setting (`initial`, from /api/config/public) is the source
@@ -14,7 +7,12 @@ const PrivacyContext = createContext<PrivacyContextValue>({ blurred: false, togg
  */
 export function PrivacyProvider({ children, initial, persist }: { children: ReactNode; initial: boolean; persist?: (value: boolean) => void }) {
   const [blurred, setBlurredState] = useState<boolean>(initial);
-  useEffect(() => setBlurredState(initial), [initial]);
+  // A changed server value wins over the local toggle: state is adjusted during render, not in an effect.
+  const [seenInitial, setSeenInitial] = useState(initial);
+  if (initial !== seenInitial) {
+    setSeenInitial(initial);
+    setBlurredState(initial);
+  }
   const setBlurred = useCallback(
     (value: boolean) => {
       setBlurredState(value);
@@ -25,8 +23,4 @@ export function PrivacyProvider({ children, initial, persist }: { children: Reac
   const toggle = useCallback(() => setBlurred(!blurred), [blurred, setBlurred]);
   const value = useMemo(() => ({ blurred, toggle, setBlurred }), [blurred, toggle, setBlurred]);
   return <PrivacyContext.Provider value={value}>{children}</PrivacyContext.Provider>;
-}
-
-export function usePrivacy() {
-  return useContext(PrivacyContext);
 }

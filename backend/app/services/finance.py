@@ -6,6 +6,7 @@ import heapq
 from collections import defaultdict
 from datetime import date, datetime, timedelta
 from decimal import Decimal
+from typing import Any
 
 from ..config_loader import DashboardConfig
 from ..util import money, money_str
@@ -13,11 +14,11 @@ from ..util import money, money_str
 ZERO = Decimal("0.00")
 
 
-def _d(value) -> Decimal:
+def _d(value: Any) -> Decimal:
     return money(value)
 
 
-def firefly_links(vanity: str) -> dict:
+def firefly_links(vanity: str) -> dict[str, Any]:
     """Deep link templates into the Firefly UI for the configured vanity URL (empty when none is set)."""
     base = vanity.rstrip("/") if vanity else ""
     if not base:
@@ -34,14 +35,14 @@ def firefly_links(vanity: str) -> dict:
     }
 
 
-def is_card_account(acct: dict) -> bool:
+def is_card_account(acct: dict[str, Any]) -> bool:
     """Credit cards are Firefly ccAsset accounts or liabilities typed as debt or credit card."""
     if acct.get("role") == "ccAsset":
         return True
     return bool(acct.get("type") in ("liabilities", "liability") and (acct.get("liability_type") or "").lower() in ("debt", "credit card", "creditcard"))
 
 
-def owed_amount(acct: dict) -> Decimal:
+def owed_amount(acct: dict[str, Any]) -> Decimal:
     """Positive balance owed on a card: negative asset balances or the absolute liability balance."""
     bal = _d(acct.get("balance"))
     if acct.get("type") == "asset":
@@ -49,7 +50,7 @@ def owed_amount(acct: dict) -> Decimal:
     return abs(bal)
 
 
-def group_accounts(accounts: list[dict], links: dict) -> dict:
+def group_accounts(accounts: list[dict[str, Any]], links: dict[str, Any]) -> dict[str, Any]:
     """Accounts split into assets, cards, and other liabilities with UI links and card balances as amounts owed."""
     assets, cards, liabilities = [], [], []
     tmpl = links.get("account_template")
@@ -74,7 +75,7 @@ def group_accounts(accounts: list[dict], links: dict) -> dict:
     return {"assets": assets, "credit_cards": cards, "liabilities": liabilities}
 
 
-def net_worth_fallback(accounts: list[dict]) -> Decimal:
+def net_worth_fallback(accounts: list[dict[str, Any]]) -> Decimal:
     """Net worth from account balances when Firefly's summary endpoint failed (assets minus liabilities, honoring include_net_worth)."""
     total = ZERO
     for a in accounts:
@@ -88,7 +89,7 @@ def net_worth_fallback(accounts: list[dict]) -> Decimal:
     return total
 
 
-def spend_between(transactions: list[dict], start: date, end: date) -> Decimal:
+def spend_between(transactions: list[dict[str, Any]], start: date, end: date) -> Decimal:
     """Withdrawals only. Transfers (card payments) never count."""
     total = ZERO
     for t in transactions:
@@ -100,7 +101,7 @@ def spend_between(transactions: list[dict], start: date, end: date) -> Decimal:
     return total
 
 
-def daily_spend(transactions: list[dict], today: date, days: int = 30) -> list[dict]:
+def daily_spend(transactions: list[dict[str, Any]], today: date, days: int = 30) -> list[dict[str, Any]]:
     """Withdrawal totals per day for the trailing `days` days, zero filled, as the spark line series."""
     start = today - timedelta(days=days - 1)
     buckets: dict[date, Decimal] = defaultdict(lambda: ZERO)
@@ -113,7 +114,7 @@ def daily_spend(transactions: list[dict], today: date, days: int = 30) -> list[d
     return [{"date": (start + timedelta(days=i)).isoformat(), "amount": money_str(buckets.get(start + timedelta(days=i), ZERO))} for i in range(days)]
 
 
-def top_categories(data: dict, transactions: list[dict], month_start: date, today: date, limit: int = 6) -> list[dict]:
+def top_categories(data: dict[str, Any], transactions: list[dict[str, Any]], month_start: date, today: date, limit: int = 6) -> list[dict[str, Any]]:
     """The top spending categories this month: Firefly's insight when available, otherwise computed from the rows."""
     cats = data.get("categories") or []
     if not cats:
@@ -134,7 +135,7 @@ def top_categories(data: dict, transactions: list[dict], month_start: date, toda
     return out
 
 
-def budgets_view(data: dict) -> list[dict]:
+def budgets_view(data: dict[str, Any]) -> list[dict[str, Any]]:
     """Budgets with spent percentage and an ok/warn/over level for the bar colors."""
     out = []
     for b in data.get("budgets") or []:
@@ -152,7 +153,7 @@ def budgets_view(data: dict) -> list[dict]:
     return out
 
 
-def upcoming_bills(data: dict, today: date, days: int = 14) -> list[dict]:
+def upcoming_bills(data: dict[str, Any], today: date, days: int = 14) -> list[dict[str, Any]]:
     """Bills expected within `days` days, soonest first, with the days until due."""
     out = []
     for b in data.get("bills") or []:
@@ -175,7 +176,7 @@ def upcoming_bills(data: dict, today: date, days: int = 14) -> list[dict]:
     return out
 
 
-def recent_transactions(transactions: list[dict], links: dict, limit: int = 15) -> list[dict]:
+def recent_transactions(transactions: list[dict[str, Any]], links: dict[str, Any], limit: int = 15) -> list[dict[str, Any]]:
     """The newest `limit` splits with a sign and counterparty the UI can render without knowing Firefly's model."""
     tmpl = links.get("transaction_template")
     rows = heapq.nlargest(limit, transactions, key=lambda t: (t["date"], t["journal_id"]))
@@ -211,7 +212,7 @@ def recent_transactions(transactions: list[dict], links: dict, limit: int = 15) 
     return out
 
 
-def freshness(data: dict, accounts: list[dict], now: datetime, stale_after_hours: int) -> dict:
+def freshness(data: dict[str, Any], accounts: list[dict[str, Any]], now: datetime, stale_after_hours: int) -> dict[str, Any]:
     """Newest transaction per bank fed account (external_id present, or any card account)."""
     newest: dict[str, str] = {}
     name_by_id = {a["id"]: a["name"] for a in accounts}
@@ -233,7 +234,7 @@ def freshness(data: dict, accounts: list[dict], now: datetime, stale_after_hours
     return {"newest_transaction": overall, "hours_since": hours, "stale": stale, "stale_after_hours": stale_after_hours, "per_account": per_account[:8]}
 
 
-def build_summary(data: dict, config: DashboardConfig, vanity_url: str, today: date, now: datetime) -> dict:
+def build_summary(data: dict[str, Any], config: DashboardConfig, vanity_url: str, today: date, now: datetime) -> dict[str, Any]:
     """The finance summary view: net worth, month to date spend paced against the same day last month
     (clamped to the last day of a shorter month, null when last month had no spend), categories, budgets, bills,
     daily spend, account groups, and data freshness."""

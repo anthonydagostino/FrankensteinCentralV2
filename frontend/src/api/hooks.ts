@@ -1,7 +1,25 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getJson, sendJson } from "./client";
 import type {
-  AttentionData, BenefitsData, CalendarData, CardData, ContainersData, Envelope, FinanceSummary, Me, PlexData, ProbesData, PublicConfig, RecurringData, SettingsData, StatusRow, TrainingData, TransactionRow, UnclassifiedData, VaultData, WeatherData,
+  AttentionData,
+  BenefitsData,
+  CalendarData,
+  CardData,
+  ContainersData,
+  Envelope,
+  FinanceSummary,
+  Me,
+  PlexData,
+  ProbesData,
+  PublicConfig,
+  RecurringData,
+  SettingsData,
+  StatusRow,
+  TrainingData,
+  TransactionRow,
+  UnclassifiedData,
+  VaultData,
+  WeatherData,
 } from "./types";
 
 const MIN = 60_000;
@@ -15,20 +33,34 @@ function invalidateFirefly(qc: ReturnType<typeof useQueryClient>) {
 
 /** Polls one module envelope. Named use* because it wraps useQuery. */
 function useEnvelope<T>(key: unknown[], url: string, interval: number, enabled = true) {
-  return useQuery<Envelope<T>>({ queryKey: key, queryFn: () => getJson<Envelope<T>>(url), refetchInterval: interval, enabled, staleTime: Math.min(interval, 30_000) });
+  return useQuery<Envelope<T>>({
+    queryKey: key,
+    queryFn: () => getJson<Envelope<T>>(url),
+    refetchInterval: interval,
+    enabled,
+    staleTime: Math.min(interval, 30_000),
+  });
 }
 
 const withLocation = (path: string, location?: string) => (location ? `${path}?location=${encodeURIComponent(location)}` : path);
 
 export const useMe = (options: { refetchInterval?: number } = {}) =>
   useQuery<Me>({ queryKey: ["me"], queryFn: () => getJson<Me>("/api/auth/me"), staleTime: 30_000, retry: 2, refetchInterval: options.refetchInterval });
-export const usePublicConfig = (enabled = true) => useQuery<PublicConfig>({ queryKey: ["config"], queryFn: () => getJson<PublicConfig>("/api/config/public"), staleTime: 5 * MIN, refetchInterval: 30 * MIN, enabled });
+export const usePublicConfig = (enabled = true) =>
+  useQuery<PublicConfig>({
+    queryKey: ["config"],
+    queryFn: () => getJson<PublicConfig>("/api/config/public"),
+    staleTime: 5 * MIN,
+    refetchInterval: 30 * MIN,
+    enabled,
+  });
 
 export const useAttention = (location?: string) => useEnvelope<AttentionData>(["attention", location], withLocation("/api/attention", location), MIN);
 export const useWeather = (location?: string) => useEnvelope<WeatherData>(["weather", location], withLocation("/api/weather", location), 2 * MIN);
 export const useCalendar = (days = 7) => useEnvelope<CalendarData>(["calendar", days], `/api/calendar?days=${days}`, 2 * MIN);
 export const useFinance = () => useEnvelope<FinanceSummary>(["finance"], "/api/finance/summary", 5 * MIN);
-export const useTransactions = (limit = 15) => useEnvelope<{ transactions: TransactionRow[] }>(["transactions", limit], `/api/finance/transactions?limit=${limit}`, 5 * MIN);
+export const useTransactions = (limit = 15) =>
+  useEnvelope<{ transactions: TransactionRow[] }>(["transactions", limit], `/api/finance/transactions?limit=${limit}`, 5 * MIN);
 export const useRecurring = () => useEnvelope<RecurringData>(["recurring"], "/api/finance/recurring", 5 * MIN);
 export const useCards = () => useEnvelope<{ cards: CardData[] }>(["cards"], "/api/cards", 5 * MIN);
 export const useBenefits = (year?: number) => useEnvelope<BenefitsData>(["benefits", year], `/api/benefits${year ? `?year=${year}` : ""}`, 5 * MIN);
@@ -38,7 +70,8 @@ export const useTraining = () => useEnvelope<TrainingData>(["lockin"], "/api/loc
 export const useVault = () => useEnvelope<VaultData>(["vault"], "/api/vault", MIN);
 export const useContainers = () => useEnvelope<ContainersData>(["containers"], "/api/containers", 15_000);
 export const useProbes = () => useEnvelope<ProbesData>(["probes"], "/api/probes", MIN);
-export const useStatus = () => useQuery<{ integrations: StatusRow[]; mock_mode: boolean }>({ queryKey: ["status"], queryFn: () => getJson("/api/status"), refetchInterval: 30_000 });
+export const useStatus = () =>
+  useQuery<{ integrations: StatusRow[]; mock_mode: boolean }>({ queryKey: ["status"], queryFn: () => getJson("/api/status"), refetchInterval: 30_000 });
 export const useSettings = () => useQuery<SettingsData>({ queryKey: ["settings"], queryFn: () => getJson<SettingsData>("/api/settings") });
 
 export function useSaveSettings() {
@@ -57,7 +90,8 @@ export function useSaveSettings() {
 export function useSaveOverride() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (body: { journal_id: number; classification: string; benefit_id?: string | null; period_key?: string | null; note?: string | null }) => sendJson<{ ok: boolean }>("/api/benefits/overrides", "POST", body),
+    mutationFn: (body: { journal_id: number; classification: string; benefit_id?: string | null; period_key?: string | null; note?: string | null }) =>
+      sendJson<{ ok: boolean }>("/api/benefits/overrides", "POST", body),
     onSuccess: () => invalidateFirefly(qc),
   });
 }
@@ -73,7 +107,8 @@ export function useDeleteOverride() {
 export function useManualUsage() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (body: { benefit_id: string; period_key: string; amount?: string | null; used: boolean; note?: string | null }) => sendJson<{ ok: boolean }>("/api/benefits/manual", "POST", body),
+    mutationFn: (body: { benefit_id: string; period_key: string; amount?: string | null; used: boolean; note?: string | null }) =>
+      sendJson<{ ok: boolean }>("/api/benefits/manual", "POST", body),
     onSuccess: () => invalidateFirefly(qc),
   });
 }

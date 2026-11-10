@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections import defaultdict
 from datetime import date, timedelta
 from decimal import Decimal
+from typing import Any
 
 from ...config_loader import BenefitsCatalog, CardConfig
 from ...util import money
@@ -25,7 +26,7 @@ def _s(d: Decimal) -> str:
     return f"{money(d):.2f}"
 
 
-def period_result(benefit: Benefit, period: Period, items: list[Classified], manual: dict[str, Decimal], today: date) -> dict:
+def period_result(benefit: Benefit, period: Period, items: list[Classified], manual: dict[str, Decimal], today: date) -> dict[str, Any]:
     """Cap, used, pending, remaining, and status for one benefit in one period.
 
     `items` must already be limited to this benefit. Credits beyond the cap are kept in evidence with an
@@ -127,7 +128,7 @@ def period_result(benefit: Benefit, period: Period, items: list[Classified], man
     }
 
 
-def multi_year_result(benefit: Benefit, items: list[Classified], today: date) -> dict:
+def multi_year_result(benefit: Benefit, items: list[Classified], today: date) -> dict[str, Any]:
     """Global Entry style benefits: no per period math, just last used and next eligible dates."""
     credits = sorted([c for c in items if c.kind == "statement_credit"], key=lambda c: c.date)
     purchases = sorted([c for c in items if c.kind == "purchase" and c.eligible], key=lambda c: c.date)
@@ -169,21 +170,21 @@ class BenefitsEngine:
 
     def compute(
         self,
-        transactions: list[dict],
-        card_accounts: dict[str, dict | None],
-        overrides: dict[int, dict],
+        transactions: list[dict[str, Any]],
+        card_accounts: dict[str, dict[str, Any] | None],
+        overrides: dict[int, dict[str, Any]],
         manual_usage: dict[str, dict[str, Decimal]],
         today: date,
         year: int,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Run classification and attribution for every card, then summarize each benefit for `year`.
 
         card_accounts maps card id to {"id": Firefly account id, "name": account name} or None when unresolved.
         The result carries `_classified` (per card Classified rows) for the discovery list; strip_internal() removes it.
         """
         cards_out = []
-        expiring: list[dict] = []
-        missing: list[dict] = []
+        expiring: list[dict[str, Any]] = []
+        missing: list[dict[str, Any]] = []
         all_classified: dict[str, list[Classified]] = {}
         for card in self.cards:
             acct = card_accounts.get(card.id)
@@ -228,7 +229,7 @@ class BenefitsEngine:
                 periods = sorted((p for p in periods if p.start <= today), key=lambda p: p.start)
                 results = [period_result(b, p, evidence, manual, today) for p in periods]
                 cur_period = current_period(b, today)
-                current: dict | None = next((r for r in results if cur_period and r["period_key"] == cur_period.key), None)
+                current: dict[str, Any] | None = next((r for r in results if cur_period and r["period_key"] == cur_period.key), None)
                 history = [r for r in results if not current or r["period_key"] != current["period_key"]]
                 for r in results:
                     if r["period_key"].startswith(str(year)):
@@ -280,7 +281,7 @@ class BenefitsEngine:
         }
 
     @staticmethod
-    def _benefit_out(b: Benefit, current: dict | None, history: list[dict], evidence: list[Classified]) -> dict:
+    def _benefit_out(b: Benefit, current: dict[str, Any] | None, history: list[dict[str, Any]], evidence: list[Classified]) -> dict[str, Any]:
         return {
             "id": b.id,
             "name": b.name,
@@ -297,7 +298,7 @@ class BenefitsEngine:
         }
 
     @staticmethod
-    def unclassified(result: dict, today: date, days: int = 120) -> list[dict]:
+    def unclassified(result: dict[str, Any], today: date, days: int = 120) -> list[dict[str, Any]]:
         """Unclassified deposits and low confidence items from the last N days."""
         cutoff = today - timedelta(days=days)
         out = []
@@ -325,6 +326,6 @@ class BenefitsEngine:
         return out
 
 
-def strip_internal(result: dict) -> dict:
+def strip_internal(result: dict[str, Any]) -> dict[str, Any]:
     """The public /api/benefits payload: everything except the underscore prefixed working data."""
     return {k: v for k, v in result.items() if not k.startswith("_")}

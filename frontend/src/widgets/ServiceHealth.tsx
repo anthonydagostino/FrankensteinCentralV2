@@ -1,13 +1,14 @@
 import { useProbes } from "../api/hooks";
 import { StatusDot } from "../components/Card";
-import { PANEL_CLASS } from "../components/SectionLabel";
+import { PANEL_CLASS } from "../lib/ui";
 
 /** One line of health pills for the configured probes; it never blocks the page, so errors stay small. */
 export function ServiceHealthRow() {
   const q = useProbes();
   const env = q.data;
   if (!env || env.status === "disabled" || !env.data) {
-    const text = q.error && !env ? `Service health unavailable: ${q.error.message}` : env?.status === "disabled" ? "No health probes configured" : "Probing services";
+    const text =
+      q.error && !env ? `Service health unavailable: ${q.error.message}` : env?.status === "disabled" ? "No health probes configured" : "Probing services";
     return (
       <div className={`${PANEL_CLASS} flex items-center gap-3 px-4 py-2 text-xs text-ink-500`}>
         <span>{text}</span>
@@ -27,7 +28,7 @@ export function ServiceHealthRow() {
           <>
             <StatusDot status={p.ok ? "ok" : "error"} />
             <span className="text-ink-200">{p.name}</span>
-            <span className="tabular text-ink-400">{p.ok && p.latency_ms !== null ? `${p.latency_ms} ms` : p.error ?? "down"}</span>
+            <span className="tabular text-ink-400">{p.ok && p.latency_ms !== null ? `${p.latency_ms} ms` : (p.error ?? "down")}</span>
           </>
         );
         const cls = "inline-flex items-center gap-1.5 rounded-full border border-ink-700 bg-ink-800 px-2.5 py-1 text-xs";

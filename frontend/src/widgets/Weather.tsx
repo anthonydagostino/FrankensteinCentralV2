@@ -5,7 +5,7 @@ import { useSaveSettings, useWeather } from "../api/hooks";
 import type { WeatherAlert, WeatherData } from "../api/types";
 import { Card } from "../components/Card";
 import { Chip } from "../components/Bars";
-import { SEVERITY_CLASS, TOOLTIP_STYLE } from "../components/SectionLabel";
+import { SEVERITY_CLASS, TOOLTIP_STYLE } from "../lib/ui";
 import { formatDateOnly, formatHour } from "../lib/format";
 import { DynamicIcon } from "../lib/icons";
 
@@ -26,7 +26,10 @@ function AlertBanner({ alert }: { alert: WeatherAlert }) {
         <DynamicIcon name="triangle-alert" size={16} className="shrink-0" />
         <span className="min-w-0 flex-1">
           <span className="font-semibold">{alert.event}</span>
-          <span className="ml-2 text-xs opacity-80">{alert.severity}{alert.expires ? `, until ${formatHour(alert.expires)}` : ""}</span>
+          <span className="ml-2 text-xs opacity-80">
+            {alert.severity}
+            {alert.expires ? `, until ${formatHour(alert.expires)}` : ""}
+          </span>
         </span>
         <ChevronDown size={16} className={`transition ${open ? "rotate-180" : ""}`} />
       </button>
@@ -60,9 +63,13 @@ export function WeatherBody({ data, kiosk }: { data: WeatherData; kiosk?: boolea
           </div>
           <div className={`${kiosk ? "text-lg" : "text-sm"} text-ink-300`}>{data.current.label}</div>
           <div className="mt-1 flex flex-wrap gap-x-3 text-xs text-ink-400">
-            <span>Feels like {data.current.feels_like ?? "--"}{unitT}</span>
+            <span>
+              Feels like {data.current.feels_like ?? "--"}
+              {unitT}
+            </span>
             <span className="inline-flex items-center gap-1">
-              <Wind size={12} /> {data.current.wind_mph ?? "--"} {unitW}{data.current.gust_mph ? ` (gusts ${data.current.gust_mph})` : ""}
+              <Wind size={12} /> {data.current.wind_mph ?? "--"} {unitW}
+              {data.current.gust_mph ? ` (gusts ${data.current.gust_mph})` : ""}
             </span>
             <span className="inline-flex items-center gap-1">
               <Droplets size={12} /> {data.current.humidity ?? "--"}%
@@ -84,7 +91,11 @@ export function WeatherBody({ data, kiosk }: { data: WeatherData; kiosk?: boolea
             <XAxis dataKey="label" tick={{ fill: "#97a69c", fontSize: 10 }} axisLine={false} tickLine={false} interval={1} />
             <YAxis yAxisId="t" domain={["dataMin - 5", "dataMax + 5"]} tick={{ fill: "#6b7a71", fontSize: 10 }} axisLine={false} tickLine={false} />
             <YAxis yAxisId="p" orientation="right" domain={[0, 100]} hide />
-            <Tooltip contentStyle={TOOLTIP_STYLE} labelStyle={{ color: "#c6d1ca" }} formatter={(v: number, name: string) => [name === "pop" ? `${v}%` : `${v}${unitT}`, name === "pop" ? "Rain chance" : "Temp"]} />
+            <Tooltip
+              contentStyle={TOOLTIP_STYLE}
+              labelStyle={{ color: "#c6d1ca" }}
+              formatter={(v: number, name: string) => [name === "pop" ? `${v}%` : `${v}${unitT}`, name === "pop" ? "Rain chance" : "Temp"]}
+            />
             <Bar yAxisId="p" dataKey="pop" fill="#60a5fa" opacity={0.45} radius={[2, 2, 0, 0]} isAnimationActive={false} />
             <Line yAxisId="t" type="monotone" dataKey="temp" stroke="#4ade80" strokeWidth={2} dot={false} isAnimationActive={false} />
           </ComposedChart>
@@ -115,7 +126,11 @@ export function WeatherWidget({ kiosk, location }: { kiosk?: boolean; location?:
     data && data.available.length > 1 && !kiosk ? (
       <label className="inline-flex items-center gap-1 text-xs text-ink-400">
         <MapPin size={12} />
-        <select value={data.location} onChange={(e) => save.mutate({ weather_location: e.target.value })} className="rounded border border-ink-700 bg-ink-800 px-1 py-0.5 text-xs text-ink-200">
+        <select
+          value={data.location}
+          onChange={(e) => save.mutate({ weather_location: e.target.value })}
+          className="rounded border border-ink-700 bg-ink-800 px-1 py-0.5 text-xs text-ink-200"
+        >
           {data.available.map((n) => (
             <option key={n} value={n}>
               {n}

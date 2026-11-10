@@ -92,3 +92,10 @@ export function minutesLabel(minutes: number): string {
   const m = minutes % 60;
   return m ? `${h} h ${m} min` : `${h} h`;
 }
+
+/** "Good morning, Anthony" and friends, by the hour in America/New_York. */
+export function greeting(now: Date, name: string): string {
+  const hour = Number(formatInTimeZone(now, TZ, "H"));
+  const part = hour < 5 ? "night" : hour < 12 ? "morning" : hour < 17 ? "afternoon" : hour < 21 ? "evening" : "night";
+  return `Good ${part}, ${name}`;
+}

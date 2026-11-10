@@ -11,7 +11,9 @@ export function VaultWidget() {
         const backup = d.backup;
         return (
           <div className="flex items-center gap-4">
-            <div className={`grid h-14 w-14 place-items-center rounded-xl ${online ? "bg-accent/15 text-accent" : "bg-red-500/15 text-red-300"}`}>{online ? <Shield size={30} /> : <ShieldOff size={30} />}</div>
+            <div className={`grid h-14 w-14 place-items-center rounded-xl ${online ? "bg-accent/15 text-accent" : "bg-red-500/15 text-red-300"}`}>
+              {online ? <Shield size={30} /> : <ShieldOff size={30} />}
+            </div>
             <div className="min-w-0 flex-1">
               <div className={`text-sm font-semibold ${online ? "text-ink-200" : "text-red-300"}`}>
                 {online ? "Online" : "Down"}
@@ -20,12 +22,19 @@ export function VaultWidget() {
               </div>
               {!online && d.error && <div className="truncate text-xs text-red-300">{d.error}</div>}
               {backup?.available && backup.age_hours != null && (
-                <div className={`text-xs ${backup.age_hours > 48 ? "text-amber-300" : "text-ink-400"}`}>Last backup {backup.age_hours < 1 ? "under 1 h" : `${Math.round(backup.age_hours)} h`} ago</div>
+                <div className={`text-xs ${backup.age_hours > 48 ? "text-amber-300" : "text-ink-400"}`}>
+                  Last backup {backup.age_hours < 1 ? "under 1 h" : `${Math.round(backup.age_hours)} h`} ago
+                </div>
               )}
               {backup && !backup.available && <div className="text-xs text-amber-300">{backup.error}</div>}
               <div className="mt-2 flex items-center gap-2">
                 {d.public_url && (
-                  <a href={d.public_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded-md bg-accent/15 px-3 py-1.5 text-sm font-medium text-accent hover:bg-accent/25">
+                  <a
+                    href={d.public_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 rounded-md bg-accent/15 px-3 py-1.5 text-sm font-medium text-accent hover:bg-accent/25"
+                  >
                     <KeyRound size={14} /> Open Vault <ExternalLink size={12} />
                   </a>
                 )}

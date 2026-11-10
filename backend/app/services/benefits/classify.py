@@ -46,7 +46,7 @@ class Classified:
     credited: Decimal = Decimal("0")
     extra: dict[str, Any] = field(default_factory=dict)
 
-    def as_evidence(self) -> dict:
+    def as_evidence(self) -> dict[str, Any]:
         """The row as shown in the benefits UI evidence list."""
         out = {
             "journal_id": self.journal_id,
@@ -68,7 +68,7 @@ class Classified:
         return out
 
 
-def text_of(row: dict, account_id: str | None = None) -> str:
+def text_of(row: dict[str, Any], account_id: str | None = None) -> str:
     """Description, notes, and the counterparty name. The card's own account name is left out."""
     parts = [str(row.get("description") or ""), str(row.get("notes") or "")]
     if account_id is None or str(row.get("source_id")) != str(account_id):
@@ -78,12 +78,12 @@ def text_of(row: dict, account_id: str | None = None) -> str:
     return " ".join(parts).lower()
 
 
-def own_text(row: dict) -> str:
+def own_text(row: dict[str, Any]) -> str:
     """Description and notes only, used for generic credit markers."""
     return " ".join(str(row.get(k) or "") for k in ("description", "notes")).lower()
 
 
-def direction(row: dict, account_id: str) -> str:
+def direction(row: dict[str, Any], account_id: str) -> str:
     """inflow, outflow, payment, or none relative to the card account."""
     t = row.get("type")
     src = str(row.get("source_id")) if row.get("source_id") is not None else None
@@ -100,7 +100,7 @@ def direction(row: dict, account_id: str) -> str:
     return "none"
 
 
-def _base(row: dict, kind: str, account_name: str) -> Classified:
+def _base(row: dict[str, Any], kind: str, account_name: str) -> Classified:
     return Classified(
         journal_id=int(row.get("journal_id") or 0),
         group_id=str(row.get("group_id") or ""),
@@ -112,7 +112,9 @@ def _base(row: dict, kind: str, account_name: str) -> Classified:
     )
 
 
-def classify_card(rows: list[dict], account_id: str, account_name: str, benefits: list[Benefit], overrides: dict[int, dict]) -> list[Classified]:
+def classify_card(
+    rows: list[dict[str, Any]], account_id: str, account_name: str, benefits: list[Benefit], overrides: dict[int, dict[str, Any]]
+) -> list[Classified]:
     """Classify every split that touches the card account. Purchases first, then deposits in date order."""
     rows = sorted(rows, key=lambda r: (str(r["date"])[:10], int(r.get("journal_id") or 0)))
     out: list[Classified] = []

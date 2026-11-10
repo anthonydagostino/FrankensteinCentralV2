@@ -54,7 +54,10 @@ function MiniMonth({ density, today }: { density: Record<string, number>; today:
             {c.day && (
               <>
                 <span className="leading-none">{c.day}</span>
-                <span className="mt-0.5 block rounded-full bg-sky-300" style={{ width: c.count ? Math.min(3 + c.count * 1.5, 8) : 0, height: c.count ? Math.min(3 + c.count * 1.5, 8) : 0 }} />
+                <span
+                  className="mt-0.5 block rounded-full bg-sky-300"
+                  style={{ width: c.count ? Math.min(3 + c.count * 1.5, 8) : 0, height: c.count ? Math.min(3 + c.count * 1.5, 8) : 0 }}
+                />
               </>
             )}
           </div>
@@ -75,7 +78,12 @@ export function NextLine({ data, large }: { data: CalendarData; large?: boolean 
       <span className="font-medium text-ink-200">{n.title}</span>
       {!n.in_progress && <span className="text-accent">{when}</span>}
       {n.join_url && (
-        <a href={n.join_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded border border-sky-500/40 px-2 py-0.5 text-xs text-sky-300 hover:bg-sky-500/10">
+        <a
+          href={n.join_url}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1 rounded border border-sky-500/40 px-2 py-0.5 text-xs text-sky-300 hover:bg-sky-500/10"
+        >
           <Video size={12} /> Join
         </a>
       )}
@@ -113,7 +121,11 @@ export function CalendarBody({ data, kiosk, onlyToday }: { data: CalendarData; k
                   <span className="text-xs font-semibold text-ink-300">{d.label}</span>
                   <span className="text-[10px] text-ink-500">{formatDateOnly(d.date, "MMM d")}</span>
                 </div>
-                {d.events.length === 0 ? <p className="px-2 text-[11px] text-ink-500">Free</p> : d.events.map((e) => <EventRow key={e.id} ev={e} onOpen={setOpen} compact />)}
+                {d.events.length === 0 ? (
+                  <p className="px-2 text-[11px] text-ink-500">Free</p>
+                ) : (
+                  d.events.map((e) => <EventRow key={e.id} ev={e} onOpen={setOpen} compact />)
+                )}
               </div>
             ))}
           </div>
@@ -127,7 +139,11 @@ export function CalendarBody({ data, kiosk, onlyToday }: { data: CalendarData; k
       {open && (
         <Modal title={open.title} onClose={() => setOpen(null)}>
           <div className="space-y-2 text-sm text-ink-300">
-            <p className="text-ink-200">{open.all_day ? `All day, ${formatDate(open.start)}` : `${formatDate(open.start, "EEE, MMM d")}, ${formatTime(open.start)} to ${formatTime(open.end)}`}</p>
+            <p className="text-ink-200">
+              {open.all_day
+                ? `All day, ${formatDate(open.start)}`
+                : `${formatDate(open.start, "EEE, MMM d")}, ${formatTime(open.start)} to ${formatTime(open.end)}`}
+            </p>
             <p className="text-xs">
               <span className="mr-1 inline-block h-2 w-2 rounded-full" style={{ background: open.color }} /> {open.calendar}
               {open.tentative ? " · tentative" : ""}
@@ -139,7 +155,12 @@ export function CalendarBody({ data, kiosk, onlyToday }: { data: CalendarData; k
             )}
             {open.description && <p className="whitespace-pre-line text-xs text-ink-400">{open.description}</p>}
             {open.join_url && (
-              <a href={open.join_url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 rounded bg-accent/15 px-3 py-1.5 text-accent hover:bg-accent/25">
+              <a
+                href={open.join_url}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center gap-1 rounded bg-accent/15 px-3 py-1.5 text-accent hover:bg-accent/25"
+              >
                 <ExternalLink size={14} /> Join meeting
               </a>
             )}

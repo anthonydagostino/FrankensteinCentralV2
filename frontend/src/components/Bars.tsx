@@ -1,9 +1,30 @@
 import { clamp } from "../lib/format";
 
-export function ProgressBar({ value, max = 100, className = "", color = "bg-accent", height = "h-2", label }: { value: number; max?: number; className?: string; color?: string; height?: string; label?: string }) {
+export function ProgressBar({
+  value,
+  max = 100,
+  className = "",
+  color = "bg-accent",
+  height = "h-2",
+  label,
+}: {
+  value: number;
+  max?: number;
+  className?: string;
+  color?: string;
+  height?: string;
+  label?: string;
+}) {
   const pct = max > 0 ? clamp((value / max) * 100, 0, 100) : 0;
   return (
-    <div className={`w-full overflow-hidden rounded-full bg-ink-700 ${height} ${className}`} role="progressbar" aria-valuenow={Math.round(pct)} aria-valuemin={0} aria-valuemax={100} aria-label={label}>
+    <div
+      className={`w-full overflow-hidden rounded-full bg-ink-700 ${height} ${className}`}
+      role="progressbar"
+      aria-valuenow={Math.round(pct)}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={label}
+    >
       <div className={`${height} ${color} transition-all`} style={{ width: `${pct}%` }} />
     </div>
   );
@@ -32,5 +53,11 @@ const CHIP_TONES: Record<ChipTone, string> = {
 };
 
 export function Chip({ children, tone = "neutral", className = "" }: { children: React.ReactNode; tone?: ChipTone; className?: string }) {
-  return <span className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-medium ${CHIP_TONES[tone]} ${className}`}>{children}</span>;
+  return (
+    <span
+      className={`inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2 py-0.5 text-[11px] font-medium ${CHIP_TONES[tone]} ${className}`}
+    >
+      {children}
+    </span>
+  );
 }
