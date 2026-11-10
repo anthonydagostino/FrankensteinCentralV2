@@ -55,6 +55,42 @@ docker compose up -d
 
 Open `http://<host>:8088`. The kiosk view is `http://<host>:8088/kiosk?token=<KIOSK_TOKEN>` (open it once per device; it sets a read-only cookie and drops the token from the URL).
 
+### Environment variables
+
+Every variable `.env` understands. Empty means off unless a default is listed.
+
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| `APP_PORT` | `8000` | Port Uvicorn listens on inside the container (compose publishes 8088 to it). |
+| `TZ` | `America/New_York` | Container time zone; display time zone comes from `config/dashboard.yaml`. |
+| `MOCK_MODE` | `true` | Serve every integration from fixtures. Set `false` for production. |
+| `MOCK_WEATHER`, `MOCK_CALENDAR`, `MOCK_FIREFLY`, `MOCK_PLEX`, `MOCK_VAULT`, `MOCK_DOCKER`, `MOCK_LOCKIN` | follow `MOCK_MODE` | Per integration override, `true` or `false`. |
+| `SECRET_KEY` | placeholder | Signs the session and kiosk cookies; changing it logs every device out. |
+| `DASHBOARD_PASSWORD_HASH` | empty | bcrypt hash of the dashboard password, in single quotes. Empty accepts any password (a warning is logged). |
+| `KIOSK_TOKEN` | empty | Enables `/kiosk?token=...`. Rotating it revokes every kiosk cookie issued before. |
+| `SESSION_DAYS` | `30` | Dashboard session cookie lifetime. |
+| `NWS_USER_AGENT` | placeholder | Contact string the National Weather Service requires for alerts. |
+| `GCAL_ICS_PRIMARY`, `GCAL_ICS_SECOND` | empty | Secret iCal URLs; `calendar.feeds` in `dashboard.yaml` may name other variables. |
+| `FIREFLY_URL` | empty | Firefly III base URL reachable from inside the container. |
+| `FIREFLY_VANITY_URL` | empty | Firefly URL you open in the browser, for deep links. |
+| `FIREFLY_TOKEN` | empty | Firefly Personal Access Token. |
+| `FIREFLY_WRITEBACK_TAGS` | `false` | Tag labeled statement credits in Firefly. |
+| `FIREFLY_IMPORTER_URL`, `FIREFLY_IMPORTER_SECRET`, `FIREFLY_IMPORTER_DIR` | empty, empty, `/import` | "Sync now" through the Firefly Data Importer. |
+| `PLEX_TOKEN` | empty | Plex account token. |
+| `PLEX_URL` | empty | Direct server address; empty discovers servers through plex.tv. |
+| `PLEX_SERVER_NAME` | empty | Which discovered server to show when the account sees several. |
+| `PLEX_PUBLIC_URL` | `https://app.plex.tv/desktop` | Where "Open Plex" links go. |
+| `VAULTWARDEN_URL` | empty | Vaultwarden address reachable from the container (`/alive` is probed). |
+| `VAULTWARDEN_PUBLIC_URL` | empty | Vaultwarden URL for the browser. |
+| `VAULTWARDEN_BACKUP_DIR` | empty | Read-only mounted backup folder, for the backup age line. |
+| `LOCKIN_URL`, `LOCKIN_TOKEN`, `LOCKIN_PUBLIC_URL` | empty | Lock-In training tracker: internal address, shared token, browser URL. |
+| `DOCKER_HOST` | `tcp://socket-proxy:2375` | The docker-socket-proxy address. |
+| `DOCKER_ALLOW_RESTART` | `false` | Show the container restart button (needs POST and ALLOW_RESTARTS on the proxy). |
+| `PORTAINER_URL` | empty | Link from the containers widget. |
+| `CONFIG_DIR`, `DATA_DIR`, `STATIC_DIR` | repo `config/`, `data/`, built SPA | Only needed outside the container layout. |
+
+Link tiles (`links[].env_url`) and probes (`probes[].url_env`) in `dashboard.yaml` may name any variable that ends in `_URL`; other names are ignored so a typo can never expose a token to the browser.
+
 ### Docker networking
 
 Inside a container, `localhost` is the container itself. `FIREFLY_URL`, `PLEX_URL`, and `VAULTWARDEN_URL` must point at something the container can reach:
@@ -105,12 +141,15 @@ The dashboard is meant for the LAN and your tailnet only. Pick one:
 ```
 cd backend && uv sync && uv run python run.py          # API on :8000, serves frontend/dist if built
 cd frontend && npm install && npm run dev               # Vite on :5173, proxies /api to :8000
+cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy app   # lint, format, types
 cd backend && uv run pytest                             # backend tests
 cd frontend && npm run build && npm test                # typecheck, build, unit tests
-scripts/test.sh                                         # everything
+scripts/test.sh                                         # everything, same as CI
 ```
 
-Regenerate fixtures with `python -m app.fixtures.generate_firefly` and `python -m app.fixtures.generate_weather` from `backend/`. Fixtures are anchored on 2026-10-20 and shifted to today at runtime so the mock dashboard always looks current.
+Dependency audits: `cd backend && uv run --with pip-audit python -m pip_audit --skip-editable` and `cd frontend && npm audit`.
+
+Regenerate fixtures with `python -m app.fixtures.generate_firefly`, `generate_weather`, and `generate_lockin` from `backend/`. Fixtures are anchored on 2026-10-20 and shifted to today at runtime so the mock dashboard always looks current.
 
 ## Future ideas (not built)
 

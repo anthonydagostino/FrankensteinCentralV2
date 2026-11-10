@@ -40,3 +40,19 @@ One line per choice the spec left open, in the order they were made.
 - "On track" for weight means the weekly change is within 0.5 lb per week of the phase target.
 - Plex discovery: with `PLEX_URL` empty the adapter calls `plex.tv/api/v2/resources` with the account token, picks the server by `PLEX_SERVER_NAME`, else the first owned server, else the first one marked present, and uses that resource's `accessToken` (required for servers shared by other people). Connections are tried public first, then local, then relay, each as the plex.direct uri and the raw address, with a 6 second timeout; the working one is cached for an hour and dropped on the next failure so a changed public IP triggers rediscovery.
 - The mock Plex server is presented as a shared one ("Absolute Cinema", shared by eddiedlugosz) to match Anthony's setup.
+- Quality pass (November 2026): `ruff`, `ruff format`, and `mypy` run in `scripts/test.sh` and therefore in CI; the rule set lives in `backend/ruff.toml`.
+- A 401 or 403 counts as a rejected token only when the request carried credentials (Authorization or X-Plex-Token). Anonymous calls (NWS, a locked down docker-socket-proxy endpoint) report the plain HTTP status instead of telling the user to regenerate a token.
+- Firefly listings stop at 200 pages (20,000 rows); hitting the cap marks the refresh degraded with the rows fetched so far rather than silently truncating.
+- The Firefly transaction window follows the current year only. `GET /api/benefits?year=<earlier>` therefore sees just the rows inside the window; fetching a second year of history was not added (it would double memory and API calls for a view that is rarely opened).
+- The kiosk cookie carries a fingerprint of `KIOSK_TOKEN`, so rotating the token revokes every cookie issued before it. Changing `SECRET_KEY` still revokes everything.
+- Link tiles and probes resolve only env var names that end in `_URL`, because their values reach the browser or the status envelope.
+- Plex rails (recently added, on deck, libraries) are cached for 15 minutes only when every rail call succeeded, so a server that recovers is picked up on the next 30 second refresh.
+- Vaultwarden backup age scans the backup directory in a worker thread at most every 5 minutes; the directory can be large or on NFS.
+- Docker inspect payloads are cached for 5 minutes but refetched as soon as the list state of a container changes, so exit codes and restart counts never lag a state change.
+- Derived views (benefits per year, finance summary, recurring charges) are memoized until the next Firefly refresh, override change, or day change; the finance summary is additionally keyed to the minute because it reports freshness in hours.
+- SQLite runs with `synchronous=NORMAL` under WAL: a power loss can lose the last cache writes but cannot corrupt the file, and the event loop no longer fsyncs on every cache write.
+- The frontend privacy blur takes the server setting as its source of truth (no localStorage), so every device agrees after a toggle on the dashboard; the kiosk toggle stays local to the kiosk session.
+- Security headers on every response: `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `Referrer-Policy: same-origin`, and `Cache-Control: no-store` on `/api/*`. Embedding the kiosk in another site's iframe is therefore not supported.
+- `/api/auth/me` reports `password_configured` so the login page can warn when no hash is set; the value is not secret.
+- The kiosk route polls `/api/auth/me` every 30 seconds while locked, so a backend that comes up after the kiosk browser does not strand it on the locked screen; the 6 hour reload lives in the same gate so it runs while locked too.
+- Tailwind `ink-500` was referenced but never defined and rendered as unstyled text; it is now defined as a mid gray between `ink-400` and `ink-600`.
