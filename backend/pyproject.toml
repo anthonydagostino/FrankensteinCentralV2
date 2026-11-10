@@ -34,6 +34,7 @@ dev = [
 dev = [
   "pytest>=8.2",
   "pytest-asyncio>=0.23",
+  "pytest-cov>=7.1",
   "respx>=0.21",
   "freezegun>=1.5",
   "ruff>=0.6",
@@ -54,6 +55,5 @@ filterwarnings = ["ignore::DeprecationWarning"]
 
 [tool.mypy]
 python_version = "3.12"
+strict = true
 ignore_missing_imports = true
-warn_unused_ignores = true
-no_implicit_optional = true

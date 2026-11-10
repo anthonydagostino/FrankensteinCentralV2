@@ -12,6 +12,7 @@ Self-hosted personal life dashboard for Anthony. `SPEC.md` is the source of trut
 - Backend checks: `cd backend && uv run ruff check . && uv run ruff format --check . && uv run mypy app`.
 - Backend tests: `cd backend && uv run pytest`.
 - Frontend dev: `cd frontend && npm install && npm run dev` (proxies `/api` to port 8000).
+- Frontend checks: `cd frontend && npx prettier --check . && npx eslint . --max-warnings 0`.
 - Frontend build and tests: `cd frontend && npm run build && npm test`.
 - Everything (same as CI): `scripts/test.sh`. Keep ruff, mypy, and both test suites clean before every commit.
 - Production: `docker compose build && docker compose up -d`.

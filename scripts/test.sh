@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Runs every check: backend tests, frontend typecheck and build, frontend unit tests.
+# Runs every Tier 1 check locally, the same commands CI runs (see .github/workflows/ci.yml).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
@@ -12,13 +12,17 @@ PY=.venv/bin/python
 "$PY" -m mypy app
 
 echo "== backend tests"
-"$PY" -m pytest -q
+"$PY" -m pytest -q --cov=app --cov-report=xml:coverage.xml --cov-report=term
+
+echo "== frontend format, lint"
+cd "$ROOT/frontend"
+npx prettier --check .
+npx eslint . --max-warnings 0
 
 echo "== frontend build (tsc + vite)"
-cd "$ROOT/frontend"
 npm run build
 
 echo "== frontend unit tests"
-npm test
+npx vitest run --coverage --coverage.reporter=text --coverage.reporter=lcov
 
 echo "All checks passed."
