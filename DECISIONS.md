@@ -56,3 +56,4 @@ One line per choice the spec left open, in the order they were made.
 - `/api/auth/me` reports `password_configured` so the login page can warn when no hash is set; the value is not secret.
 - The kiosk route polls `/api/auth/me` every 30 seconds while locked, so a backend that comes up after the kiosk browser does not strand it on the locked screen; the 6 hour reload lives in the same gate so it runs while locked too.
 - Tailwind `ink-500` was referenced but never defined and rendered as unstyled text; it is now defined as a mid gray between `ink-400` and `ink-600`.
+- Frankenstein reaches Lock-In over a shared Docker network with the fixed name `lockin`, created by the Lock-In stack and declared external here. Lock-In publishes its port on `127.0.0.1` only, so the host address does not work from inside a container, and a project prefixed network name would depend on each checkout's folder name. Frankenstein therefore needs that network to exist before it starts.

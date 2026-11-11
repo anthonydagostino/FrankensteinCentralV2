@@ -15,6 +15,7 @@ services:
     networks:
       - frankenstein
       - socket
+      - lockin
     depends_on:
       - socket-proxy
 
@@ -36,3 +37,9 @@ networks:
   frankenstein: {}
   socket:
     internal: true
+  # Created by the Lock-In stack (its compose names its network "lockin"). Joining it
+  # lets LOCKIN_URL=http://lockin:8080 resolve. Start Lock-In first, or run
+  # `docker network create lockin` once if Lock-In is not installed.
+  lockin:
+    external: true
+    name: lockin
