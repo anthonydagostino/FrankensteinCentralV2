@@ -63,4 +63,4 @@ One line per choice the spec left open, in the order they were made.
 - PR counting: sets without external load (weight 0) never count as rep PRs, matching the e1RM rule; the first session of an exercise is a baseline, not a PR; a session that sets both a rep PR and a new e1RM best counts as two PRs in the weekly count.
 - "Days since a muscle was last trained" counts sets where the muscle is secondary as well as primary, because an assisting muscle still did work.
 - Lock-In has no warm-up flag, so every logged set counts toward volume (the spec's fallback).
-
+- Frankenstein reaches Lock-In over a shared Docker network with the fixed name `lockin`, created by the Lock-In stack and declared external here. Lock-In publishes its port on `127.0.0.1` only, so the host address does not work from inside a container, and a project prefixed network name would depend on each checkout's folder name. Frankenstein therefore needs that network to exist before it starts.
