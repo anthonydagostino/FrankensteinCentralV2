@@ -14,6 +14,61 @@ HERE = Path(__file__).resolve().parent
 ANCHOR = date(2026, 10, 25)
 ROTATION = ["pushA", "pullA", "legsA", "pushB", "pullB", "legsB"]
 NAMES = {"pushA": "Push A", "pullA": "Pull A", "legsA": "Legs A", "pushB": "Push B", "pullB": "Pull B", "legsB": "Legs B"}
+# (exercise key, starting load lb, rep range, weekly increment) per template, keys from Lock-In's program
+PROGRAM: dict[str, list[tuple[str, float, int, int, float]]] = {
+    "pushA": [
+        ("incline-db-press", 60, 6, 10, 2.5),
+        ("flat-bench", 155, 6, 10, 5),
+        ("cable-fly", 30, 10, 15, 2.5),
+        ("seated-db-shoulder-press", 45, 8, 12, 2.5),
+        ("cable-lateral-raise", 15, 12, 20, 0),
+        ("rope-pushdown", 50, 10, 15, 2.5),
+        ("overhead-cable-triceps", 40, 10, 15, 2.5),
+    ],
+    "pullA": [
+        ("pullup-or-pulldown", 140, 6, 10, 5),
+        ("chest-supported-row", 90, 8, 12, 5),
+        ("single-arm-cable-lat-row", 50, 10, 15, 2.5),
+        ("reverse-pec-deck", 70, 12, 20, 5),
+        ("ez-bar-curl", 60, 8, 12, 0),
+        ("hammer-curl", 30, 10, 15, 2.5),
+    ],
+    "legsA": [
+        ("squat-or-hack", 185, 6, 10, 10),
+        ("romanian-deadlift", 165, 8, 10, 5),
+        ("leg-extension", 110, 10, 15, 5),
+        ("seated-leg-curl", 100, 10, 15, 5),
+        ("standing-calf-raise", 180, 10, 15, 10),
+        ("cable-crunch", 70, 10, 15, 5),
+    ],
+    "pushB": [
+        ("overhead-press", 95, 6, 10, 2.5),
+        ("incline-machine-press", 120, 8, 12, 5),
+        ("dips", 0, 8, 12, 0),
+        ("cable-lateral-raise", 15, 12, 20, 0),
+        ("pec-deck", 100, 12, 15, 5),
+        ("ez-skull-crusher", 55, 8, 12, 2.5),
+        ("single-arm-pushdown", 25, 12, 15, 0),
+    ],
+    "pullB": [
+        ("barbell-or-tbar-row", 135, 6, 10, 5),
+        ("neutral-grip-pulldown", 130, 8, 12, 5),
+        ("seated-cable-row", 120, 10, 12, 5),
+        ("face-pull", 45, 12, 15, 2.5),
+        ("incline-db-curl", 25, 10, 12, 0),
+        ("preacher-or-cable-curl", 50, 10, 15, 2.5),
+    ],
+    "legsB": [
+        ("leg-press", 320, 10, 15, 20),
+        ("bulgarian-split-squat", 35, 8, 12, 2.5),
+        ("lying-leg-curl", 90, 8, 12, 5),
+        ("hip-thrust-or-back-ext", 185, 10, 12, 10),
+        ("leg-extension", 110, 12, 15, 5),
+        ("seated-calf-raise", 90, 12, 20, 5),
+        ("hanging-leg-raise", 0, 10, 15, 0),
+    ],
+}
+STALLED = {"ez-bar-curl", "incline-db-curl"}
 
 
 def build() -> tuple[dict[str, Any], dict[str, Any]]:
@@ -53,6 +108,29 @@ def build() -> tuple[dict[str, Any], dict[str, Any]]:
                     "deleted": False,
                 }
             )
+    # logged sets: every exercise of the session's template, 3 working sets, loads creeping up week over week
+    # (two lifts are deliberately flat so the stalled-lifts view has something to show)
+    sets: list[dict[str, Any]] = []
+    first_week = min(date.fromisoformat(str(s["date"])) for s in sessions)
+    for s in sessions:
+        week_no = (date.fromisoformat(str(s["date"])) - first_week).days // 7
+        for exercise, base_lb, reps_lo, reps_hi, step in PROGRAM[str(s["templateKey"])]:
+            flat = exercise in STALLED
+            for set_index in range(3):
+                load = base_lb if flat else base_lb + step * week_no
+                reps = rnd.randint(reps_lo, reps_hi) - set_index
+                sets.append(
+                    {
+                        "id": f"{s['id']}-{exercise}-{set_index}",
+                        "sessionId": s["id"],
+                        "exerciseKey": exercise,
+                        "setIndex": set_index,
+                        "weightLb": float(load),
+                        "reps": max(1, reps),
+                        "updatedAt": int(s["startedAt"]) + set_index,
+                        "deleted": False,
+                    }
+                )
     last = sessions[-1]
     next_key = ROTATION[(ROTATION.index(str(last["templateKey"])) + 1) % 6]
     week_start = (ANCHOR - timedelta(days=ANCHOR.weekday())).isoformat()
@@ -104,7 +182,7 @@ def build() -> tuple[dict[str, Any], dict[str, Any]]:
             "targetWeeklyChangeLb": 0.5,
         },
     }
-    export = {"exportedAt": "2026-10-25T12:00:00.000Z", "version": "0.2.1", "weighIns": weigh_ins, "sessions": sessions, "sets": []}
+    export = {"exportedAt": "2026-10-25T12:00:00.000Z", "version": "0.2.1", "weighIns": weigh_ins, "sessions": sessions, "sets": sets}
     return summary, export
 
 

@@ -77,6 +77,16 @@ def build_training(
     elif summary.get("lastSession"):
         trained_today = summary["lastSession"].get("date") == today.isoformat()
 
+    # the raw export (non-deleted rows) feeds the fitness analytics; the /api/lockin route strips it
+    raw_export = (
+        {
+            "weighIns": [w for w in export.get("weighIns") or [] if not w.get("deleted")],
+            "sessions": [s for s in export.get("sessions") or [] if not s.get("deleted")],
+            "sets": [s for s in export.get("sets") or [] if not s.get("deleted")],
+        }
+        if export
+        else None
+    )
     weighed_today = bool(latest and latest.get("date") == today.isoformat())
     # Day streak, computed by Lock-In (0.2.x servers before the feature do not send it).
     streak = summary.get("scheduleStreak") or None
@@ -99,6 +109,7 @@ def build_training(
     return {
         "version": version,
         "today": today.isoformat(),
+        "_export": raw_export,
         "phase": {"key": phase.get("key"), "name": phase.get("name"), "week": phase.get("week"), "deload": bool(phase.get("deload"))},
         "days_until_goal": int(goal_days),
         "goal_date": GOAL_DATE.isoformat(),

@@ -28,6 +28,7 @@ from .logsetup import configure_logging, install_redaction
 from .routes import auth as auth_routes
 from .routes import benefits as benefits_routes
 from .routes import finance as finance_routes
+from .routes import fitness as fitness_routes
 from .routes import health as health_routes
 from .routes import modules as module_routes
 from .settings import Settings, get_settings
@@ -100,6 +101,7 @@ app.include_router(auth_routes.router)
 app.include_router(module_routes.router)
 app.include_router(finance_routes.router)
 app.include_router(benefits_routes.router)
+app.include_router(fitness_routes.router)
 
 
 @app.exception_handler(Exception)

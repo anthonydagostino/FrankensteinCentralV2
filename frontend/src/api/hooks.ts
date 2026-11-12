@@ -8,7 +8,11 @@ import type {
   ContainersData,
   Envelope,
   FinanceSummary,
+  FitnessData,
+  FitnessSettings,
   Me,
+  MuscleMap,
+  MuscleMapInput,
   PlexData,
   ProbesData,
   PublicConfig,
@@ -67,6 +71,10 @@ export const useBenefits = (year?: number) => useEnvelope<BenefitsData>(["benefi
 export const useUnclassified = (enabled = true) => useEnvelope<UnclassifiedData>(["unclassified"], "/api/benefits/unclassified", 5 * MIN, enabled);
 export const usePlex = () => useEnvelope<PlexData>(["plex"], "/api/plex", 30_000);
 export const useTraining = () => useEnvelope<TrainingData>(["lockin"], "/api/lockin", 2 * MIN);
+export const useFitness = () => useEnvelope<FitnessData>(["fitness"], "/api/fitness", 2 * MIN);
+export const useFitnessSettings = () =>
+  useQuery<FitnessSettings>({ queryKey: ["fitness-settings"], queryFn: () => getJson<FitnessSettings>("/api/fitness/settings") });
+export const useMuscleMap = () => useQuery<MuscleMap>({ queryKey: ["muscle-map"], queryFn: () => getJson<MuscleMap>("/api/fitness/muscle-map") });
 export const useVault = () => useEnvelope<VaultData>(["vault"], "/api/vault", MIN);
 export const useContainers = () => useEnvelope<ContainersData>(["containers"], "/api/containers", 15_000);
 export const useProbes = () => useEnvelope<ProbesData>(["probes"], "/api/probes", MIN);
@@ -110,6 +118,27 @@ export function useManualUsage() {
     mutationFn: (body: { benefit_id: string; period_key: string; amount?: string | null; used: boolean; note?: string | null }) =>
       sendJson<{ ok: boolean }>("/api/benefits/manual", "POST", body),
     onSuccess: () => invalidateFirefly(qc),
+  });
+}
+
+/** Query keys refreshed after a fitness settings or muscle map change. */
+function invalidateFitness(qc: ReturnType<typeof useQueryClient>) {
+  for (const queryKey of [["fitness"], ["fitness-settings"], ["muscle-map"]]) void qc.invalidateQueries({ queryKey });
+}
+
+export function useSaveFitnessSettings() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: Partial<FitnessSettings>) => sendJson<FitnessSettings>("/api/fitness/settings", "PUT", body),
+    onSuccess: () => invalidateFitness(qc),
+  });
+}
+
+export function useSaveMuscleEntry() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: MuscleMapInput) => sendJson<MuscleMap>("/api/fitness/muscle-map", "PUT", body),
+    onSuccess: () => invalidateFitness(qc),
   });
 }
 
