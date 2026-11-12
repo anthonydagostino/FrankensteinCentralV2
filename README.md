@@ -42,7 +42,7 @@ Test suite: 83 backend tests (`pytest`) and 9 frontend tests (`vitest`); `script
 7. Plex: set `PLEX_TOKEN` to your account token. The quickest way to get it: open `app.plex.tv` in a desktop browser, press F12, open the Console tab, run `localStorage.getItem("myPlexAccessToken")`, and copy the value without the quotes. (On a server you own, View XML under Get Info also shows it in the URL.) Then either:
    * leave `PLEX_URL` empty, and Frankenstein asks plex.tv which servers your account can see, including servers friends have shared with you, picks the owned one or the first shared one (or `PLEX_SERVER_NAME`), and connects through the server's public address or the Plex relay using the server specific token plex.tv issues; or
    * set `PLEX_URL` to a direct address such as `http://192.168.1.50:32400` when the server is on your own network.
-   `PLEX_PUBLIC_URL` is where "Open Plex" links go. The health probe for Plex only runs when `PLEX_URL` is set.
+   `PLEX_PUBLIC_URL` is where "Open Plex" links go. If you watch through the Plezy app instead, set `PLEX_CLIENT=plezy`: the card is titled Plezy and every poster and the Open button become `plezy://` links that open the item in Plezy on that device (Plezy must be installed there). The health probe for Plex only runs when `PLEX_URL` is set.
 8. Vaultwarden: set `VAULTWARDEN_URL` (internal) and `VAULTWARDEN_PUBLIC_URL` (browser). Optional: mount your backup folder read-only and set `VAULTWARDEN_BACKUP_DIR` to show backup age and warn after 48 hours.
 9. Lock-In (your training tracker): set `LOCKIN_TOKEN` to the same value as `LOCKIN_TOKEN` in the Lock-In `.env`, `LOCKIN_URL` to an address the container can reach (the Lock-In compose binds `127.0.0.1:8090`, so either join its Docker network and use `http://lockin:8080`, or publish it on the host IP), and `LOCKIN_PUBLIC_URL` to the Tailscale HTTPS address the phone uses, for the "Open Lock-In" button. Frankenstein only reads `/api/health`, `/api/summary`, and `/api/export`; it never writes.
 10. Docker: nothing beyond compose. Optional labels on any container: `frankenstein.url` (launch link), `frankenstein.name` (display name), `frankenstein.hide=true`, `frankenstein.critical=true` (non-running becomes a critical attention item).
@@ -79,7 +79,8 @@ Every variable `.env` understands. Empty means off unless a default is listed.
 | `PLEX_TOKEN` | empty | Plex account token. |
 | `PLEX_URL` | empty | Direct server address; empty discovers servers through plex.tv. |
 | `PLEX_SERVER_NAME` | empty | Which discovered server to show when the account sees several. |
-| `PLEX_PUBLIC_URL` | `https://app.plex.tv/desktop` | Where "Open Plex" links go. |
+| `PLEX_PUBLIC_URL` | `https://app.plex.tv/desktop` | Where "Open Plex" links go when `PLEX_CLIENT=web`. |
+| `PLEX_CLIENT` | `web` | `plezy` opens the server and items in the Plezy app through `plezy://` links instead of Plex Web. |
 | `VAULTWARDEN_URL` | empty | Vaultwarden address reachable from the container (`/alive` is probed). |
 | `VAULTWARDEN_PUBLIC_URL` | empty | Vaultwarden URL for the browser. |
 | `VAULTWARDEN_BACKUP_DIR` | empty | Read-only mounted backup folder, for the backup age line. |

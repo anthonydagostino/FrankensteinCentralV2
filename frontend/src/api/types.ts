@@ -307,6 +307,8 @@ export interface PlexItem {
   progress: number | null;
 }
 export interface PlexData {
+  /** Which app the links open: Plex Web (default) or the Plezy client through plezy:// links. */
+  client?: "web" | "plezy";
   server: {
     online: boolean;
     version: string | null;
