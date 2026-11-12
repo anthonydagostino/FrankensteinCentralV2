@@ -489,6 +489,8 @@ export interface TrainingData {
   streak_weeks: number;
   /** Days trained and logged; one rest day at a time keeps it, two in a row reset it. Null from older Lock-In servers. */
   day_streak: { days: number; last_trained: string | null; at_risk: boolean; rest_days_allowed: number } | null;
+  /** Heaviest weight and the most reps at it, per headline lift. Empty from older Lock-In servers. */
+  top_lifts: { key: string; label: string; weight: number; reps: number; date: string }[];
   streak_min_sessions: number;
   streak_risk: "safe" | "ok" | "at_risk" | "lost";
   sessions_needed_for_streak: number;

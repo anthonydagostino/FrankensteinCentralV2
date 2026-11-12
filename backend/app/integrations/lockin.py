@@ -106,6 +106,11 @@ def build_training(
         "sessions_planned": planned,
         "streak_weeks": int(summary.get("trainingStreakWeeks") or 0),
         "day_streak": day_streak,
+        # Heaviest weight x reps per headline lift (bench, squat); older Lock-In servers send none.
+        "top_lifts": [
+            {"key": t.get("key"), "label": t.get("label"), "weight": t.get("weightLb"), "reps": t.get("reps"), "date": t.get("date")}
+            for t in summary.get("topLifts") or []
+        ],
         "streak_min_sessions": STREAK_MIN_SESSIONS,
         "streak_risk": streak_risk,
         "sessions_needed_for_streak": needed,
@@ -175,6 +180,8 @@ class LockInIntegration(BaseIntegration):
         summary["daysUntilGoal"] = max(0, (GOAL_DATE - today).days)
         if summary.get("lastSession"):
             summary["lastSession"]["date"] = shift(summary["lastSession"]["date"])
+        for lift in summary.get("topLifts") or []:
+            lift["date"] = shift(lift["date"])
         if summary.get("scheduleStreak"):
             summary["scheduleStreak"]["lastTrainedDate"] = shift(summary["scheduleStreak"]["lastTrainedDate"])
         if (summary.get("weight") or {}).get("latest"):

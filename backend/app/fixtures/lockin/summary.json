@@ -18,6 +18,22 @@
   "atRisk": true,
   "restDaysAllowed": 1
  },
+ "topLifts": [
+  {
+   "key": "flat-bench",
+   "label": "Bench",
+   "weightLb": 185,
+   "reps": 6,
+   "date": "2026-10-14"
+  },
+  {
+   "key": "squat-or-hack",
+   "label": "Squat",
+   "weightLb": 225,
+   "reps": 5,
+   "date": "2026-10-21"
+  }
+ ],
  "lastSession": {
   "date": "2026-10-23",
   "templateKey": "pullA",

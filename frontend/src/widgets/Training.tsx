@@ -86,6 +86,20 @@ export function TrainingBody({ data, large }: { data: TrainingData; large?: bool
         </div>
       </div>
 
+      {data.top_lifts.length > 0 && (
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          {data.top_lifts.map((lift) => (
+            <div key={lift.key} className="rounded-lg bg-ink-800/40 p-2">
+              <div className="text-ink-400">{lift.label}</div>
+              <div className="tabular text-base font-semibold text-ink-200">
+                {lift.weight} lb <span className="text-ink-400">x</span> {lift.reps}
+              </div>
+              <div className="text-[10px] text-ink-500">best, {formatDateOnly(lift.date)}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
       <div className="grid grid-cols-3 gap-2 text-xs">
         <div className="rounded-lg bg-ink-800/40 p-2">
           <div className="text-ink-400">Weight</div>

@@ -160,3 +160,18 @@ def test_attention_asks_to_train_only_when_the_day_streak_is_at_risk():
     for quiet in ({"day_streak": at_risk, "trained_today": True}, {"day_streak": {**at_risk, "at_risk": False}}, {"day_streak": None}):
         cache.set_ok("lockin", {**base, **quiet})
         assert not [i for i in build_attention(cache, None, None, NOW) if i["icon"] == "flame"]
+
+
+def test_top_lifts_pass_through_and_shift_in_mock():
+    sun = date(2026, 10, 25)
+    out = build_training(summary(), None, sun, NOW, None, None)
+    assert out["top_lifts"] == [
+        {"key": "flat-bench", "label": "Bench", "weight": 185, "reps": 6, "date": "2026-10-14"},
+        {"key": "squat-or-hack", "label": "Squat", "weight": 225, "reps": 5, "date": "2026-10-21"},
+    ]
+    old = summary()
+    del old["topLifts"]
+    assert build_training(old, None, sun, NOW, None, None)["top_lifts"] == []
+    mock = LockInIntegration(settings(mock_mode=True), get_dashboard_config()).mock()
+    bench = mock["top_lifts"][0]
+    assert (date.fromisoformat(mock["today"]) - date.fromisoformat(bench["date"])).days == 11

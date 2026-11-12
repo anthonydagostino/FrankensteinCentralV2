@@ -90,6 +90,10 @@ def build() -> tuple[dict[str, Any], dict[str, Any]]:
             "atRisk": rest_since == rest_allowed,
             "restDaysAllowed": rest_allowed,
         },
+        "topLifts": [
+            {"key": "flat-bench", "label": "Bench", "weightLb": 185, "reps": 6, "date": (ANCHOR - timedelta(days=11)).isoformat()},
+            {"key": "squat-or-hack", "label": "Squat", "weightLb": 225, "reps": 5, "date": (ANCHOR - timedelta(days=4)).isoformat()},
+        ],
         "lastSession": {"date": last["date"], "templateKey": last["templateKey"], "templateName": NAMES[last["templateKey"]]},
         "nextSession": {"templateKey": next_key, "templateName": NAMES[next_key]},
         "weight": {
