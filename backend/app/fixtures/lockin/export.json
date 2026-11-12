@@ -629,5 +629,5076 @@
    "deleted": false
   }
  ],
- "sets": []
+ "sets": [
+  {
+   "id": "s-2026-09-21-incline-db-press-0",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 0,
+   "weightLb": 60.0,
+   "reps": 10,
+   "updatedAt": 1761000000000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-incline-db-press-1",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 1,
+   "weightLb": 60.0,
+   "reps": 6,
+   "updatedAt": 1761000000001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-incline-db-press-2",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 2,
+   "weightLb": 60.0,
+   "reps": 7,
+   "updatedAt": 1761000000002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-flat-bench-0",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "flat-bench",
+   "setIndex": 0,
+   "weightLb": 155.0,
+   "reps": 9,
+   "updatedAt": 1761000000000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-flat-bench-1",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "flat-bench",
+   "setIndex": 1,
+   "weightLb": 155.0,
+   "reps": 9,
+   "updatedAt": 1761000000001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-flat-bench-2",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "flat-bench",
+   "setIndex": 2,
+   "weightLb": 155.0,
+   "reps": 4,
+   "updatedAt": 1761000000002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-cable-fly-0",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "cable-fly",
+   "setIndex": 0,
+   "weightLb": 30.0,
+   "reps": 13,
+   "updatedAt": 1761000000000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-cable-fly-1",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "cable-fly",
+   "setIndex": 1,
+   "weightLb": 30.0,
+   "reps": 9,
+   "updatedAt": 1761000000001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-cable-fly-2",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "cable-fly",
+   "setIndex": 2,
+   "weightLb": 30.0,
+   "reps": 8,
+   "updatedAt": 1761000000002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-seated-db-shoulder-press-0",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 0,
+   "weightLb": 45.0,
+   "reps": 8,
+   "updatedAt": 1761000000000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-seated-db-shoulder-press-1",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 1,
+   "weightLb": 45.0,
+   "reps": 7,
+   "updatedAt": 1761000000001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-seated-db-shoulder-press-2",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 2,
+   "weightLb": 45.0,
+   "reps": 10,
+   "updatedAt": 1761000000002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-cable-lateral-raise-0",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 0,
+   "weightLb": 15.0,
+   "reps": 16,
+   "updatedAt": 1761000000000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-cable-lateral-raise-1",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 1,
+   "weightLb": 15.0,
+   "reps": 14,
+   "updatedAt": 1761000000001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-cable-lateral-raise-2",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 2,
+   "weightLb": 15.0,
+   "reps": 16,
+   "updatedAt": 1761000000002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-rope-pushdown-0",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 0,
+   "weightLb": 50.0,
+   "reps": 12,
+   "updatedAt": 1761000000000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-rope-pushdown-1",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 1,
+   "weightLb": 50.0,
+   "reps": 12,
+   "updatedAt": 1761000000001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-rope-pushdown-2",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 2,
+   "weightLb": 50.0,
+   "reps": 12,
+   "updatedAt": 1761000000002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-overhead-cable-triceps-0",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 0,
+   "weightLb": 40.0,
+   "reps": 13,
+   "updatedAt": 1761000000000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-overhead-cable-triceps-1",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 1,
+   "weightLb": 40.0,
+   "reps": 11,
+   "updatedAt": 1761000000001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-21-overhead-cable-triceps-2",
+   "sessionId": "s-2026-09-21",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 2,
+   "weightLb": 40.0,
+   "reps": 12,
+   "updatedAt": 1761000000002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-pullup-or-pulldown-0",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 0,
+   "weightLb": 140.0,
+   "reps": 7,
+   "updatedAt": 1761000010000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-pullup-or-pulldown-1",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 1,
+   "weightLb": 140.0,
+   "reps": 5,
+   "updatedAt": 1761000010001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-pullup-or-pulldown-2",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 2,
+   "weightLb": 140.0,
+   "reps": 5,
+   "updatedAt": 1761000010002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-chest-supported-row-0",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 0,
+   "weightLb": 90.0,
+   "reps": 9,
+   "updatedAt": 1761000010000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-chest-supported-row-1",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 1,
+   "weightLb": 90.0,
+   "reps": 10,
+   "updatedAt": 1761000010001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-chest-supported-row-2",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 2,
+   "weightLb": 90.0,
+   "reps": 10,
+   "updatedAt": 1761000010002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-single-arm-cable-lat-row-0",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 0,
+   "weightLb": 50.0,
+   "reps": 15,
+   "updatedAt": 1761000010000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-single-arm-cable-lat-row-1",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 1,
+   "weightLb": 50.0,
+   "reps": 13,
+   "updatedAt": 1761000010001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-single-arm-cable-lat-row-2",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 2,
+   "weightLb": 50.0,
+   "reps": 12,
+   "updatedAt": 1761000010002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-reverse-pec-deck-0",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 0,
+   "weightLb": 70.0,
+   "reps": 13,
+   "updatedAt": 1761000010000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-reverse-pec-deck-1",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 1,
+   "weightLb": 70.0,
+   "reps": 15,
+   "updatedAt": 1761000010001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-reverse-pec-deck-2",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 2,
+   "weightLb": 70.0,
+   "reps": 13,
+   "updatedAt": 1761000010002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-ez-bar-curl-0",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 0,
+   "weightLb": 60.0,
+   "reps": 9,
+   "updatedAt": 1761000010000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-ez-bar-curl-1",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 1,
+   "weightLb": 60.0,
+   "reps": 7,
+   "updatedAt": 1761000010001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-ez-bar-curl-2",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 2,
+   "weightLb": 60.0,
+   "reps": 6,
+   "updatedAt": 1761000010002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-hammer-curl-0",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 0,
+   "weightLb": 30.0,
+   "reps": 12,
+   "updatedAt": 1761000010000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-hammer-curl-1",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 1,
+   "weightLb": 30.0,
+   "reps": 12,
+   "updatedAt": 1761000010001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-22-hammer-curl-2",
+   "sessionId": "s-2026-09-22",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 2,
+   "weightLb": 30.0,
+   "reps": 11,
+   "updatedAt": 1761000010002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-squat-or-hack-0",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 0,
+   "weightLb": 185.0,
+   "reps": 7,
+   "updatedAt": 1761000020000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-squat-or-hack-1",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 1,
+   "weightLb": 185.0,
+   "reps": 5,
+   "updatedAt": 1761000020001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-squat-or-hack-2",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 2,
+   "weightLb": 185.0,
+   "reps": 4,
+   "updatedAt": 1761000020002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-romanian-deadlift-0",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 0,
+   "weightLb": 165.0,
+   "reps": 8,
+   "updatedAt": 1761000020000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-romanian-deadlift-1",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 1,
+   "weightLb": 165.0,
+   "reps": 8,
+   "updatedAt": 1761000020001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-romanian-deadlift-2",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 2,
+   "weightLb": 165.0,
+   "reps": 7,
+   "updatedAt": 1761000020002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-leg-extension-0",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "leg-extension",
+   "setIndex": 0,
+   "weightLb": 110.0,
+   "reps": 14,
+   "updatedAt": 1761000020000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-leg-extension-1",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "leg-extension",
+   "setIndex": 1,
+   "weightLb": 110.0,
+   "reps": 13,
+   "updatedAt": 1761000020001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-leg-extension-2",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "leg-extension",
+   "setIndex": 2,
+   "weightLb": 110.0,
+   "reps": 9,
+   "updatedAt": 1761000020002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-seated-leg-curl-0",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 0,
+   "weightLb": 100.0,
+   "reps": 10,
+   "updatedAt": 1761000020000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-seated-leg-curl-1",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 1,
+   "weightLb": 100.0,
+   "reps": 11,
+   "updatedAt": 1761000020001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-seated-leg-curl-2",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 2,
+   "weightLb": 100.0,
+   "reps": 9,
+   "updatedAt": 1761000020002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-standing-calf-raise-0",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 0,
+   "weightLb": 180.0,
+   "reps": 13,
+   "updatedAt": 1761000020000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-standing-calf-raise-1",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 1,
+   "weightLb": 180.0,
+   "reps": 11,
+   "updatedAt": 1761000020001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-standing-calf-raise-2",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 2,
+   "weightLb": 180.0,
+   "reps": 13,
+   "updatedAt": 1761000020002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-cable-crunch-0",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 0,
+   "weightLb": 70.0,
+   "reps": 15,
+   "updatedAt": 1761000020000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-cable-crunch-1",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 1,
+   "weightLb": 70.0,
+   "reps": 14,
+   "updatedAt": 1761000020001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-23-cable-crunch-2",
+   "sessionId": "s-2026-09-23",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 2,
+   "weightLb": 70.0,
+   "reps": 12,
+   "updatedAt": 1761000020002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-overhead-press-0",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "overhead-press",
+   "setIndex": 0,
+   "weightLb": 95.0,
+   "reps": 10,
+   "updatedAt": 1761000030000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-overhead-press-1",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "overhead-press",
+   "setIndex": 1,
+   "weightLb": 95.0,
+   "reps": 6,
+   "updatedAt": 1761000030001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-overhead-press-2",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "overhead-press",
+   "setIndex": 2,
+   "weightLb": 95.0,
+   "reps": 8,
+   "updatedAt": 1761000030002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-incline-machine-press-0",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 0,
+   "weightLb": 120.0,
+   "reps": 8,
+   "updatedAt": 1761000030000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-incline-machine-press-1",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 1,
+   "weightLb": 120.0,
+   "reps": 7,
+   "updatedAt": 1761000030001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-incline-machine-press-2",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 2,
+   "weightLb": 120.0,
+   "reps": 9,
+   "updatedAt": 1761000030002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-dips-0",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "dips",
+   "setIndex": 0,
+   "weightLb": 0.0,
+   "reps": 10,
+   "updatedAt": 1761000030000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-dips-1",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "dips",
+   "setIndex": 1,
+   "weightLb": 0.0,
+   "reps": 9,
+   "updatedAt": 1761000030001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-dips-2",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "dips",
+   "setIndex": 2,
+   "weightLb": 0.0,
+   "reps": 6,
+   "updatedAt": 1761000030002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-cable-lateral-raise-0",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 0,
+   "weightLb": 15.0,
+   "reps": 12,
+   "updatedAt": 1761000030000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-cable-lateral-raise-1",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 1,
+   "weightLb": 15.0,
+   "reps": 12,
+   "updatedAt": 1761000030001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-cable-lateral-raise-2",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 2,
+   "weightLb": 15.0,
+   "reps": 17,
+   "updatedAt": 1761000030002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-pec-deck-0",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "pec-deck",
+   "setIndex": 0,
+   "weightLb": 100.0,
+   "reps": 12,
+   "updatedAt": 1761000030000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-pec-deck-1",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "pec-deck",
+   "setIndex": 1,
+   "weightLb": 100.0,
+   "reps": 13,
+   "updatedAt": 1761000030001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-pec-deck-2",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "pec-deck",
+   "setIndex": 2,
+   "weightLb": 100.0,
+   "reps": 12,
+   "updatedAt": 1761000030002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-ez-skull-crusher-0",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 0,
+   "weightLb": 55.0,
+   "reps": 9,
+   "updatedAt": 1761000030000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-ez-skull-crusher-1",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 1,
+   "weightLb": 55.0,
+   "reps": 7,
+   "updatedAt": 1761000030001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-ez-skull-crusher-2",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 2,
+   "weightLb": 55.0,
+   "reps": 6,
+   "updatedAt": 1761000030002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-single-arm-pushdown-0",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 0,
+   "weightLb": 25.0,
+   "reps": 15,
+   "updatedAt": 1761000030000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-single-arm-pushdown-1",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 1,
+   "weightLb": 25.0,
+   "reps": 13,
+   "updatedAt": 1761000030001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-24-single-arm-pushdown-2",
+   "sessionId": "s-2026-09-24",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 2,
+   "weightLb": 25.0,
+   "reps": 10,
+   "updatedAt": 1761000030002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-barbell-or-tbar-row-0",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 0,
+   "weightLb": 135.0,
+   "reps": 7,
+   "updatedAt": 1761000040000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-barbell-or-tbar-row-1",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 1,
+   "weightLb": 135.0,
+   "reps": 7,
+   "updatedAt": 1761000040001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-barbell-or-tbar-row-2",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 2,
+   "weightLb": 135.0,
+   "reps": 6,
+   "updatedAt": 1761000040002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-neutral-grip-pulldown-0",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 0,
+   "weightLb": 130.0,
+   "reps": 8,
+   "updatedAt": 1761000040000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-neutral-grip-pulldown-1",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 1,
+   "weightLb": 130.0,
+   "reps": 10,
+   "updatedAt": 1761000040001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-neutral-grip-pulldown-2",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 2,
+   "weightLb": 130.0,
+   "reps": 6,
+   "updatedAt": 1761000040002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-seated-cable-row-0",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 0,
+   "weightLb": 120.0,
+   "reps": 11,
+   "updatedAt": 1761000040000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-seated-cable-row-1",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 1,
+   "weightLb": 120.0,
+   "reps": 9,
+   "updatedAt": 1761000040001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-seated-cable-row-2",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 2,
+   "weightLb": 120.0,
+   "reps": 9,
+   "updatedAt": 1761000040002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-face-pull-0",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "face-pull",
+   "setIndex": 0,
+   "weightLb": 45.0,
+   "reps": 12,
+   "updatedAt": 1761000040000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-face-pull-1",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "face-pull",
+   "setIndex": 1,
+   "weightLb": 45.0,
+   "reps": 14,
+   "updatedAt": 1761000040001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-face-pull-2",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "face-pull",
+   "setIndex": 2,
+   "weightLb": 45.0,
+   "reps": 13,
+   "updatedAt": 1761000040002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-incline-db-curl-0",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 0,
+   "weightLb": 25.0,
+   "reps": 12,
+   "updatedAt": 1761000040000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-incline-db-curl-1",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 1,
+   "weightLb": 25.0,
+   "reps": 9,
+   "updatedAt": 1761000040001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-incline-db-curl-2",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 2,
+   "weightLb": 25.0,
+   "reps": 10,
+   "updatedAt": 1761000040002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-preacher-or-cable-curl-0",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 0,
+   "weightLb": 50.0,
+   "reps": 10,
+   "updatedAt": 1761000040000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-preacher-or-cable-curl-1",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 1,
+   "weightLb": 50.0,
+   "reps": 9,
+   "updatedAt": 1761000040001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-25-preacher-or-cable-curl-2",
+   "sessionId": "s-2026-09-25",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 2,
+   "weightLb": 50.0,
+   "reps": 8,
+   "updatedAt": 1761000040002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-leg-press-0",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "leg-press",
+   "setIndex": 0,
+   "weightLb": 320.0,
+   "reps": 15,
+   "updatedAt": 1761000050000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-leg-press-1",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "leg-press",
+   "setIndex": 1,
+   "weightLb": 320.0,
+   "reps": 9,
+   "updatedAt": 1761000050001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-leg-press-2",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "leg-press",
+   "setIndex": 2,
+   "weightLb": 320.0,
+   "reps": 10,
+   "updatedAt": 1761000050002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-bulgarian-split-squat-0",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 0,
+   "weightLb": 35.0,
+   "reps": 11,
+   "updatedAt": 1761000050000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-bulgarian-split-squat-1",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 1,
+   "weightLb": 35.0,
+   "reps": 9,
+   "updatedAt": 1761000050001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-bulgarian-split-squat-2",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 2,
+   "weightLb": 35.0,
+   "reps": 9,
+   "updatedAt": 1761000050002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-lying-leg-curl-0",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 0,
+   "weightLb": 90.0,
+   "reps": 12,
+   "updatedAt": 1761000050000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-lying-leg-curl-1",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 1,
+   "weightLb": 90.0,
+   "reps": 10,
+   "updatedAt": 1761000050001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-lying-leg-curl-2",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 2,
+   "weightLb": 90.0,
+   "reps": 9,
+   "updatedAt": 1761000050002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-hip-thrust-or-back-ext-0",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 0,
+   "weightLb": 185.0,
+   "reps": 11,
+   "updatedAt": 1761000050000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-hip-thrust-or-back-ext-1",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 1,
+   "weightLb": 185.0,
+   "reps": 11,
+   "updatedAt": 1761000050001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-hip-thrust-or-back-ext-2",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 2,
+   "weightLb": 185.0,
+   "reps": 8,
+   "updatedAt": 1761000050002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-leg-extension-0",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "leg-extension",
+   "setIndex": 0,
+   "weightLb": 110.0,
+   "reps": 12,
+   "updatedAt": 1761000050000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-leg-extension-1",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "leg-extension",
+   "setIndex": 1,
+   "weightLb": 110.0,
+   "reps": 13,
+   "updatedAt": 1761000050001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-leg-extension-2",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "leg-extension",
+   "setIndex": 2,
+   "weightLb": 110.0,
+   "reps": 10,
+   "updatedAt": 1761000050002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-seated-calf-raise-0",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 0,
+   "weightLb": 90.0,
+   "reps": 19,
+   "updatedAt": 1761000050000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-seated-calf-raise-1",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 1,
+   "weightLb": 90.0,
+   "reps": 11,
+   "updatedAt": 1761000050001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-seated-calf-raise-2",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 2,
+   "weightLb": 90.0,
+   "reps": 13,
+   "updatedAt": 1761000050002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-hanging-leg-raise-0",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 0,
+   "weightLb": 0.0,
+   "reps": 15,
+   "updatedAt": 1761000050000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-hanging-leg-raise-1",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 1,
+   "weightLb": 0.0,
+   "reps": 9,
+   "updatedAt": 1761000050001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-26-hanging-leg-raise-2",
+   "sessionId": "s-2026-09-26",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 2,
+   "weightLb": 0.0,
+   "reps": 11,
+   "updatedAt": 1761000050002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-incline-db-press-0",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 0,
+   "weightLb": 62.5,
+   "reps": 10,
+   "updatedAt": 1761000060000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-incline-db-press-1",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 1,
+   "weightLb": 62.5,
+   "reps": 8,
+   "updatedAt": 1761000060001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-incline-db-press-2",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 2,
+   "weightLb": 62.5,
+   "reps": 6,
+   "updatedAt": 1761000060002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-flat-bench-0",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "flat-bench",
+   "setIndex": 0,
+   "weightLb": 160.0,
+   "reps": 6,
+   "updatedAt": 1761000060000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-flat-bench-1",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "flat-bench",
+   "setIndex": 1,
+   "weightLb": 160.0,
+   "reps": 7,
+   "updatedAt": 1761000060001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-flat-bench-2",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "flat-bench",
+   "setIndex": 2,
+   "weightLb": 160.0,
+   "reps": 6,
+   "updatedAt": 1761000060002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-cable-fly-0",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "cable-fly",
+   "setIndex": 0,
+   "weightLb": 32.5,
+   "reps": 11,
+   "updatedAt": 1761000060000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-cable-fly-1",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "cable-fly",
+   "setIndex": 1,
+   "weightLb": 32.5,
+   "reps": 14,
+   "updatedAt": 1761000060001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-cable-fly-2",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "cable-fly",
+   "setIndex": 2,
+   "weightLb": 32.5,
+   "reps": 12,
+   "updatedAt": 1761000060002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-seated-db-shoulder-press-0",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 0,
+   "weightLb": 47.5,
+   "reps": 9,
+   "updatedAt": 1761000060000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-seated-db-shoulder-press-1",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 1,
+   "weightLb": 47.5,
+   "reps": 11,
+   "updatedAt": 1761000060001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-seated-db-shoulder-press-2",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 2,
+   "weightLb": 47.5,
+   "reps": 7,
+   "updatedAt": 1761000060002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-cable-lateral-raise-0",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 0,
+   "weightLb": 15.0,
+   "reps": 17,
+   "updatedAt": 1761000060000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-cable-lateral-raise-1",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 1,
+   "weightLb": 15.0,
+   "reps": 18,
+   "updatedAt": 1761000060001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-cable-lateral-raise-2",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 2,
+   "weightLb": 15.0,
+   "reps": 17,
+   "updatedAt": 1761000060002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-rope-pushdown-0",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 0,
+   "weightLb": 52.5,
+   "reps": 11,
+   "updatedAt": 1761000060000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-rope-pushdown-1",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 1,
+   "weightLb": 52.5,
+   "reps": 11,
+   "updatedAt": 1761000060001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-rope-pushdown-2",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 2,
+   "weightLb": 52.5,
+   "reps": 11,
+   "updatedAt": 1761000060002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-overhead-cable-triceps-0",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 0,
+   "weightLb": 42.5,
+   "reps": 15,
+   "updatedAt": 1761000060000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-overhead-cable-triceps-1",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 1,
+   "weightLb": 42.5,
+   "reps": 11,
+   "updatedAt": 1761000060001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-28-overhead-cable-triceps-2",
+   "sessionId": "s-2026-09-28",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 2,
+   "weightLb": 42.5,
+   "reps": 9,
+   "updatedAt": 1761000060002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-pullup-or-pulldown-0",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 0,
+   "weightLb": 145.0,
+   "reps": 9,
+   "updatedAt": 1761000070000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-pullup-or-pulldown-1",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 1,
+   "weightLb": 145.0,
+   "reps": 6,
+   "updatedAt": 1761000070001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-pullup-or-pulldown-2",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 2,
+   "weightLb": 145.0,
+   "reps": 5,
+   "updatedAt": 1761000070002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-chest-supported-row-0",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 0,
+   "weightLb": 95.0,
+   "reps": 11,
+   "updatedAt": 1761000070000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-chest-supported-row-1",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 1,
+   "weightLb": 95.0,
+   "reps": 8,
+   "updatedAt": 1761000070001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-chest-supported-row-2",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 2,
+   "weightLb": 95.0,
+   "reps": 10,
+   "updatedAt": 1761000070002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-single-arm-cable-lat-row-0",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 0,
+   "weightLb": 52.5,
+   "reps": 12,
+   "updatedAt": 1761000070000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-single-arm-cable-lat-row-1",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 1,
+   "weightLb": 52.5,
+   "reps": 10,
+   "updatedAt": 1761000070001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-single-arm-cable-lat-row-2",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 2,
+   "weightLb": 52.5,
+   "reps": 9,
+   "updatedAt": 1761000070002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-reverse-pec-deck-0",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 0,
+   "weightLb": 75.0,
+   "reps": 14,
+   "updatedAt": 1761000070000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-reverse-pec-deck-1",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 1,
+   "weightLb": 75.0,
+   "reps": 18,
+   "updatedAt": 1761000070001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-reverse-pec-deck-2",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 2,
+   "weightLb": 75.0,
+   "reps": 15,
+   "updatedAt": 1761000070002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-ez-bar-curl-0",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 0,
+   "weightLb": 60.0,
+   "reps": 8,
+   "updatedAt": 1761000070000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-ez-bar-curl-1",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 1,
+   "weightLb": 60.0,
+   "reps": 7,
+   "updatedAt": 1761000070001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-ez-bar-curl-2",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 2,
+   "weightLb": 60.0,
+   "reps": 8,
+   "updatedAt": 1761000070002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-hammer-curl-0",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 0,
+   "weightLb": 32.5,
+   "reps": 11,
+   "updatedAt": 1761000070000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-hammer-curl-1",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 1,
+   "weightLb": 32.5,
+   "reps": 9,
+   "updatedAt": 1761000070001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-29-hammer-curl-2",
+   "sessionId": "s-2026-09-29",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 2,
+   "weightLb": 32.5,
+   "reps": 11,
+   "updatedAt": 1761000070002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-squat-or-hack-0",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 0,
+   "weightLb": 195.0,
+   "reps": 9,
+   "updatedAt": 1761000080000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-squat-or-hack-1",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 1,
+   "weightLb": 195.0,
+   "reps": 7,
+   "updatedAt": 1761000080001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-squat-or-hack-2",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 2,
+   "weightLb": 195.0,
+   "reps": 5,
+   "updatedAt": 1761000080002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-romanian-deadlift-0",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 0,
+   "weightLb": 170.0,
+   "reps": 9,
+   "updatedAt": 1761000080000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-romanian-deadlift-1",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 1,
+   "weightLb": 170.0,
+   "reps": 8,
+   "updatedAt": 1761000080001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-romanian-deadlift-2",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 2,
+   "weightLb": 170.0,
+   "reps": 8,
+   "updatedAt": 1761000080002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-leg-extension-0",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "leg-extension",
+   "setIndex": 0,
+   "weightLb": 115.0,
+   "reps": 14,
+   "updatedAt": 1761000080000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-leg-extension-1",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "leg-extension",
+   "setIndex": 1,
+   "weightLb": 115.0,
+   "reps": 12,
+   "updatedAt": 1761000080001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-leg-extension-2",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "leg-extension",
+   "setIndex": 2,
+   "weightLb": 115.0,
+   "reps": 13,
+   "updatedAt": 1761000080002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-seated-leg-curl-0",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 0,
+   "weightLb": 105.0,
+   "reps": 12,
+   "updatedAt": 1761000080000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-seated-leg-curl-1",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 1,
+   "weightLb": 105.0,
+   "reps": 14,
+   "updatedAt": 1761000080001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-seated-leg-curl-2",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 2,
+   "weightLb": 105.0,
+   "reps": 12,
+   "updatedAt": 1761000080002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-standing-calf-raise-0",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 0,
+   "weightLb": 190.0,
+   "reps": 13,
+   "updatedAt": 1761000080000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-standing-calf-raise-1",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 1,
+   "weightLb": 190.0,
+   "reps": 11,
+   "updatedAt": 1761000080001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-standing-calf-raise-2",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 2,
+   "weightLb": 190.0,
+   "reps": 8,
+   "updatedAt": 1761000080002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-cable-crunch-0",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 0,
+   "weightLb": 75.0,
+   "reps": 10,
+   "updatedAt": 1761000080000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-cable-crunch-1",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 1,
+   "weightLb": 75.0,
+   "reps": 11,
+   "updatedAt": 1761000080001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-09-30-cable-crunch-2",
+   "sessionId": "s-2026-09-30",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 2,
+   "weightLb": 75.0,
+   "reps": 12,
+   "updatedAt": 1761000080002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-overhead-press-0",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "overhead-press",
+   "setIndex": 0,
+   "weightLb": 97.5,
+   "reps": 6,
+   "updatedAt": 1761000090000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-overhead-press-1",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "overhead-press",
+   "setIndex": 1,
+   "weightLb": 97.5,
+   "reps": 7,
+   "updatedAt": 1761000090001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-overhead-press-2",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "overhead-press",
+   "setIndex": 2,
+   "weightLb": 97.5,
+   "reps": 8,
+   "updatedAt": 1761000090002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-incline-machine-press-0",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 0,
+   "weightLb": 125.0,
+   "reps": 10,
+   "updatedAt": 1761000090000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-incline-machine-press-1",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 1,
+   "weightLb": 125.0,
+   "reps": 9,
+   "updatedAt": 1761000090001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-incline-machine-press-2",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 2,
+   "weightLb": 125.0,
+   "reps": 10,
+   "updatedAt": 1761000090002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-dips-0",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "dips",
+   "setIndex": 0,
+   "weightLb": 0.0,
+   "reps": 8,
+   "updatedAt": 1761000090000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-dips-1",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "dips",
+   "setIndex": 1,
+   "weightLb": 0.0,
+   "reps": 8,
+   "updatedAt": 1761000090001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-dips-2",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "dips",
+   "setIndex": 2,
+   "weightLb": 0.0,
+   "reps": 9,
+   "updatedAt": 1761000090002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-cable-lateral-raise-0",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 0,
+   "weightLb": 15.0,
+   "reps": 19,
+   "updatedAt": 1761000090000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-cable-lateral-raise-1",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 1,
+   "weightLb": 15.0,
+   "reps": 14,
+   "updatedAt": 1761000090001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-cable-lateral-raise-2",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 2,
+   "weightLb": 15.0,
+   "reps": 10,
+   "updatedAt": 1761000090002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-pec-deck-0",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "pec-deck",
+   "setIndex": 0,
+   "weightLb": 105.0,
+   "reps": 14,
+   "updatedAt": 1761000090000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-pec-deck-1",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "pec-deck",
+   "setIndex": 1,
+   "weightLb": 105.0,
+   "reps": 12,
+   "updatedAt": 1761000090001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-pec-deck-2",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "pec-deck",
+   "setIndex": 2,
+   "weightLb": 105.0,
+   "reps": 11,
+   "updatedAt": 1761000090002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-ez-skull-crusher-0",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 0,
+   "weightLb": 57.5,
+   "reps": 8,
+   "updatedAt": 1761000090000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-ez-skull-crusher-1",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 1,
+   "weightLb": 57.5,
+   "reps": 7,
+   "updatedAt": 1761000090001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-ez-skull-crusher-2",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 2,
+   "weightLb": 57.5,
+   "reps": 9,
+   "updatedAt": 1761000090002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-single-arm-pushdown-0",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 0,
+   "weightLb": 25.0,
+   "reps": 12,
+   "updatedAt": 1761000090000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-single-arm-pushdown-1",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 1,
+   "weightLb": 25.0,
+   "reps": 13,
+   "updatedAt": 1761000090001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-02-single-arm-pushdown-2",
+   "sessionId": "s-2026-10-02",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 2,
+   "weightLb": 25.0,
+   "reps": 10,
+   "updatedAt": 1761000090002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-barbell-or-tbar-row-0",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 0,
+   "weightLb": 140.0,
+   "reps": 7,
+   "updatedAt": 1761000100000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-barbell-or-tbar-row-1",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 1,
+   "weightLb": 140.0,
+   "reps": 6,
+   "updatedAt": 1761000100001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-barbell-or-tbar-row-2",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 2,
+   "weightLb": 140.0,
+   "reps": 7,
+   "updatedAt": 1761000100002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-neutral-grip-pulldown-0",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 0,
+   "weightLb": 135.0,
+   "reps": 10,
+   "updatedAt": 1761000100000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-neutral-grip-pulldown-1",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 1,
+   "weightLb": 135.0,
+   "reps": 8,
+   "updatedAt": 1761000100001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-neutral-grip-pulldown-2",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 2,
+   "weightLb": 135.0,
+   "reps": 6,
+   "updatedAt": 1761000100002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-seated-cable-row-0",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 0,
+   "weightLb": 125.0,
+   "reps": 11,
+   "updatedAt": 1761000100000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-seated-cable-row-1",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 1,
+   "weightLb": 125.0,
+   "reps": 11,
+   "updatedAt": 1761000100001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-seated-cable-row-2",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 2,
+   "weightLb": 125.0,
+   "reps": 10,
+   "updatedAt": 1761000100002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-face-pull-0",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "face-pull",
+   "setIndex": 0,
+   "weightLb": 47.5,
+   "reps": 12,
+   "updatedAt": 1761000100000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-face-pull-1",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "face-pull",
+   "setIndex": 1,
+   "weightLb": 47.5,
+   "reps": 12,
+   "updatedAt": 1761000100001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-face-pull-2",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "face-pull",
+   "setIndex": 2,
+   "weightLb": 47.5,
+   "reps": 11,
+   "updatedAt": 1761000100002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-incline-db-curl-0",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 0,
+   "weightLb": 25.0,
+   "reps": 11,
+   "updatedAt": 1761000100000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-incline-db-curl-1",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 1,
+   "weightLb": 25.0,
+   "reps": 10,
+   "updatedAt": 1761000100001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-incline-db-curl-2",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 2,
+   "weightLb": 25.0,
+   "reps": 10,
+   "updatedAt": 1761000100002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-preacher-or-cable-curl-0",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 0,
+   "weightLb": 52.5,
+   "reps": 15,
+   "updatedAt": 1761000100000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-preacher-or-cable-curl-1",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 1,
+   "weightLb": 52.5,
+   "reps": 13,
+   "updatedAt": 1761000100001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-03-preacher-or-cable-curl-2",
+   "sessionId": "s-2026-10-03",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 2,
+   "weightLb": 52.5,
+   "reps": 12,
+   "updatedAt": 1761000100002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-leg-press-0",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "leg-press",
+   "setIndex": 0,
+   "weightLb": 360.0,
+   "reps": 14,
+   "updatedAt": 1761000110000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-leg-press-1",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "leg-press",
+   "setIndex": 1,
+   "weightLb": 360.0,
+   "reps": 10,
+   "updatedAt": 1761000110001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-leg-press-2",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "leg-press",
+   "setIndex": 2,
+   "weightLb": 360.0,
+   "reps": 11,
+   "updatedAt": 1761000110002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-bulgarian-split-squat-0",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 0,
+   "weightLb": 40.0,
+   "reps": 9,
+   "updatedAt": 1761000110000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-bulgarian-split-squat-1",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 1,
+   "weightLb": 40.0,
+   "reps": 7,
+   "updatedAt": 1761000110001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-bulgarian-split-squat-2",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 2,
+   "weightLb": 40.0,
+   "reps": 9,
+   "updatedAt": 1761000110002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-lying-leg-curl-0",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 0,
+   "weightLb": 100.0,
+   "reps": 11,
+   "updatedAt": 1761000110000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-lying-leg-curl-1",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 1,
+   "weightLb": 100.0,
+   "reps": 8,
+   "updatedAt": 1761000110001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-lying-leg-curl-2",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 2,
+   "weightLb": 100.0,
+   "reps": 9,
+   "updatedAt": 1761000110002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-hip-thrust-or-back-ext-0",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 0,
+   "weightLb": 205.0,
+   "reps": 11,
+   "updatedAt": 1761000110000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-hip-thrust-or-back-ext-1",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 1,
+   "weightLb": 205.0,
+   "reps": 9,
+   "updatedAt": 1761000110001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-hip-thrust-or-back-ext-2",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 2,
+   "weightLb": 205.0,
+   "reps": 10,
+   "updatedAt": 1761000110002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-leg-extension-0",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "leg-extension",
+   "setIndex": 0,
+   "weightLb": 120.0,
+   "reps": 12,
+   "updatedAt": 1761000110000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-leg-extension-1",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "leg-extension",
+   "setIndex": 1,
+   "weightLb": 120.0,
+   "reps": 14,
+   "updatedAt": 1761000110001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-leg-extension-2",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "leg-extension",
+   "setIndex": 2,
+   "weightLb": 120.0,
+   "reps": 12,
+   "updatedAt": 1761000110002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-seated-calf-raise-0",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 0,
+   "weightLb": 100.0,
+   "reps": 19,
+   "updatedAt": 1761000110000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-seated-calf-raise-1",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 1,
+   "weightLb": 100.0,
+   "reps": 16,
+   "updatedAt": 1761000110001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-seated-calf-raise-2",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 2,
+   "weightLb": 100.0,
+   "reps": 13,
+   "updatedAt": 1761000110002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-hanging-leg-raise-0",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 0,
+   "weightLb": 0.0,
+   "reps": 10,
+   "updatedAt": 1761000110000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-hanging-leg-raise-1",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 1,
+   "weightLb": 0.0,
+   "reps": 14,
+   "updatedAt": 1761000110001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-05-hanging-leg-raise-2",
+   "sessionId": "s-2026-10-05",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 2,
+   "weightLb": 0.0,
+   "reps": 13,
+   "updatedAt": 1761000110002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-incline-db-press-0",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 0,
+   "weightLb": 65.0,
+   "reps": 6,
+   "updatedAt": 1761000120000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-incline-db-press-1",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 1,
+   "weightLb": 65.0,
+   "reps": 6,
+   "updatedAt": 1761000120001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-incline-db-press-2",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 2,
+   "weightLb": 65.0,
+   "reps": 5,
+   "updatedAt": 1761000120002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-flat-bench-0",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "flat-bench",
+   "setIndex": 0,
+   "weightLb": 165.0,
+   "reps": 9,
+   "updatedAt": 1761000120000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-flat-bench-1",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "flat-bench",
+   "setIndex": 1,
+   "weightLb": 165.0,
+   "reps": 5,
+   "updatedAt": 1761000120001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-flat-bench-2",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "flat-bench",
+   "setIndex": 2,
+   "weightLb": 165.0,
+   "reps": 6,
+   "updatedAt": 1761000120002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-cable-fly-0",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "cable-fly",
+   "setIndex": 0,
+   "weightLb": 35.0,
+   "reps": 14,
+   "updatedAt": 1761000120000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-cable-fly-1",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "cable-fly",
+   "setIndex": 1,
+   "weightLb": 35.0,
+   "reps": 11,
+   "updatedAt": 1761000120001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-cable-fly-2",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "cable-fly",
+   "setIndex": 2,
+   "weightLb": 35.0,
+   "reps": 10,
+   "updatedAt": 1761000120002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-seated-db-shoulder-press-0",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 0,
+   "weightLb": 50.0,
+   "reps": 8,
+   "updatedAt": 1761000120000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-seated-db-shoulder-press-1",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 1,
+   "weightLb": 50.0,
+   "reps": 9,
+   "updatedAt": 1761000120001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-seated-db-shoulder-press-2",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 2,
+   "weightLb": 50.0,
+   "reps": 10,
+   "updatedAt": 1761000120002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-cable-lateral-raise-0",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 0,
+   "weightLb": 15.0,
+   "reps": 13,
+   "updatedAt": 1761000120000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-cable-lateral-raise-1",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 1,
+   "weightLb": 15.0,
+   "reps": 11,
+   "updatedAt": 1761000120001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-cable-lateral-raise-2",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 2,
+   "weightLb": 15.0,
+   "reps": 17,
+   "updatedAt": 1761000120002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-rope-pushdown-0",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 0,
+   "weightLb": 55.0,
+   "reps": 12,
+   "updatedAt": 1761000120000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-rope-pushdown-1",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 1,
+   "weightLb": 55.0,
+   "reps": 13,
+   "updatedAt": 1761000120001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-rope-pushdown-2",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 2,
+   "weightLb": 55.0,
+   "reps": 11,
+   "updatedAt": 1761000120002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-overhead-cable-triceps-0",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 0,
+   "weightLb": 45.0,
+   "reps": 12,
+   "updatedAt": 1761000120000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-overhead-cable-triceps-1",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 1,
+   "weightLb": 45.0,
+   "reps": 12,
+   "updatedAt": 1761000120001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-06-overhead-cable-triceps-2",
+   "sessionId": "s-2026-10-06",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 2,
+   "weightLb": 45.0,
+   "reps": 8,
+   "updatedAt": 1761000120002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-pullup-or-pulldown-0",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 0,
+   "weightLb": 150.0,
+   "reps": 7,
+   "updatedAt": 1761000130000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-pullup-or-pulldown-1",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 1,
+   "weightLb": 150.0,
+   "reps": 5,
+   "updatedAt": 1761000130001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-pullup-or-pulldown-2",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 2,
+   "weightLb": 150.0,
+   "reps": 7,
+   "updatedAt": 1761000130002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-chest-supported-row-0",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 0,
+   "weightLb": 100.0,
+   "reps": 8,
+   "updatedAt": 1761000130000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-chest-supported-row-1",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 1,
+   "weightLb": 100.0,
+   "reps": 8,
+   "updatedAt": 1761000130001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-chest-supported-row-2",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 2,
+   "weightLb": 100.0,
+   "reps": 10,
+   "updatedAt": 1761000130002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-single-arm-cable-lat-row-0",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 0,
+   "weightLb": 55.0,
+   "reps": 12,
+   "updatedAt": 1761000130000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-single-arm-cable-lat-row-1",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 1,
+   "weightLb": 55.0,
+   "reps": 14,
+   "updatedAt": 1761000130001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-single-arm-cable-lat-row-2",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 2,
+   "weightLb": 55.0,
+   "reps": 9,
+   "updatedAt": 1761000130002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-reverse-pec-deck-0",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 0,
+   "weightLb": 80.0,
+   "reps": 19,
+   "updatedAt": 1761000130000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-reverse-pec-deck-1",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 1,
+   "weightLb": 80.0,
+   "reps": 13,
+   "updatedAt": 1761000130001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-reverse-pec-deck-2",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 2,
+   "weightLb": 80.0,
+   "reps": 18,
+   "updatedAt": 1761000130002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-ez-bar-curl-0",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 0,
+   "weightLb": 60.0,
+   "reps": 12,
+   "updatedAt": 1761000130000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-ez-bar-curl-1",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 1,
+   "weightLb": 60.0,
+   "reps": 10,
+   "updatedAt": 1761000130001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-ez-bar-curl-2",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 2,
+   "weightLb": 60.0,
+   "reps": 9,
+   "updatedAt": 1761000130002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-hammer-curl-0",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 0,
+   "weightLb": 35.0,
+   "reps": 14,
+   "updatedAt": 1761000130000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-hammer-curl-1",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 1,
+   "weightLb": 35.0,
+   "reps": 14,
+   "updatedAt": 1761000130001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-07-hammer-curl-2",
+   "sessionId": "s-2026-10-07",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 2,
+   "weightLb": 35.0,
+   "reps": 8,
+   "updatedAt": 1761000130002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-squat-or-hack-0",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 0,
+   "weightLb": 205.0,
+   "reps": 7,
+   "updatedAt": 1761000140000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-squat-or-hack-1",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 1,
+   "weightLb": 205.0,
+   "reps": 8,
+   "updatedAt": 1761000140001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-squat-or-hack-2",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 2,
+   "weightLb": 205.0,
+   "reps": 8,
+   "updatedAt": 1761000140002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-romanian-deadlift-0",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 0,
+   "weightLb": 175.0,
+   "reps": 10,
+   "updatedAt": 1761000140000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-romanian-deadlift-1",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 1,
+   "weightLb": 175.0,
+   "reps": 8,
+   "updatedAt": 1761000140001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-romanian-deadlift-2",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 2,
+   "weightLb": 175.0,
+   "reps": 8,
+   "updatedAt": 1761000140002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-leg-extension-0",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "leg-extension",
+   "setIndex": 0,
+   "weightLb": 120.0,
+   "reps": 14,
+   "updatedAt": 1761000140000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-leg-extension-1",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "leg-extension",
+   "setIndex": 1,
+   "weightLb": 120.0,
+   "reps": 14,
+   "updatedAt": 1761000140001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-leg-extension-2",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "leg-extension",
+   "setIndex": 2,
+   "weightLb": 120.0,
+   "reps": 9,
+   "updatedAt": 1761000140002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-seated-leg-curl-0",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 0,
+   "weightLb": 110.0,
+   "reps": 14,
+   "updatedAt": 1761000140000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-seated-leg-curl-1",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 1,
+   "weightLb": 110.0,
+   "reps": 13,
+   "updatedAt": 1761000140001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-seated-leg-curl-2",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 2,
+   "weightLb": 110.0,
+   "reps": 12,
+   "updatedAt": 1761000140002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-standing-calf-raise-0",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 0,
+   "weightLb": 200.0,
+   "reps": 12,
+   "updatedAt": 1761000140000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-standing-calf-raise-1",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 1,
+   "weightLb": 200.0,
+   "reps": 11,
+   "updatedAt": 1761000140001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-standing-calf-raise-2",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 2,
+   "weightLb": 200.0,
+   "reps": 13,
+   "updatedAt": 1761000140002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-cable-crunch-0",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 0,
+   "weightLb": 80.0,
+   "reps": 13,
+   "updatedAt": 1761000140000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-cable-crunch-1",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 1,
+   "weightLb": 80.0,
+   "reps": 13,
+   "updatedAt": 1761000140001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-08-cable-crunch-2",
+   "sessionId": "s-2026-10-08",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 2,
+   "weightLb": 80.0,
+   "reps": 9,
+   "updatedAt": 1761000140002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-overhead-press-0",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "overhead-press",
+   "setIndex": 0,
+   "weightLb": 100.0,
+   "reps": 8,
+   "updatedAt": 1761000150000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-overhead-press-1",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "overhead-press",
+   "setIndex": 1,
+   "weightLb": 100.0,
+   "reps": 6,
+   "updatedAt": 1761000150001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-overhead-press-2",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "overhead-press",
+   "setIndex": 2,
+   "weightLb": 100.0,
+   "reps": 8,
+   "updatedAt": 1761000150002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-incline-machine-press-0",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 0,
+   "weightLb": 130.0,
+   "reps": 12,
+   "updatedAt": 1761000150000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-incline-machine-press-1",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 1,
+   "weightLb": 130.0,
+   "reps": 9,
+   "updatedAt": 1761000150001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-incline-machine-press-2",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 2,
+   "weightLb": 130.0,
+   "reps": 10,
+   "updatedAt": 1761000150002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-dips-0",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "dips",
+   "setIndex": 0,
+   "weightLb": 0.0,
+   "reps": 11,
+   "updatedAt": 1761000150000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-dips-1",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "dips",
+   "setIndex": 1,
+   "weightLb": 0.0,
+   "reps": 8,
+   "updatedAt": 1761000150001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-dips-2",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "dips",
+   "setIndex": 2,
+   "weightLb": 0.0,
+   "reps": 9,
+   "updatedAt": 1761000150002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-cable-lateral-raise-0",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 0,
+   "weightLb": 15.0,
+   "reps": 20,
+   "updatedAt": 1761000150000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-cable-lateral-raise-1",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 1,
+   "weightLb": 15.0,
+   "reps": 12,
+   "updatedAt": 1761000150001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-cable-lateral-raise-2",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 2,
+   "weightLb": 15.0,
+   "reps": 18,
+   "updatedAt": 1761000150002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-pec-deck-0",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "pec-deck",
+   "setIndex": 0,
+   "weightLb": 110.0,
+   "reps": 12,
+   "updatedAt": 1761000150000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-pec-deck-1",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "pec-deck",
+   "setIndex": 1,
+   "weightLb": 110.0,
+   "reps": 14,
+   "updatedAt": 1761000150001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-pec-deck-2",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "pec-deck",
+   "setIndex": 2,
+   "weightLb": 110.0,
+   "reps": 10,
+   "updatedAt": 1761000150002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-ez-skull-crusher-0",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 0,
+   "weightLb": 60.0,
+   "reps": 12,
+   "updatedAt": 1761000150000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-ez-skull-crusher-1",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 1,
+   "weightLb": 60.0,
+   "reps": 7,
+   "updatedAt": 1761000150001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-ez-skull-crusher-2",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 2,
+   "weightLb": 60.0,
+   "reps": 10,
+   "updatedAt": 1761000150002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-single-arm-pushdown-0",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 0,
+   "weightLb": 25.0,
+   "reps": 15,
+   "updatedAt": 1761000150000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-single-arm-pushdown-1",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 1,
+   "weightLb": 25.0,
+   "reps": 11,
+   "updatedAt": 1761000150001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-09-single-arm-pushdown-2",
+   "sessionId": "s-2026-10-09",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 2,
+   "weightLb": 25.0,
+   "reps": 13,
+   "updatedAt": 1761000150002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-barbell-or-tbar-row-0",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 0,
+   "weightLb": 145.0,
+   "reps": 6,
+   "updatedAt": 1761000160000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-barbell-or-tbar-row-1",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 1,
+   "weightLb": 145.0,
+   "reps": 6,
+   "updatedAt": 1761000160001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-barbell-or-tbar-row-2",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 2,
+   "weightLb": 145.0,
+   "reps": 4,
+   "updatedAt": 1761000160002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-neutral-grip-pulldown-0",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 0,
+   "weightLb": 140.0,
+   "reps": 12,
+   "updatedAt": 1761000160000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-neutral-grip-pulldown-1",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 1,
+   "weightLb": 140.0,
+   "reps": 10,
+   "updatedAt": 1761000160001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-neutral-grip-pulldown-2",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 2,
+   "weightLb": 140.0,
+   "reps": 9,
+   "updatedAt": 1761000160002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-seated-cable-row-0",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 0,
+   "weightLb": 130.0,
+   "reps": 11,
+   "updatedAt": 1761000160000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-seated-cable-row-1",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 1,
+   "weightLb": 130.0,
+   "reps": 10,
+   "updatedAt": 1761000160001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-seated-cable-row-2",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 2,
+   "weightLb": 130.0,
+   "reps": 8,
+   "updatedAt": 1761000160002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-face-pull-0",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "face-pull",
+   "setIndex": 0,
+   "weightLb": 50.0,
+   "reps": 15,
+   "updatedAt": 1761000160000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-face-pull-1",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "face-pull",
+   "setIndex": 1,
+   "weightLb": 50.0,
+   "reps": 14,
+   "updatedAt": 1761000160001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-face-pull-2",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "face-pull",
+   "setIndex": 2,
+   "weightLb": 50.0,
+   "reps": 11,
+   "updatedAt": 1761000160002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-incline-db-curl-0",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 0,
+   "weightLb": 25.0,
+   "reps": 11,
+   "updatedAt": 1761000160000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-incline-db-curl-1",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 1,
+   "weightLb": 25.0,
+   "reps": 10,
+   "updatedAt": 1761000160001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-incline-db-curl-2",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 2,
+   "weightLb": 25.0,
+   "reps": 9,
+   "updatedAt": 1761000160002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-preacher-or-cable-curl-0",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 0,
+   "weightLb": 55.0,
+   "reps": 14,
+   "updatedAt": 1761000160000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-preacher-or-cable-curl-1",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 1,
+   "weightLb": 55.0,
+   "reps": 11,
+   "updatedAt": 1761000160001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-10-preacher-or-cable-curl-2",
+   "sessionId": "s-2026-10-10",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 2,
+   "weightLb": 55.0,
+   "reps": 8,
+   "updatedAt": 1761000160002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-leg-press-0",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "leg-press",
+   "setIndex": 0,
+   "weightLb": 380.0,
+   "reps": 11,
+   "updatedAt": 1761000170000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-leg-press-1",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "leg-press",
+   "setIndex": 1,
+   "weightLb": 380.0,
+   "reps": 12,
+   "updatedAt": 1761000170001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-leg-press-2",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "leg-press",
+   "setIndex": 2,
+   "weightLb": 380.0,
+   "reps": 12,
+   "updatedAt": 1761000170002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-bulgarian-split-squat-0",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 0,
+   "weightLb": 42.5,
+   "reps": 8,
+   "updatedAt": 1761000170000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-bulgarian-split-squat-1",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 1,
+   "weightLb": 42.5,
+   "reps": 9,
+   "updatedAt": 1761000170001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-bulgarian-split-squat-2",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 2,
+   "weightLb": 42.5,
+   "reps": 7,
+   "updatedAt": 1761000170002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-lying-leg-curl-0",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 0,
+   "weightLb": 105.0,
+   "reps": 8,
+   "updatedAt": 1761000170000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-lying-leg-curl-1",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 1,
+   "weightLb": 105.0,
+   "reps": 7,
+   "updatedAt": 1761000170001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-lying-leg-curl-2",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 2,
+   "weightLb": 105.0,
+   "reps": 7,
+   "updatedAt": 1761000170002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-hip-thrust-or-back-ext-0",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 0,
+   "weightLb": 215.0,
+   "reps": 10,
+   "updatedAt": 1761000170000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-hip-thrust-or-back-ext-1",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 1,
+   "weightLb": 215.0,
+   "reps": 9,
+   "updatedAt": 1761000170001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-hip-thrust-or-back-ext-2",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 2,
+   "weightLb": 215.0,
+   "reps": 8,
+   "updatedAt": 1761000170002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-leg-extension-0",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "leg-extension",
+   "setIndex": 0,
+   "weightLb": 125.0,
+   "reps": 14,
+   "updatedAt": 1761000170000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-leg-extension-1",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "leg-extension",
+   "setIndex": 1,
+   "weightLb": 125.0,
+   "reps": 13,
+   "updatedAt": 1761000170001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-leg-extension-2",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "leg-extension",
+   "setIndex": 2,
+   "weightLb": 125.0,
+   "reps": 12,
+   "updatedAt": 1761000170002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-seated-calf-raise-0",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 0,
+   "weightLb": 105.0,
+   "reps": 15,
+   "updatedAt": 1761000170000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-seated-calf-raise-1",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 1,
+   "weightLb": 105.0,
+   "reps": 18,
+   "updatedAt": 1761000170001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-seated-calf-raise-2",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 2,
+   "weightLb": 105.0,
+   "reps": 11,
+   "updatedAt": 1761000170002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-hanging-leg-raise-0",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 0,
+   "weightLb": 0.0,
+   "reps": 13,
+   "updatedAt": 1761000170000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-hanging-leg-raise-1",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 1,
+   "weightLb": 0.0,
+   "reps": 14,
+   "updatedAt": 1761000170001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-12-hanging-leg-raise-2",
+   "sessionId": "s-2026-10-12",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 2,
+   "weightLb": 0.0,
+   "reps": 12,
+   "updatedAt": 1761000170002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-incline-db-press-0",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 0,
+   "weightLb": 67.5,
+   "reps": 6,
+   "updatedAt": 1761000180000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-incline-db-press-1",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 1,
+   "weightLb": 67.5,
+   "reps": 9,
+   "updatedAt": 1761000180001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-incline-db-press-2",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 2,
+   "weightLb": 67.5,
+   "reps": 8,
+   "updatedAt": 1761000180002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-flat-bench-0",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "flat-bench",
+   "setIndex": 0,
+   "weightLb": 170.0,
+   "reps": 8,
+   "updatedAt": 1761000180000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-flat-bench-1",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "flat-bench",
+   "setIndex": 1,
+   "weightLb": 170.0,
+   "reps": 6,
+   "updatedAt": 1761000180001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-flat-bench-2",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "flat-bench",
+   "setIndex": 2,
+   "weightLb": 170.0,
+   "reps": 8,
+   "updatedAt": 1761000180002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-cable-fly-0",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "cable-fly",
+   "setIndex": 0,
+   "weightLb": 37.5,
+   "reps": 13,
+   "updatedAt": 1761000180000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-cable-fly-1",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "cable-fly",
+   "setIndex": 1,
+   "weightLb": 37.5,
+   "reps": 9,
+   "updatedAt": 1761000180001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-cable-fly-2",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "cable-fly",
+   "setIndex": 2,
+   "weightLb": 37.5,
+   "reps": 11,
+   "updatedAt": 1761000180002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-seated-db-shoulder-press-0",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 0,
+   "weightLb": 52.5,
+   "reps": 11,
+   "updatedAt": 1761000180000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-seated-db-shoulder-press-1",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 1,
+   "weightLb": 52.5,
+   "reps": 11,
+   "updatedAt": 1761000180001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-seated-db-shoulder-press-2",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 2,
+   "weightLb": 52.5,
+   "reps": 10,
+   "updatedAt": 1761000180002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-cable-lateral-raise-0",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 0,
+   "weightLb": 15.0,
+   "reps": 14,
+   "updatedAt": 1761000180000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-cable-lateral-raise-1",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 1,
+   "weightLb": 15.0,
+   "reps": 19,
+   "updatedAt": 1761000180001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-cable-lateral-raise-2",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 2,
+   "weightLb": 15.0,
+   "reps": 13,
+   "updatedAt": 1761000180002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-rope-pushdown-0",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 0,
+   "weightLb": 57.5,
+   "reps": 15,
+   "updatedAt": 1761000180000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-rope-pushdown-1",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 1,
+   "weightLb": 57.5,
+   "reps": 13,
+   "updatedAt": 1761000180001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-rope-pushdown-2",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 2,
+   "weightLb": 57.5,
+   "reps": 13,
+   "updatedAt": 1761000180002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-overhead-cable-triceps-0",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 0,
+   "weightLb": 47.5,
+   "reps": 11,
+   "updatedAt": 1761000180000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-overhead-cable-triceps-1",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 1,
+   "weightLb": 47.5,
+   "reps": 13,
+   "updatedAt": 1761000180001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-13-overhead-cable-triceps-2",
+   "sessionId": "s-2026-10-13",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 2,
+   "weightLb": 47.5,
+   "reps": 9,
+   "updatedAt": 1761000180002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-pullup-or-pulldown-0",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 0,
+   "weightLb": 155.0,
+   "reps": 10,
+   "updatedAt": 1761000190000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-pullup-or-pulldown-1",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 1,
+   "weightLb": 155.0,
+   "reps": 9,
+   "updatedAt": 1761000190001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-pullup-or-pulldown-2",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 2,
+   "weightLb": 155.0,
+   "reps": 8,
+   "updatedAt": 1761000190002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-chest-supported-row-0",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 0,
+   "weightLb": 105.0,
+   "reps": 9,
+   "updatedAt": 1761000190000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-chest-supported-row-1",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 1,
+   "weightLb": 105.0,
+   "reps": 8,
+   "updatedAt": 1761000190001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-chest-supported-row-2",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 2,
+   "weightLb": 105.0,
+   "reps": 8,
+   "updatedAt": 1761000190002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-single-arm-cable-lat-row-0",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 0,
+   "weightLb": 57.5,
+   "reps": 11,
+   "updatedAt": 1761000190000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-single-arm-cable-lat-row-1",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 1,
+   "weightLb": 57.5,
+   "reps": 11,
+   "updatedAt": 1761000190001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-single-arm-cable-lat-row-2",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 2,
+   "weightLb": 57.5,
+   "reps": 12,
+   "updatedAt": 1761000190002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-reverse-pec-deck-0",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 0,
+   "weightLb": 85.0,
+   "reps": 17,
+   "updatedAt": 1761000190000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-reverse-pec-deck-1",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 1,
+   "weightLb": 85.0,
+   "reps": 14,
+   "updatedAt": 1761000190001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-reverse-pec-deck-2",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 2,
+   "weightLb": 85.0,
+   "reps": 13,
+   "updatedAt": 1761000190002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-ez-bar-curl-0",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 0,
+   "weightLb": 60.0,
+   "reps": 9,
+   "updatedAt": 1761000190000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-ez-bar-curl-1",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 1,
+   "weightLb": 60.0,
+   "reps": 7,
+   "updatedAt": 1761000190001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-ez-bar-curl-2",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 2,
+   "weightLb": 60.0,
+   "reps": 7,
+   "updatedAt": 1761000190002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-hammer-curl-0",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 0,
+   "weightLb": 37.5,
+   "reps": 11,
+   "updatedAt": 1761000190000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-hammer-curl-1",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 1,
+   "weightLb": 37.5,
+   "reps": 10,
+   "updatedAt": 1761000190001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-14-hammer-curl-2",
+   "sessionId": "s-2026-10-14",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 2,
+   "weightLb": 37.5,
+   "reps": 13,
+   "updatedAt": 1761000190002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-squat-or-hack-0",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 0,
+   "weightLb": 215.0,
+   "reps": 6,
+   "updatedAt": 1761000200000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-squat-or-hack-1",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 1,
+   "weightLb": 215.0,
+   "reps": 7,
+   "updatedAt": 1761000200001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-squat-or-hack-2",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "squat-or-hack",
+   "setIndex": 2,
+   "weightLb": 215.0,
+   "reps": 7,
+   "updatedAt": 1761000200002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-romanian-deadlift-0",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 0,
+   "weightLb": 180.0,
+   "reps": 8,
+   "updatedAt": 1761000200000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-romanian-deadlift-1",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 1,
+   "weightLb": 180.0,
+   "reps": 8,
+   "updatedAt": 1761000200001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-romanian-deadlift-2",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "romanian-deadlift",
+   "setIndex": 2,
+   "weightLb": 180.0,
+   "reps": 7,
+   "updatedAt": 1761000200002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-leg-extension-0",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "leg-extension",
+   "setIndex": 0,
+   "weightLb": 125.0,
+   "reps": 14,
+   "updatedAt": 1761000200000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-leg-extension-1",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "leg-extension",
+   "setIndex": 1,
+   "weightLb": 125.0,
+   "reps": 14,
+   "updatedAt": 1761000200001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-leg-extension-2",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "leg-extension",
+   "setIndex": 2,
+   "weightLb": 125.0,
+   "reps": 9,
+   "updatedAt": 1761000200002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-seated-leg-curl-0",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 0,
+   "weightLb": 115.0,
+   "reps": 11,
+   "updatedAt": 1761000200000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-seated-leg-curl-1",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 1,
+   "weightLb": 115.0,
+   "reps": 12,
+   "updatedAt": 1761000200001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-seated-leg-curl-2",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "seated-leg-curl",
+   "setIndex": 2,
+   "weightLb": 115.0,
+   "reps": 13,
+   "updatedAt": 1761000200002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-standing-calf-raise-0",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 0,
+   "weightLb": 210.0,
+   "reps": 15,
+   "updatedAt": 1761000200000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-standing-calf-raise-1",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 1,
+   "weightLb": 210.0,
+   "reps": 9,
+   "updatedAt": 1761000200001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-standing-calf-raise-2",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "standing-calf-raise",
+   "setIndex": 2,
+   "weightLb": 210.0,
+   "reps": 8,
+   "updatedAt": 1761000200002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-cable-crunch-0",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 0,
+   "weightLb": 85.0,
+   "reps": 11,
+   "updatedAt": 1761000200000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-cable-crunch-1",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 1,
+   "weightLb": 85.0,
+   "reps": 13,
+   "updatedAt": 1761000200001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-16-cable-crunch-2",
+   "sessionId": "s-2026-10-16",
+   "exerciseKey": "cable-crunch",
+   "setIndex": 2,
+   "weightLb": 85.0,
+   "reps": 13,
+   "updatedAt": 1761000200002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-overhead-press-0",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "overhead-press",
+   "setIndex": 0,
+   "weightLb": 102.5,
+   "reps": 8,
+   "updatedAt": 1761000210000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-overhead-press-1",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "overhead-press",
+   "setIndex": 1,
+   "weightLb": 102.5,
+   "reps": 7,
+   "updatedAt": 1761000210001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-overhead-press-2",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "overhead-press",
+   "setIndex": 2,
+   "weightLb": 102.5,
+   "reps": 4,
+   "updatedAt": 1761000210002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-incline-machine-press-0",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 0,
+   "weightLb": 135.0,
+   "reps": 12,
+   "updatedAt": 1761000210000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-incline-machine-press-1",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 1,
+   "weightLb": 135.0,
+   "reps": 9,
+   "updatedAt": 1761000210001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-incline-machine-press-2",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "incline-machine-press",
+   "setIndex": 2,
+   "weightLb": 135.0,
+   "reps": 10,
+   "updatedAt": 1761000210002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-dips-0",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "dips",
+   "setIndex": 0,
+   "weightLb": 0.0,
+   "reps": 9,
+   "updatedAt": 1761000210000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-dips-1",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "dips",
+   "setIndex": 1,
+   "weightLb": 0.0,
+   "reps": 7,
+   "updatedAt": 1761000210001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-dips-2",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "dips",
+   "setIndex": 2,
+   "weightLb": 0.0,
+   "reps": 9,
+   "updatedAt": 1761000210002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-cable-lateral-raise-0",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 0,
+   "weightLb": 15.0,
+   "reps": 13,
+   "updatedAt": 1761000210000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-cable-lateral-raise-1",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 1,
+   "weightLb": 15.0,
+   "reps": 11,
+   "updatedAt": 1761000210001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-cable-lateral-raise-2",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 2,
+   "weightLb": 15.0,
+   "reps": 10,
+   "updatedAt": 1761000210002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-pec-deck-0",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "pec-deck",
+   "setIndex": 0,
+   "weightLb": 115.0,
+   "reps": 15,
+   "updatedAt": 1761000210000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-pec-deck-1",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "pec-deck",
+   "setIndex": 1,
+   "weightLb": 115.0,
+   "reps": 12,
+   "updatedAt": 1761000210001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-pec-deck-2",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "pec-deck",
+   "setIndex": 2,
+   "weightLb": 115.0,
+   "reps": 11,
+   "updatedAt": 1761000210002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-ez-skull-crusher-0",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 0,
+   "weightLb": 62.5,
+   "reps": 9,
+   "updatedAt": 1761000210000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-ez-skull-crusher-1",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 1,
+   "weightLb": 62.5,
+   "reps": 7,
+   "updatedAt": 1761000210001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-ez-skull-crusher-2",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "ez-skull-crusher",
+   "setIndex": 2,
+   "weightLb": 62.5,
+   "reps": 7,
+   "updatedAt": 1761000210002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-single-arm-pushdown-0",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 0,
+   "weightLb": 25.0,
+   "reps": 13,
+   "updatedAt": 1761000210000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-single-arm-pushdown-1",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 1,
+   "weightLb": 25.0,
+   "reps": 12,
+   "updatedAt": 1761000210001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-17-single-arm-pushdown-2",
+   "sessionId": "s-2026-10-17",
+   "exerciseKey": "single-arm-pushdown",
+   "setIndex": 2,
+   "weightLb": 25.0,
+   "reps": 12,
+   "updatedAt": 1761000210002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-barbell-or-tbar-row-0",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 0,
+   "weightLb": 155.0,
+   "reps": 6,
+   "updatedAt": 1761000220000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-barbell-or-tbar-row-1",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 1,
+   "weightLb": 155.0,
+   "reps": 9,
+   "updatedAt": 1761000220001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-barbell-or-tbar-row-2",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "barbell-or-tbar-row",
+   "setIndex": 2,
+   "weightLb": 155.0,
+   "reps": 4,
+   "updatedAt": 1761000220002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-neutral-grip-pulldown-0",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 0,
+   "weightLb": 150.0,
+   "reps": 9,
+   "updatedAt": 1761000220000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-neutral-grip-pulldown-1",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 1,
+   "weightLb": 150.0,
+   "reps": 10,
+   "updatedAt": 1761000220001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-neutral-grip-pulldown-2",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "neutral-grip-pulldown",
+   "setIndex": 2,
+   "weightLb": 150.0,
+   "reps": 6,
+   "updatedAt": 1761000220002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-seated-cable-row-0",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 0,
+   "weightLb": 140.0,
+   "reps": 10,
+   "updatedAt": 1761000220000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-seated-cable-row-1",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 1,
+   "weightLb": 140.0,
+   "reps": 10,
+   "updatedAt": 1761000220001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-seated-cable-row-2",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "seated-cable-row",
+   "setIndex": 2,
+   "weightLb": 140.0,
+   "reps": 9,
+   "updatedAt": 1761000220002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-face-pull-0",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "face-pull",
+   "setIndex": 0,
+   "weightLb": 55.0,
+   "reps": 15,
+   "updatedAt": 1761000220000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-face-pull-1",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "face-pull",
+   "setIndex": 1,
+   "weightLb": 55.0,
+   "reps": 14,
+   "updatedAt": 1761000220001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-face-pull-2",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "face-pull",
+   "setIndex": 2,
+   "weightLb": 55.0,
+   "reps": 12,
+   "updatedAt": 1761000220002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-incline-db-curl-0",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 0,
+   "weightLb": 25.0,
+   "reps": 11,
+   "updatedAt": 1761000220000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-incline-db-curl-1",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 1,
+   "weightLb": 25.0,
+   "reps": 9,
+   "updatedAt": 1761000220001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-incline-db-curl-2",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "incline-db-curl",
+   "setIndex": 2,
+   "weightLb": 25.0,
+   "reps": 10,
+   "updatedAt": 1761000220002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-preacher-or-cable-curl-0",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 0,
+   "weightLb": 60.0,
+   "reps": 12,
+   "updatedAt": 1761000220000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-preacher-or-cable-curl-1",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 1,
+   "weightLb": 60.0,
+   "reps": 9,
+   "updatedAt": 1761000220001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-19-preacher-or-cable-curl-2",
+   "sessionId": "s-2026-10-19",
+   "exerciseKey": "preacher-or-cable-curl",
+   "setIndex": 2,
+   "weightLb": 60.0,
+   "reps": 13,
+   "updatedAt": 1761000220002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-leg-press-0",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "leg-press",
+   "setIndex": 0,
+   "weightLb": 400.0,
+   "reps": 15,
+   "updatedAt": 1761000230000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-leg-press-1",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "leg-press",
+   "setIndex": 1,
+   "weightLb": 400.0,
+   "reps": 9,
+   "updatedAt": 1761000230001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-leg-press-2",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "leg-press",
+   "setIndex": 2,
+   "weightLb": 400.0,
+   "reps": 9,
+   "updatedAt": 1761000230002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-bulgarian-split-squat-0",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 0,
+   "weightLb": 45.0,
+   "reps": 9,
+   "updatedAt": 1761000230000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-bulgarian-split-squat-1",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 1,
+   "weightLb": 45.0,
+   "reps": 10,
+   "updatedAt": 1761000230001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-bulgarian-split-squat-2",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "bulgarian-split-squat",
+   "setIndex": 2,
+   "weightLb": 45.0,
+   "reps": 9,
+   "updatedAt": 1761000230002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-lying-leg-curl-0",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 0,
+   "weightLb": 110.0,
+   "reps": 10,
+   "updatedAt": 1761000230000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-lying-leg-curl-1",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 1,
+   "weightLb": 110.0,
+   "reps": 9,
+   "updatedAt": 1761000230001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-lying-leg-curl-2",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "lying-leg-curl",
+   "setIndex": 2,
+   "weightLb": 110.0,
+   "reps": 9,
+   "updatedAt": 1761000230002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-hip-thrust-or-back-ext-0",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 0,
+   "weightLb": 225.0,
+   "reps": 10,
+   "updatedAt": 1761000230000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-hip-thrust-or-back-ext-1",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 1,
+   "weightLb": 225.0,
+   "reps": 11,
+   "updatedAt": 1761000230001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-hip-thrust-or-back-ext-2",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "hip-thrust-or-back-ext",
+   "setIndex": 2,
+   "weightLb": 225.0,
+   "reps": 8,
+   "updatedAt": 1761000230002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-leg-extension-0",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "leg-extension",
+   "setIndex": 0,
+   "weightLb": 130.0,
+   "reps": 12,
+   "updatedAt": 1761000230000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-leg-extension-1",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "leg-extension",
+   "setIndex": 1,
+   "weightLb": 130.0,
+   "reps": 11,
+   "updatedAt": 1761000230001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-leg-extension-2",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "leg-extension",
+   "setIndex": 2,
+   "weightLb": 130.0,
+   "reps": 12,
+   "updatedAt": 1761000230002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-seated-calf-raise-0",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 0,
+   "weightLb": 110.0,
+   "reps": 13,
+   "updatedAt": 1761000230000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-seated-calf-raise-1",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 1,
+   "weightLb": 110.0,
+   "reps": 17,
+   "updatedAt": 1761000230001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-seated-calf-raise-2",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "seated-calf-raise",
+   "setIndex": 2,
+   "weightLb": 110.0,
+   "reps": 13,
+   "updatedAt": 1761000230002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-hanging-leg-raise-0",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 0,
+   "weightLb": 0.0,
+   "reps": 14,
+   "updatedAt": 1761000230000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-hanging-leg-raise-1",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 1,
+   "weightLb": 0.0,
+   "reps": 13,
+   "updatedAt": 1761000230001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-20-hanging-leg-raise-2",
+   "sessionId": "s-2026-10-20",
+   "exerciseKey": "hanging-leg-raise",
+   "setIndex": 2,
+   "weightLb": 0.0,
+   "reps": 10,
+   "updatedAt": 1761000230002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-incline-db-press-0",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 0,
+   "weightLb": 70.0,
+   "reps": 8,
+   "updatedAt": 1761000240000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-incline-db-press-1",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 1,
+   "weightLb": 70.0,
+   "reps": 7,
+   "updatedAt": 1761000240001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-incline-db-press-2",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "incline-db-press",
+   "setIndex": 2,
+   "weightLb": 70.0,
+   "reps": 4,
+   "updatedAt": 1761000240002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-flat-bench-0",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "flat-bench",
+   "setIndex": 0,
+   "weightLb": 175.0,
+   "reps": 7,
+   "updatedAt": 1761000240000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-flat-bench-1",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "flat-bench",
+   "setIndex": 1,
+   "weightLb": 175.0,
+   "reps": 8,
+   "updatedAt": 1761000240001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-flat-bench-2",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "flat-bench",
+   "setIndex": 2,
+   "weightLb": 175.0,
+   "reps": 5,
+   "updatedAt": 1761000240002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-cable-fly-0",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "cable-fly",
+   "setIndex": 0,
+   "weightLb": 40.0,
+   "reps": 12,
+   "updatedAt": 1761000240000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-cable-fly-1",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "cable-fly",
+   "setIndex": 1,
+   "weightLb": 40.0,
+   "reps": 13,
+   "updatedAt": 1761000240001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-cable-fly-2",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "cable-fly",
+   "setIndex": 2,
+   "weightLb": 40.0,
+   "reps": 13,
+   "updatedAt": 1761000240002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-seated-db-shoulder-press-0",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 0,
+   "weightLb": 55.0,
+   "reps": 10,
+   "updatedAt": 1761000240000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-seated-db-shoulder-press-1",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 1,
+   "weightLb": 55.0,
+   "reps": 10,
+   "updatedAt": 1761000240001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-seated-db-shoulder-press-2",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "seated-db-shoulder-press",
+   "setIndex": 2,
+   "weightLb": 55.0,
+   "reps": 7,
+   "updatedAt": 1761000240002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-cable-lateral-raise-0",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 0,
+   "weightLb": 15.0,
+   "reps": 18,
+   "updatedAt": 1761000240000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-cable-lateral-raise-1",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 1,
+   "weightLb": 15.0,
+   "reps": 14,
+   "updatedAt": 1761000240001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-cable-lateral-raise-2",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "cable-lateral-raise",
+   "setIndex": 2,
+   "weightLb": 15.0,
+   "reps": 12,
+   "updatedAt": 1761000240002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-rope-pushdown-0",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 0,
+   "weightLb": 60.0,
+   "reps": 10,
+   "updatedAt": 1761000240000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-rope-pushdown-1",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 1,
+   "weightLb": 60.0,
+   "reps": 11,
+   "updatedAt": 1761000240001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-rope-pushdown-2",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "rope-pushdown",
+   "setIndex": 2,
+   "weightLb": 60.0,
+   "reps": 10,
+   "updatedAt": 1761000240002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-overhead-cable-triceps-0",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 0,
+   "weightLb": 50.0,
+   "reps": 13,
+   "updatedAt": 1761000240000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-overhead-cable-triceps-1",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 1,
+   "weightLb": 50.0,
+   "reps": 9,
+   "updatedAt": 1761000240001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-22-overhead-cable-triceps-2",
+   "sessionId": "s-2026-10-22",
+   "exerciseKey": "overhead-cable-triceps",
+   "setIndex": 2,
+   "weightLb": 50.0,
+   "reps": 8,
+   "updatedAt": 1761000240002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-pullup-or-pulldown-0",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 0,
+   "weightLb": 160.0,
+   "reps": 8,
+   "updatedAt": 1761000250000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-pullup-or-pulldown-1",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 1,
+   "weightLb": 160.0,
+   "reps": 9,
+   "updatedAt": 1761000250001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-pullup-or-pulldown-2",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "pullup-or-pulldown",
+   "setIndex": 2,
+   "weightLb": 160.0,
+   "reps": 4,
+   "updatedAt": 1761000250002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-chest-supported-row-0",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 0,
+   "weightLb": 110.0,
+   "reps": 9,
+   "updatedAt": 1761000250000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-chest-supported-row-1",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 1,
+   "weightLb": 110.0,
+   "reps": 9,
+   "updatedAt": 1761000250001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-chest-supported-row-2",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "chest-supported-row",
+   "setIndex": 2,
+   "weightLb": 110.0,
+   "reps": 8,
+   "updatedAt": 1761000250002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-single-arm-cable-lat-row-0",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 0,
+   "weightLb": 60.0,
+   "reps": 12,
+   "updatedAt": 1761000250000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-single-arm-cable-lat-row-1",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 1,
+   "weightLb": 60.0,
+   "reps": 10,
+   "updatedAt": 1761000250001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-single-arm-cable-lat-row-2",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "single-arm-cable-lat-row",
+   "setIndex": 2,
+   "weightLb": 60.0,
+   "reps": 13,
+   "updatedAt": 1761000250002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-reverse-pec-deck-0",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 0,
+   "weightLb": 90.0,
+   "reps": 18,
+   "updatedAt": 1761000250000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-reverse-pec-deck-1",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 1,
+   "weightLb": 90.0,
+   "reps": 13,
+   "updatedAt": 1761000250001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-reverse-pec-deck-2",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "reverse-pec-deck",
+   "setIndex": 2,
+   "weightLb": 90.0,
+   "reps": 18,
+   "updatedAt": 1761000250002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-ez-bar-curl-0",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 0,
+   "weightLb": 60.0,
+   "reps": 8,
+   "updatedAt": 1761000250000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-ez-bar-curl-1",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 1,
+   "weightLb": 60.0,
+   "reps": 10,
+   "updatedAt": 1761000250001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-ez-bar-curl-2",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "ez-bar-curl",
+   "setIndex": 2,
+   "weightLb": 60.0,
+   "reps": 10,
+   "updatedAt": 1761000250002,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-hammer-curl-0",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 0,
+   "weightLb": 40.0,
+   "reps": 13,
+   "updatedAt": 1761000250000,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-hammer-curl-1",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 1,
+   "weightLb": 40.0,
+   "reps": 14,
+   "updatedAt": 1761000250001,
+   "deleted": false
+  },
+  {
+   "id": "s-2026-10-23-hammer-curl-2",
+   "sessionId": "s-2026-10-23",
+   "exerciseKey": "hammer-curl",
+   "setIndex": 2,
+   "weightLb": 40.0,
+   "reps": 9,
+   "updatedAt": 1761000250002,
+   "deleted": false
+  }
+ ]
 }
