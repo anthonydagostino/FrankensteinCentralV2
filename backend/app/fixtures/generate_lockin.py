@@ -6,6 +6,7 @@ import json
 import math
 import random
 from datetime import date, timedelta
+from itertools import pairwise
 from pathlib import Path
 from typing import Any
 
@@ -140,6 +141,18 @@ def build() -> tuple[dict[str, Any], dict[str, Any]]:
     prev = [w["weightLb"] for w in weigh_ins if d14 < w["date"] <= d7]
     avg7 = round(sum(recent) / len(recent), 1)
     avg7_prev = round(sum(prev) / len(prev), 1)
+    # Day streak, same rule as Lock-In's scheduleStreak: one rest day at a time is fine,
+    # two in a row resets it, and today is never counted as missed.
+    trained = sorted({date.fromisoformat(str(s["date"])) for s in sessions}, reverse=True)
+    rest_allowed = 1
+    rest_since = (ANCHOR - trained[0]).days - 1
+    streak_days = 0
+    if rest_since <= rest_allowed:
+        streak_days = 1
+        for newer, older in pairwise(trained):
+            if (newer - older).days - 1 > rest_allowed:
+                break
+            streak_days += 1
     summary = {
         "_version": "0.2.1",
         "generatedAt": "2026-10-25T12:00:00.000Z",
@@ -149,6 +162,16 @@ def build() -> tuple[dict[str, Any], dict[str, Any]]:
         "sessionsThisWeek": len(this_week),
         "sessionsPlannedPerWeek": 6,
         "trainingStreakWeeks": 4,
+        "scheduleStreak": {
+            "days": streak_days,
+            "lastTrainedDate": trained[0].isoformat(),
+            "atRisk": rest_since == rest_allowed,
+            "restDaysAllowed": rest_allowed,
+        },
+        "topLifts": [
+            {"key": "flat-bench", "label": "Bench", "weightLb": 185, "reps": 6, "date": (ANCHOR - timedelta(days=11)).isoformat()},
+            {"key": "squat-or-hack", "label": "Squat", "weightLb": 225, "reps": 5, "date": (ANCHOR - timedelta(days=4)).isoformat()},
+        ],
         "lastSession": {"date": last["date"], "templateKey": last["templateKey"], "templateName": NAMES[last["templateKey"]]},
         "nextSession": {"templateKey": next_key, "templateName": NAMES[next_key]},
         "weight": {

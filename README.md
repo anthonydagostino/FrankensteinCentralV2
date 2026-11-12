@@ -19,7 +19,7 @@ The build environment for this repository had no outbound network access to the 
 | Plex (plex.tv discovery for owned or shared servers, identity, sessions, recently added, on deck, libraries, image proxy) | implemented | respx | `PLEX_URL`, `PLEX_TOKEN` |
 | Vaultwarden (alive, version, backup age) | implemented | respx | `VAULTWARDEN_URL` |
 | Docker (socket proxy, inspect, restart counts) | implemented | respx | compose socket proxy (no extra config) |
-| Lock-In training tracker (summary, week squares, weight trend) | implemented | respx plus unit tests | `LOCKIN_URL`, `LOCKIN_TOKEN` |
+| Lock-In training tracker (summary, week squares, day streak, weight trend) | implemented | respx plus unit tests | `LOCKIN_URL`, `LOCKIN_TOKEN` |
 | HTTP probes | implemented | mock | `probes` in `config/dashboard.yaml` |
 | Recurring charge detector | implemented | 10 unit tests plus an API test on mock data | Firefly |
 | Firefly "Sync now" (data importer) | implemented | manual only | `FIREFLY_IMPORTER_URL`, `FIREFLY_IMPORTER_SECRET` |
