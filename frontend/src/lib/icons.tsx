@@ -18,6 +18,7 @@ import {
   Container,
   Database,
   Dumbbell,
+  Flame,
   Scale,
   DatabaseBackup,
   DatabaseZap,
@@ -72,6 +73,7 @@ const MAP: Record<string, LucideIcon> = {
   "key-round": KeyRound,
   receipt: Receipt,
   dumbbell: Dumbbell,
+  flame: Flame,
   scale: Scale,
   link: Link,
 };

@@ -487,6 +487,8 @@ export interface TrainingData {
   sessions_this_week: number;
   sessions_planned: number;
   streak_weeks: number;
+  /** Days trained and logged; one rest day at a time keeps it, two in a row reset it. Null from older Lock-In servers. */
+  day_streak: { days: number; last_trained: string | null; at_risk: boolean; rest_days_allowed: number } | null;
   streak_min_sessions: number;
   streak_risk: "safe" | "ok" | "at_risk" | "lost";
   sessions_needed_for_streak: number;

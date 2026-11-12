@@ -78,6 +78,18 @@ def build_training(
         trained_today = summary["lastSession"].get("date") == today.isoformat()
 
     weighed_today = bool(latest and latest.get("date") == today.isoformat())
+    # Day streak, computed by Lock-In (0.2.x servers before the feature do not send it).
+    streak = summary.get("scheduleStreak") or None
+    day_streak = (
+        {
+            "days": int(streak.get("days") or 0),
+            "last_trained": streak.get("lastTrainedDate"),
+            "at_risk": bool(streak.get("atRisk")),
+            "rest_days_allowed": int(streak.get("restDaysAllowed") or 1),
+        }
+        if streak
+        else None
+    )
     phase = summary.get("phase") or {}
     last = summary.get("lastSession") or None
     nxt = summary.get("nextSession") or {}
@@ -93,6 +105,7 @@ def build_training(
         "sessions_this_week": sessions_this_week,
         "sessions_planned": planned,
         "streak_weeks": int(summary.get("trainingStreakWeeks") or 0),
+        "day_streak": day_streak,
         "streak_min_sessions": STREAK_MIN_SESSIONS,
         "streak_risk": streak_risk,
         "sessions_needed_for_streak": needed,
@@ -162,6 +175,8 @@ class LockInIntegration(BaseIntegration):
         summary["daysUntilGoal"] = max(0, (GOAL_DATE - today).days)
         if summary.get("lastSession"):
             summary["lastSession"]["date"] = shift(summary["lastSession"]["date"])
+        if summary.get("scheduleStreak"):
+            summary["scheduleStreak"]["lastTrainedDate"] = shift(summary["scheduleStreak"]["lastTrainedDate"])
         if (summary.get("weight") or {}).get("latest"):
             summary["weight"]["latest"]["date"] = shift(summary["weight"]["latest"]["date"])
         for w in export.get("weighIns", []):

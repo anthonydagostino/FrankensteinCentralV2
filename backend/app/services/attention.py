@@ -152,6 +152,18 @@ def build_attention(
                     "lockin",
                 )
             )
+        day_streak = lockin.get("day_streak") or {}
+        if day_streak.get("at_risk") and day_streak.get("days") and not lockin.get("trained_today"):
+            items.append(
+                _item(
+                    "warning",
+                    "flame",
+                    f"Train today to keep your {day_streak['days']} day streak",
+                    f"Yesterday was a rest day. Next up: {(lockin.get('next_session') or {}).get('name', '')}",
+                    link,
+                    "lockin",
+                )
+            )
         local_hour = now.astimezone(_local_tz()).hour
         if not lockin.get("weighed_today") and 10 <= local_hour < 22:
             items.append(_item("info", "scale", "Log your weight", "No weigh-in yet today", link, "lockin"))

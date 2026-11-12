@@ -12,6 +12,12 @@
  "sessionsThisWeek": 4,
  "sessionsPlannedPerWeek": 6,
  "trainingStreakWeeks": 4,
+ "scheduleStreak": {
+  "days": 26,
+  "lastTrainedDate": "2026-10-23",
+  "atRisk": true,
+  "restDaysAllowed": 1
+ },
  "lastSession": {
   "date": "2026-10-23",
   "templateKey": "pullA",

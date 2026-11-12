@@ -125,3 +125,38 @@ def test_attention_rules_for_training():
     early = datetime(2026, 10, 25, 12, 0, tzinfo=UTC)  # 8 AM New York
     cache.set_ok("lockin", {"streak_risk": "ok", "weighed_today": False, "phase": {}})
     assert build_attention(cache, None, None, early) == []
+
+
+def test_day_streak_passes_through_from_lockin():
+    sun = date(2026, 10, 25)
+    out = build_training(summary(), None, sun, NOW, None, None)
+    assert out["day_streak"] == {"days": 26, "last_trained": "2026-10-23", "at_risk": True, "rest_days_allowed": 1}
+    # Lock-In servers from before the feature do not send it; the card just leaves it out.
+    old = summary()
+    del old["scheduleStreak"]
+    assert build_training(old, None, sun, NOW, None, None)["day_streak"] is None
+
+
+def test_mock_day_streak_follows_the_shifted_dates():
+    out = LockInIntegration(settings(mock_mode=True), get_dashboard_config()).mock()
+    streak = out["day_streak"]
+    last = date.fromisoformat(streak["last_trained"])
+    today = date.fromisoformat(out["today"])
+    # The fixture's last workout is two days before its anchor, so the shifted copy is too.
+    assert (today - last).days == 2 and streak["at_risk"] is True and streak["days"] > 0
+
+
+def test_attention_asks_to_train_only_when_the_day_streak_is_at_risk():
+    cache = Cache(None)
+    cache.configure("lockin", 300, True)
+    base = {"weighed_today": True, "phase": {}, "next_session": {"name": "Push B"}, "public_url": "https://lockin.ts.net"}
+    at_risk = {"days": 12, "last_trained": "2026-10-23", "at_risk": True, "rest_days_allowed": 1}
+
+    cache.set_ok("lockin", {**base, "day_streak": at_risk, "trained_today": False})
+    items = [i for i in build_attention(cache, None, None, NOW) if i["icon"] == "flame"]
+    assert [i["title"] for i in items] == ["Train today to keep your 12 day streak"]
+    assert items[0]["detail"] == "Yesterday was a rest day. Next up: Push B" and items[0]["link"] == "https://lockin.ts.net"
+
+    for quiet in ({"day_streak": at_risk, "trained_today": True}, {"day_streak": {**at_risk, "at_risk": False}}, {"day_streak": None}):
+        cache.set_ok("lockin", {**base, **quiet})
+        assert not [i for i in build_attention(cache, None, None, NOW) if i["icon"] == "flame"]

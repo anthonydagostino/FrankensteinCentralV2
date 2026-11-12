@@ -54,6 +54,11 @@ export function TrainingBody({ data, large }: { data: TrainingData; large?: bool
         <Chip tone={streakTone}>
           <Flame size={11} /> {data.streak_weeks} week streak
         </Chip>
+        {data.day_streak && (
+          <Chip tone={data.day_streak.at_risk && !data.trained_today ? "warn" : data.day_streak.days > 0 ? "good" : "neutral"}>
+            <Flame size={11} /> {data.day_streak.days} day streak
+          </Chip>
+        )}
         <span className="ml-auto text-[11px] text-ink-400">
           <span className="tabular text-ink-200">{data.days_until_goal}</span> days to {formatDateOnly(data.goal_date, "MMM d")}
         </span>
@@ -75,6 +80,9 @@ export function TrainingBody({ data, large }: { data: TrainingData; large?: bool
           <span className="tabular text-base font-semibold text-ink-200">{data.sessions_this_week}</span> of {data.sessions_planned} sessions
           {data.streak_risk === "at_risk" && <div className="text-amber-300">{data.sessions_needed_for_streak} more to keep the streak</div>}
           {data.streak_risk === "lost" && data.streak_weeks > 0 && <div className="text-red-300">Streak ends this week</div>}
+          {data.day_streak?.at_risk && !data.trained_today && data.day_streak.days > 0 && (
+            <div className="text-amber-300">Train today to keep the {data.day_streak.days} day streak</div>
+          )}
         </div>
       </div>
 
