@@ -102,7 +102,10 @@ async def restart(cid: str, state: AppState = Depends(get_state)) -> dict[str, A
 
 @router.get("/lockin")
 async def lockin(state: AppState = Depends(get_state)) -> dict[str, Any]:
-    return state.cache.envelope("lockin")
+    env = state.cache.envelope("lockin")
+    if isinstance(env.get("data"), dict):
+        env["data"] = {k: v for k, v in env["data"].items() if not k.startswith("_")}  # the raw export stays server side
+    return env
 
 
 @router.get("/probes")
