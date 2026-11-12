@@ -28,7 +28,9 @@ class ProbesIntegration(BaseIntegration):
                 headers["Accept"] = "application/json"
             if p.auth == "plex" and self.settings.plex_token:
                 headers["X-Plex-Token"] = self.settings.plex_token
-            out.append({"name": p.name, "url": base.rstrip("/") + p.path, "expect": p.expect, "headers": headers, "base": base.rstrip("/")})
+            # the Vaultwarden probe honors VAULTWARDEN_VERIFY_TLS like the Vaultwarden card does
+            verify = p.url_env != "VAULTWARDEN_URL" or self.settings.vaultwarden_verify_tls
+            out.append({"name": p.name, "url": base.rstrip("/") + p.path, "expect": p.expect, "headers": headers, "base": base.rstrip("/"), "verify": verify})
         return out
 
     def is_configured(self) -> bool:
@@ -62,8 +64,10 @@ class ProbesIntegration(BaseIntegration):
             }
 
     async def fetch(self) -> dict[str, Any]:
-        async with make_client(timeout=8.0) as client:
-            results = await asyncio.gather(*(self._probe(client, t) for t in self._targets()))
+        targets = self._targets()
+        # one client per verify mode, so a self signed Vaultwarden does not loosen the check for everything else
+        async with make_client(timeout=8.0) as strict, make_client(timeout=8.0, verify=False) as lenient:
+            results = await asyncio.gather(*(self._probe(strict if t["verify"] else lenient, t) for t in targets))
         return {"probes": list(results), "checked_at": iso(utcnow())}
 
     def mock(self) -> dict[str, Any]:

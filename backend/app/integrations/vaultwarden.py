@@ -73,7 +73,8 @@ class VaultwardenIntegration(BaseIntegration):
         latency_ms = None
         version = None
         error = None
-        async with make_client(timeout=8.0) as client:
+        # verify follows VAULTWARDEN_VERIFY_TLS: a self signed certificate on the box's own address is the norm
+        async with make_client(timeout=8.0, verify=self.settings.vaultwarden_verify_tls) as client:
             started = time.perf_counter()
             try:
                 resp = await request(client, "GET", f"{base}/alive", retries=1, service="Vaultwarden")

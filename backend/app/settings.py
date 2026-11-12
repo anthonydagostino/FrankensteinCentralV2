@@ -75,6 +75,9 @@ class Settings(BaseSettings):
     vaultwarden_url: str = ""
     vaultwarden_public_url: str = ""
     vaultwarden_backup_dir: str = ""
+    # Vaultwarden often serves its own TLS with a self signed certificate on the LAN. False accepts any
+    # certificate for VAULTWARDEN_URL only; the health check sends no credentials, so nothing is exposed.
+    vaultwarden_verify_tls: bool = True
 
     # Lock-In (training tracker)
     lockin_url: str = ""
