@@ -8,6 +8,7 @@ import { Header } from "./components/Header";
 import { PrivacyProvider } from "./lib/privacy";
 import { BenefitsPage } from "./pages/Benefits";
 import { Dashboard } from "./pages/Dashboard";
+import { FitnessPage } from "./pages/Fitness";
 import { Kiosk } from "./pages/Kiosk";
 import { LoginPage } from "./pages/Login";
 import { SettingsPage } from "./pages/Settings";
@@ -77,6 +78,8 @@ function Shell() {
       <Routes>
         <Route path="/" element={<Dashboard config={cfg} readOnly={readOnly} />} />
         <Route path="/benefits" element={<BenefitsPage readOnly={readOnly} />} />
+        <Route path="/fitness" element={<Navigate to="/fitness/weight" replace />} />
+        <Route path="/fitness/:view" element={<FitnessPage readOnly={readOnly} />} />
         <Route path="/settings" element={readOnly ? <Navigate to="/" replace /> : <SettingsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

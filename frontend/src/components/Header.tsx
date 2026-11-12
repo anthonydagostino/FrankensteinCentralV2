@@ -1,4 +1,4 @@
-import { Eye, EyeOff, LogOut, Settings as SettingsIcon, BadgeDollarSign, MonitorPlay } from "lucide-react";
+import { Activity, Eye, EyeOff, LogOut, Settings as SettingsIcon, BadgeDollarSign, MonitorPlay } from "lucide-react";
 import { Link, NavLink } from "react-router-dom";
 import { useLogout } from "../api/hooks";
 import type { PublicConfig } from "../api/types";
@@ -34,6 +34,11 @@ export function Header({ config, readOnly }: { config?: PublicConfig; readOnly: 
           <NavLink to="/benefits" className={nav}>
             <span className="inline-flex items-center gap-1">
               <BadgeDollarSign size={14} /> Benefits
+            </span>
+          </NavLink>
+          <NavLink to="/fitness" className={nav}>
+            <span className="inline-flex items-center gap-1">
+              <Activity size={14} /> Fitness
             </span>
           </NavLink>
           {!readOnly && (

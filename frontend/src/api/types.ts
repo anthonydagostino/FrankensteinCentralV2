@@ -307,6 +307,8 @@ export interface PlexItem {
   progress: number | null;
 }
 export interface PlexData {
+  /** Which app the links open: Plex Web (default) or the Plezy client through plezy:// links. */
+  client?: "web" | "plezy";
   server: {
     online: boolean;
     version: string | null;
@@ -505,4 +507,145 @@ export interface TrainingData {
   weight_series: { date: string; weight: number }[] | null;
   public_url: string | null;
   generated_at: string;
+}
+
+// ---- fitness
+export type Muscle = "chest" | "back" | "shoulders" | "biceps" | "triceps" | "quads" | "hamstrings" | "glutes" | "calves" | "abs";
+export type VolumeZone = "below_minimum" | "building" | "target" | "high";
+export type WeightBand = "below" | "in" | "above";
+export type BulkState = "on_track" | "gaining_without_strength" | "recomping" | "under_eating";
+export interface FitnessZones {
+  below_minimum_max: number;
+  building_max: number;
+  target_max: number;
+}
+export interface FitnessSettings {
+  alpha: number;
+  band_low_pct: number;
+  band_high_pct: number;
+  target_sessions: number;
+  zones: FitnessZones;
+  plateau_weeks: number;
+  flat_pct: number;
+  units: string;
+}
+export interface MuscleMapEntry {
+  name: string;
+  primary: Muscle[];
+  secondary: Muscle[];
+}
+export interface MuscleMap {
+  map: Record<string, MuscleMapEntry>;
+  muscles: Muscle[];
+  unmapped: string[];
+}
+export interface MuscleMapInput {
+  exercise_key: string;
+  name?: string;
+  primary: Muscle[];
+  secondary: Muscle[];
+}
+export interface FitnessWeightPoint {
+  date: string;
+  raw: number | null;
+  trend: number;
+}
+export interface FitnessCorridorPoint {
+  date: string;
+  low: number;
+  high: number;
+}
+export interface FitnessWeight {
+  status: "ok" | "collecting";
+  days_of_data: number;
+  trend: { date: string; lb: number } | null;
+  rate: { lb_per_week: number; pct_per_month: number; band: WeightBand } | null;
+  change_30d_lb: number | null;
+  change_90d_lb: number | null;
+  series: FitnessWeightPoint[];
+  corridor: FitnessCorridorPoint[];
+}
+export interface FitnessConsistency {
+  week_start: string;
+  this_week: number;
+  target: number;
+  weeks: { week_start: string; sessions: number }[];
+  heatmap: { date: string; sessions: number }[];
+  days_since_muscle: { muscle: Muscle; days: number | null }[];
+}
+export interface VolumeExercise {
+  exercise_key: string;
+  name: string;
+  sets: number;
+}
+export interface VolumeMuscle {
+  muscle: Muscle;
+  sets: number;
+  zone: VolumeZone;
+  exercises: VolumeExercise[];
+}
+export interface FitnessVolume {
+  week_start: string;
+  muscles: VolumeMuscle[];
+  weeks: { week_start: string; sets: Partial<Record<Muscle, number>> }[];
+  unmapped: { exercise_key: string; sets: number }[];
+  zones: FitnessZones;
+}
+export interface StrengthPoint {
+  date: string;
+  e1rm: number;
+  pr: boolean;
+}
+export interface StrengthExercise {
+  exercise_key: string;
+  name: string;
+  best_e1rm: number;
+  sessions: number;
+  points: StrengthPoint[];
+  rep_prs: { weight: number; reps: number; date: string }[];
+}
+export interface RecentPr {
+  date: string;
+  exercise_key: string;
+  name: string;
+  kind: "rep" | "e1rm";
+  weight: number;
+  reps: number;
+  e1rm: number | null;
+}
+export interface FitnessStrength {
+  prs_this_week: number;
+  exercises: StrengthExercise[];
+  recent_prs: RecentPr[];
+}
+export interface StalledItem {
+  exercise_key: string;
+  name: string;
+  pct_change: number;
+  sessions: number;
+  sparkline: { date: string; e1rm: number }[];
+}
+export interface FitnessStalled {
+  count: number;
+  window_weeks: number;
+  items: StalledItem[];
+}
+export interface BulkQuality {
+  state: BulkState;
+  label: string;
+  weight_change_pct: number;
+  strength_change_pct: number;
+  weeks: { week_start: string; trend_lb: number; strength_index: number }[];
+}
+export interface FitnessData {
+  as_of: string;
+  units: string;
+  settings: FitnessSettings;
+  weight: FitnessWeight;
+  consistency: FitnessConsistency;
+  volume: FitnessVolume;
+  strength: FitnessStrength;
+  stalled: FitnessStalled;
+  bulk_quality: BulkQuality | null;
+  muscle_map: Record<string, MuscleMapEntry>;
 }

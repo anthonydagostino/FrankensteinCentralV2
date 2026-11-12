@@ -11,6 +11,10 @@ weather:
       lat: 40.7440
       lon: -74.0324
       default: false
+    - name: New York City
+      lat: 40.7128
+      lon: -74.0060
+      default: false
   units: imperial            # imperial or metric
 
 calendar:

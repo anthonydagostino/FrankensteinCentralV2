@@ -13,10 +13,14 @@ function itemLink(data: PlexData, ratingKey: string): string {
   return data.links.item_template.replace("{rating_key}", ratingKey);
 }
 
+/** The app the links open. A plezy:// link must open in the same tab: a new tab for a custom scheme stays blank. */
+const appName = (data: PlexData | null | undefined): string => (data?.client === "plezy" ? "Plezy" : "Plex");
+const linkTarget = (data: PlexData): string | undefined => (data.client === "plezy" ? undefined : "_blank");
+
 function SessionCard({ s, data, large }: { s: PlexSession; data: PlexData; large?: boolean }) {
   const img = poster(s.thumb, 120, 180);
   return (
-    <a href={itemLink(data, s.rating_key)} target="_blank" rel="noreferrer" className="flex gap-3 rounded-lg bg-ink-800/60 p-2 hover:bg-ink-800">
+    <a href={itemLink(data, s.rating_key)} target={linkTarget(data)} rel="noreferrer" className="flex gap-3 rounded-lg bg-ink-800/60 p-2 hover:bg-ink-800">
       {img ? (
         <img src={img} alt="" className={`${large ? "h-32 w-[86px]" : "h-24 w-16"} shrink-0 rounded object-cover`} loading="lazy" />
       ) : (
@@ -51,7 +55,7 @@ function Rail({ title, items, data }: { title: string; items: PlexItem[]; data: 
             <a
               key={it.rating_key}
               href={itemLink(data, it.rating_key)}
-              target="_blank"
+              target={linkTarget(data)}
               rel="noreferrer"
               className="w-20 shrink-0"
               title={`${it.title}${it.subtitle ? `, ${it.subtitle}` : ""}`}
@@ -90,11 +94,11 @@ export function PlexBody({ data, kiosk, onlyNowPlaying }: { data: PlexData; kios
           ))}
         <a
           href={data.links.server}
-          target="_blank"
+          target={linkTarget(data)}
           rel="noreferrer"
           className="ml-auto inline-flex items-center gap-1 rounded-md bg-accent/15 px-3 py-1.5 text-sm font-medium text-accent hover:bg-accent/25"
         >
-          <Tv size={14} /> Open Plex <ExternalLink size={12} />
+          <Tv size={14} /> Open {appName(data)} <ExternalLink size={12} />
         </a>
       </div>
       <div>
@@ -122,7 +126,7 @@ export function PlexBody({ data, kiosk, onlyNowPlaying }: { data: PlexData; kios
 export function PlexWidget({ kiosk, onlyNowPlaying }: { kiosk?: boolean; onlyNowPlaying?: boolean }) {
   const q = usePlex();
   return (
-    <Card title="Plex" envelope={q.data} error={q.error} onRetry={() => q.refetch()} kiosk={kiosk}>
+    <Card title={appName(q.data?.data)} envelope={q.data} error={q.error} onRetry={() => q.refetch()} kiosk={kiosk}>
       {(d) => <PlexBody data={d} kiosk={kiosk} onlyNowPlaying={onlyNowPlaying} />}
     </Card>
   );

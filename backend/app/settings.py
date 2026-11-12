@@ -69,11 +69,15 @@ class Settings(BaseSettings):
     plex_token: str = ""
     plex_public_url: str = "https://app.plex.tv/desktop"
     plex_server_name: str = ""  # pick a specific server from plex.tv discovery; empty picks owned first, then first shared
+    plex_client: str = "web"  # "web" links to Plex Web at PLEX_PUBLIC_URL; "plezy" opens the Plezy app through plezy:// links
 
     # Vaultwarden
     vaultwarden_url: str = ""
     vaultwarden_public_url: str = ""
     vaultwarden_backup_dir: str = ""
+    # Vaultwarden often serves its own TLS with a self signed certificate on the LAN. False accepts any
+    # certificate for VAULTWARDEN_URL only; the health check sends no credentials, so nothing is exposed.
+    vaultwarden_verify_tls: bool = True
 
     # Lock-In (training tracker)
     lockin_url: str = ""

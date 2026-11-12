@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 import uuid
 from collections.abc import Callable, Coroutine
@@ -18,6 +19,9 @@ from .services.attention import build_attention
 from .services.benefits.engine import BenefitsEngine, strip_internal
 from .services.cards import card_metrics, resolve_card_accounts
 from .services.finance import build_summary, firefly_links
+from .services.fitness.build import build_fitness
+from .services.fitness.muscle_map import MuscleMap, load_map
+from .services.fitness.settings import MAP_KEY_SETTING, SETTINGS_KEY, FitnessSettings, load_settings
 from .services.recurring import detect as detect_recurring
 from .settings import Settings
 from .util import iso, local_now, money, today_local, utcnow
@@ -166,6 +170,36 @@ class AppState:
             lambda: detect_recurring(data.get("transactions") or [], today_local(), self.recurring_ignored(), firefly_links(self.settings.firefly_vanity_url)),
         )
         return recurring
+
+    # ---- fitness (derived from the Lock-In export)
+    def fitness_settings(self) -> FitnessSettings:
+        return load_settings(self.db.get_setting(SETTINGS_KEY))
+
+    def save_fitness_settings(self, settings: FitnessSettings) -> None:
+        self.db.set_setting(SETTINGS_KEY, settings.model_dump_json())
+        self.invalidate_benefits()
+
+    def muscle_map(self) -> MuscleMap:
+        return load_map(self.db.get_setting(MAP_KEY_SETTING))
+
+    def save_muscle_entry(self, key: str, entry: dict[str, Any]) -> None:
+        """Store one exercise's entry as an override on top of the seed map."""
+        raw = self.db.get_setting(MAP_KEY_SETTING)
+        overrides = json.loads(raw) if raw else {}
+        overrides[key] = entry
+        self.db.set_setting(MAP_KEY_SETTING, json.dumps(overrides))
+        self.invalidate_benefits()
+
+    def fitness(self) -> dict[str, Any] | None:
+        """The fitness analytics payload, memoized on the Lock-In refresh and the settings version."""
+        data = self.cache.data("lockin") or {}
+        export = data.get("_export")
+        if not export:
+            return None
+        entry = self.cache.get("lockin")
+        key = (iso(entry.fetched_at) if entry else None, self._overrides_version, today_local().isoformat())
+        result: dict[str, Any] = self._memoized("fitness", key, lambda: build_fitness(export, today_local(), self.fitness_settings(), self.muscle_map()))
+        return result
 
     def cards(self) -> dict[str, Any] | None:
         """Card balances, limits, and benefit totals for the cards widget."""

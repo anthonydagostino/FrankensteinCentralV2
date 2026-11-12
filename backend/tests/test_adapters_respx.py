@@ -324,3 +324,26 @@ async def test_vaultwarden_backup_status_is_cached(tmp_path):
     assert (await integration.fetch())["backup"]["newest_file"] == "db.sqlite3", "the directory is rescanned at most every BACKUP_TTL"
     integration._backup = None
     assert (await integration.fetch())["backup"]["newest_file"] == "newer.sqlite3"
+
+
+@respx.mock
+async def test_vaultwarden_can_accept_a_self_signed_certificate(monkeypatch):
+    """VAULTWARDEN_VERIFY_TLS=false reaches the card's client and the probe for that one address, nothing else."""
+    from app.integrations import probes as probes_mod
+    from app.integrations import vaultwarden as vault_mod
+
+    seen: list[bool] = []
+    real = vault_mod.make_client
+
+    def spy(*args, **kwargs):
+        seen.append(kwargs.get("verify", True))
+        return real(*args, **kwargs)
+
+    monkeypatch.setattr(vault_mod, "make_client", spy)
+    respx.get("https://vault.lan:8222/alive").mock(return_value=httpx.Response(200))
+    respx.get("https://vault.lan:8222/api/version").mock(return_value=httpx.Response(200, text='"1.33.2"'))
+    cfg = settings(vaultwarden_url="https://vault.lan:8222", vaultwarden_verify_tls=False)
+    data = await VaultwardenIntegration(cfg, get_dashboard_config()).fetch()
+    assert data["online"] is True and seen == [False]
+    targets = {t["name"]: t["verify"] for t in probes_mod.ProbesIntegration(cfg, get_dashboard_config())._targets()}
+    assert targets["Vaultwarden"] is False and targets["Firefly III"] is True

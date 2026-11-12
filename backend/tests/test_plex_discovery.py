@@ -128,3 +128,14 @@ def test_plex_url_bypasses_discovery():
     assert integration.base_url() == "http://10.0.0.5:32400" and integration.headers()["X-Plex-Token"] == "acct-token"
     assert integration.is_configured()
     assert not PlexIntegration(settings(plex_token=""), get_dashboard_config()).is_configured()
+
+
+def test_plezy_links_use_the_machine_id_and_rating_key():
+    from app.integrations.plex import deep_links
+
+    links = deep_links("https://app.plex.tv/desktop", "abc123", "plezy")
+    assert links["server"] == "plezy://open"
+    assert links["item_template"].replace("{rating_key}", "42") == "plezy://play?server=abc123&id=42"
+    assert deep_links("https://app.plex.tv/desktop", None, "plezy")["item_template"] == "plezy://open"
+    web = deep_links("https://app.plex.tv/desktop", "abc123")
+    assert web["server"].startswith("https://app.plex.tv/desktop/#!/media/abc123")

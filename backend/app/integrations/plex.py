@@ -122,8 +122,18 @@ def parse_rail(raw: dict[str, Any], limit: int = 12) -> list[dict[str, Any]]:
     return [_item(i) for i in items[:limit]]
 
 
-def deep_links(public_url: str, machine_id: str | None) -> dict[str, str]:
-    """Plex Web links for the server and an item template keyed by rating_key."""
+def deep_links(public_url: str, machine_id: str | None, client: str = "web") -> dict[str, str]:
+    """Links for the server and an item template keyed by rating_key.
+
+    "web" points at Plex Web. "plezy" uses the Plezy app's own scheme: plezy://open for the server and
+    plezy://play?server=<machine id>&id=<rating key> for an item (Plezy identifies a Plex server by its
+    machine identifier and an item by its rating key, so no extra configuration is needed).
+    """
+    if client == "plezy":
+        return {
+            "server": "plezy://open",
+            "item_template": f"plezy://play?server={machine_id}&id={{rating_key}}" if machine_id else "plezy://open",
+        }
     base = public_url.rstrip("/")
     server = f"{base}/#!/media/{machine_id}/com.plexapp.plugins.library" if machine_id else base
     return {
@@ -338,7 +348,8 @@ class PlexIntegration(BaseIntegration):
             "recently_added": rails["recently_added"],
             "on_deck": rails["on_deck"],
             "libraries": rails["libraries"],
-            "links": deep_links(self.settings.plex_public_url, machine_id),
+            "links": deep_links(self.settings.plex_public_url, machine_id, self.settings.plex_client),
+            "client": self.settings.plex_client,
         }
         if rails.get("errors"):
             raise Degraded(data, "; ".join(rails["errors"]))
@@ -366,5 +377,6 @@ class PlexIntegration(BaseIntegration):
             "recently_added": recently,
             "on_deck": on_deck,
             "libraries": libraries,
-            "links": deep_links(self.settings.plex_public_url or "https://app.plex.tv/desktop", identity["machineIdentifier"]),
+            "links": deep_links(self.settings.plex_public_url or "https://app.plex.tv/desktop", identity["machineIdentifier"], self.settings.plex_client),
+            "client": self.settings.plex_client,
         }
