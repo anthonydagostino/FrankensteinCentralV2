@@ -103,7 +103,9 @@ export function PlexBody({ data, kiosk, onlyNowPlaying }: { data: PlexData; kios
       </div>
       <div>
         <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-ink-400">Now playing</div>
-        {data.sessions.length === 0 ? (
+        {data.sessions_available === false ? (
+          <p className="text-sm text-ink-500">Only the server owner can see what is playing</p>
+        ) : data.sessions.length === 0 ? (
           <p className="text-sm text-ink-500">Nothing playing</p>
         ) : (
           <div className={`grid gap-2 ${kiosk ? "grid-cols-1" : "md:grid-cols-2"}`}>

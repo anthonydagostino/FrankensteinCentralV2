@@ -319,6 +319,8 @@ export interface PlexData {
     via?: "direct" | "relay";
   };
   sessions: PlexSession[];
+  /** false on a shared server: only the owner can see what is playing */
+  sessions_available?: boolean;
   recently_added: PlexItem[];
   on_deck: PlexItem[];
   libraries: { key: string; title: string; type: string; count: number | null }[];

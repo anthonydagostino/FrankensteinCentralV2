@@ -87,6 +87,18 @@ async def test_discovers_shared_server_and_uses_its_access_token():
 
 
 @respx.mock
+async def test_shared_server_without_session_access_still_loads():
+    respx.get("https://plex.tv/api/v2/resources").mock(return_value=httpx.Response(200, json=[SHARED]))
+    respx.get("https://73-1-2-3.1ada.plex.direct:12345/identity").mock(side_effect=httpx.ConnectError("dns"))
+    base = "https://73.1.2.3:12345"
+    _mock_server(base)
+    respx.get(f"{base}/status/sessions").mock(return_value=httpx.Response(403))
+    data = await PlexIntegration(settings(), get_dashboard_config(), client_id_provider=lambda: "cid").fetch()
+    assert data["sessions"] == [] and data["sessions_available"] is False
+    assert data["recently_added"] and data["libraries"][0]["count"] == 7
+
+
+@respx.mock
 async def test_falls_back_to_relay_and_rediscovers_after_failure():
     respx.get("https://plex.tv/api/v2/resources").mock(return_value=httpx.Response(200, json=[SHARED]))
     for dead in (
