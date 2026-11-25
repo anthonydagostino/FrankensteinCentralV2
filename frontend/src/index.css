@@ -21,6 +21,11 @@ body {
   user-select: none;
   transition: filter 150ms ease;
 }
+/* net worth: a heavier blur and a dimmer rendering, so even the digit count is not readable */
+.privacy-blur-strong {
+  filter: blur(16px);
+  opacity: 0.55;
+}
 .kiosk-idle,
 .kiosk-idle * {
   cursor: none !important;

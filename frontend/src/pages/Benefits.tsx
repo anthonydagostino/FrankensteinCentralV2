@@ -38,15 +38,15 @@ function Tile({ b, onOpen }: { b: BenefitOut; onOpen: (b: BenefitOut) => void })
           <SplitBar used={pct(c.used, c.cap)} pending={pct(c.pending, c.cap)} className="mt-3" />
           <div className="mt-1 flex w-full flex-wrap justify-between gap-x-2 text-[11px] text-ink-400">
             <span>
-              <Money value={c.used} className="text-accent" /> used
+              <Money open value={c.used} className="text-accent" /> used
             </span>
             {Number(c.pending) > 0 && (
               <span>
-                <Money value={c.pending} className="text-amber-300" /> pending
+                <Money open value={c.pending} className="text-amber-300" /> pending
               </span>
             )}
             <span>
-              <Money value={c.remaining} className="text-ink-200" /> of <Money value={c.cap} /> left
+              <Money open value={c.remaining} className="text-ink-200" /> of <Money open value={c.cap} /> left
             </span>
           </div>
           {b.period === "multi_year" && c.next_eligible && <div className="mt-1 text-[11px] text-ink-400">Next eligible {formatDateOnly(c.next_eligible)}</div>}
@@ -77,7 +77,7 @@ function EvidenceDrawer({ b, onClose, onWrong }: { b: BenefitOut; onClose: () =>
           <Chip>{b.tracking.replace("_", " ")}</Chip>
           <Chip>{b.period.replace("_", " ")}</Chip>
           <Chip>
-            cap <Money value={b.cap} />
+            cap <Money open value={b.cap} />
           </Chip>
           {b.enrollment_required && <Chip tone="info">enrollment required</Chip>}
         </div>
@@ -103,16 +103,16 @@ function EvidenceDrawer({ b, onClose, onWrong }: { b: BenefitOut; onClose: () =>
                   <tr key={p.period_key} className={`border-t border-ink-800 ${b.current?.period_key === p.period_key ? "bg-accent/5" : ""}`}>
                     <td className="py-1 text-ink-200">{p.label}</td>
                     <td className="py-1 text-right">
-                      <Money value={p.cap} />
+                      <Money open value={p.cap} />
                     </td>
                     <td className="py-1 text-right text-accent">
-                      <Money value={p.used} />
+                      <Money open value={p.used} />
                     </td>
                     <td className="py-1 text-right text-amber-300">
-                      <Money value={p.pending} />
+                      <Money open value={p.pending} />
                     </td>
                     <td className="py-1 text-right">
-                      <Money value={p.remaining} />
+                      <Money open value={p.remaining} />
                     </td>
                     <td className="py-1 pl-2">
                       <Chip tone={statusTone(p.status)}>{statusLabel(p.status)}</Chip>
@@ -144,7 +144,7 @@ function EvidenceDrawer({ b, onClose, onWrong }: { b: BenefitOut; onClose: () =>
                   <Chip tone={e.confidence === "high" ? "good" : e.confidence === "medium" ? "warn" : "bad"}>{e.override ? "override" : e.confidence}</Chip>
                 )}
                 <span className="w-16 shrink-0 text-right">
-                  <Money value={e.amount} />
+                  <Money open value={e.amount} />
                 </span>
                 {e.kind !== "purchase" && (
                   <button
@@ -187,7 +187,7 @@ function ReclassifyModal({
     <Modal title="Reclassify transaction" onClose={onClose}>
       <div className="space-y-3 text-sm">
         <p className="text-ink-300">
-          {formatDateOnly(item.date)} · {item.description} · <Money value={item.amount} />
+          {formatDateOnly(item.date)} · {item.description} · <Money open value={item.amount} />
         </p>
         <label className="block text-xs text-ink-400">
           This is
@@ -297,7 +297,7 @@ function Unclassified({ readOnly, cardLabels }: { readOnly: boolean; cardLabels:
                       </td>
                       <td className="hidden py-1.5 pr-2 text-ink-400 sm:table-cell">{it.account}</td>
                       <td className="py-1.5 text-right">
-                        <Money value={it.amount} />
+                        <Money open value={it.amount} />
                       </td>
                       <td className="py-1.5 pl-2">
                         {it.kind === "unclassified_deposit" ? (
@@ -396,7 +396,7 @@ function ManualRow({ b, readOnly }: { b: BenefitOut; readOnly: boolean }) {
                 Used
               </label>
               <span className="text-ink-400">
-                of <Money value={p.cap} />
+                of <Money open value={p.cap} />
               </span>
               <input
                 type="number"
@@ -434,25 +434,25 @@ function CardSection({ card, onOpen }: { card: BenefitsData["cards"][number]; on
           <div>
             <div className="text-ink-400">Captured YTD</div>
             <div className="text-base font-semibold text-accent">
-              <Money value={card.captured_ytd} />
+              <Money open value={card.captured_ytd} />
             </div>
           </div>
           <div>
             <div className="text-ink-400">Annual fee</div>
             <div className="text-base font-semibold text-ink-200">
-              <Money value={card.annual_fee} />
+              <Money open value={card.annual_fee} />
             </div>
           </div>
           <div>
             <div className="text-ink-400">Still available</div>
             <div className="text-base font-semibold text-ink-200">
-              <Money value={card.still_available} />
+              <Money open value={card.still_available} />
             </div>
           </div>
           <div>
             <div className="text-ink-400">Left on the table</div>
             <div className="text-base font-semibold text-amber-300">
-              <Money value={card.left_on_table_ytd} />
+              <Money open value={card.left_on_table_ytd} />
             </div>
           </div>
         </div>
