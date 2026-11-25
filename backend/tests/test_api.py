@@ -96,6 +96,16 @@ def test_kiosk_cookie_is_read_only(client):
     assert "fc_kiosk" not in r.cookies
 
 
+def test_glance_accepts_the_kiosk_token_too(client):
+    monitor = TestClient(app)
+    r = monitor.get("/glance?token=" + os.environ["KIOSK_TOKEN"], follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/glance" and "fc_kiosk" in r.cookies
+    assert monitor.get("/api/auth/me").json() == {"authenticated": True, "mode": "kiosk", "read_only": True, "password_configured": False}
+    assert monitor.get("/api/transit").status_code == 200
+    r = monitor.get("/settings?token=" + os.environ["KIOSK_TOKEN"], follow_redirects=False)
+    assert "fc_kiosk" not in r.cookies, "only the kiosk and glance pages take the token"
+
+
 def test_rotating_kiosk_token_revokes_issued_cookies(client, monkeypatch):
     from app.settings import get_settings
 
