@@ -8,7 +8,7 @@ PORT="${E2E_PORT:-8777}"
 DATA="$(mktemp -d)"
 cd "$ROOT/backend"
 PY=.venv/bin/python; [ -x "$PY" ] || PY=python3
-MOCK_MODE=true SECRET_KEY=e2e-secret-key-0123456789abcdef KIOSK_TOKEN=e2e-kiosk-token-0123456789 DASHBOARD_PASSWORD_HASH='' \
+MOCK_MODE=true SECRET_KEY=e2e-not-a-real-secret-aaaaaaaaaaaa KIOSK_TOKEN=e2e-not-a-real-token-aaaaaaaaaaaa DASHBOARD_PASSWORD_HASH='' \
   DATA_DIR="$DATA" APP_PORT="$PORT" "$PY" run.py > "$DATA/server.log" 2>&1 &
 SERVER=$!
 trap 'kill $SERVER 2>/dev/null || true; rm -rf "$DATA"' EXIT
