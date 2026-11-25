@@ -19,4 +19,9 @@ export default tseslint.config(
     files: ["src/__tests__/**"],
     languageOptions: { globals: { ...globals.browser, ...globals.node } },
   },
+  {
+    // Browser integration scripts run under node and drive a page, so both sets of globals apply.
+    files: ["e2e/**/*.mjs"],
+    languageOptions: { globals: { ...globals.browser, ...globals.node } },
+  },
 );

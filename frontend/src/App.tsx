@@ -1,13 +1,16 @@
 import { QueryCache, QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useCallback, useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { ApiError, sendJson } from "./api/client";
+import type { PublicConfig } from "./api/types";
 import { useMe, usePublicConfig } from "./api/hooks";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { Header } from "./components/Header";
+import { readViewMode } from "./lib/glance";
 import { PrivacyProvider } from "./lib/privacy";
 import { BenefitsPage } from "./pages/Benefits";
 import { Dashboard } from "./pages/Dashboard";
+import { GlancePage } from "./pages/Glance";
 import { FitnessPage } from "./pages/Fitness";
 import { Kiosk } from "./pages/Kiosk";
 import { LoginPage } from "./pages/Login";
@@ -61,9 +64,15 @@ function KioskGate() {
   );
 }
 
+/** The dashboard route honors the saved view choice, so a monitor left on "/" comes back to the glance view. */
+function HomeRoute({ config, readOnly }: { config?: PublicConfig; readOnly: boolean }) {
+  return readViewMode() === "glance" ? <Navigate to="/glance" replace /> : <Dashboard config={config} readOnly={readOnly} />;
+}
+
 /** Everything behind the login: header, dashboard, benefits, and settings. */
 function Shell() {
   const me = useMe();
+  const glance = useLocation().pathname === "/glance";
   const config = usePublicConfig(!!me.data?.authenticated);
   const persist = useCallback((value: boolean) => {
     sendJson("/api/settings", "POST", { values: { privacy_blur: String(value) } }).catch(() => {});
@@ -74,9 +83,10 @@ function Shell() {
   const cfg = config.data;
   return (
     <PrivacyProvider initial={cfg?.privacy.hide_amounts_by_default ?? false} persist={readOnly ? undefined : persist}>
-      <Header config={cfg} readOnly={readOnly} />
+      {!glance && <Header config={cfg} readOnly={readOnly} />}
       <Routes>
-        <Route path="/" element={<Dashboard config={cfg} readOnly={readOnly} />} />
+        <Route path="/" element={<HomeRoute config={cfg} readOnly={readOnly} />} />
+        <Route path="/glance" element={<GlancePage config={cfg} />} />
         <Route path="/benefits" element={<BenefitsPage readOnly={readOnly} />} />
         <Route path="/fitness" element={<Navigate to="/fitness/weight" replace />} />
         <Route path="/fitness/:view" element={<FitnessPage readOnly={readOnly} />} />

@@ -1,10 +1,11 @@
-import { Activity, Eye, EyeOff, LogOut, Settings as SettingsIcon, BadgeDollarSign, MonitorPlay } from "lucide-react";
-import { Link, NavLink } from "react-router-dom";
+import { Activity, Eye, EyeOff, LayoutGrid, LogOut, Settings as SettingsIcon, BadgeDollarSign, MonitorPlay } from "lucide-react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useLogout } from "../api/hooks";
 import type { PublicConfig } from "../api/types";
 import { usePrivacy } from "../lib/privacyContext";
 import { greeting } from "../lib/format";
 import { useNow } from "../lib/useNow";
+import { writeViewMode } from "../lib/glance";
 import { Clock } from "./Clock";
 import { DynamicIcon } from "../lib/icons";
 
@@ -12,6 +13,7 @@ export function Header({ config, readOnly }: { config?: PublicConfig; readOnly: 
   const { blurred, toggle } = usePrivacy();
   const logout = useLogout();
   const now = useNow(60_000);
+  const navigate = useNavigate();
   const nav = ({ isActive }: { isActive: boolean }) =>
     `rounded-md px-2 py-1 text-sm text-ink-300 hover:bg-ink-700 hover:text-ink-200 ${isActive ? "bg-ink-800 text-ink-200" : ""}`;
   return (
@@ -28,7 +30,7 @@ export function Header({ config, readOnly }: { config?: PublicConfig; readOnly: 
           </div>
         </Link>
         <nav className="order-last flex w-full items-center gap-1 sm:order-none sm:ml-4 sm:w-auto">
-          <NavLink to="/" end className={nav}>
+          <NavLink to="/" end className={nav} onClick={() => writeViewMode("full")}>
             Dashboard
           </NavLink>
           <NavLink to="/benefits" className={nav}>
@@ -70,6 +72,18 @@ export function Header({ config, readOnly }: { config?: PublicConfig; readOnly: 
             ))}
           </div>
           <Clock />
+          <button
+            type="button"
+            onClick={() => {
+              writeViewMode("glance");
+              navigate("/glance");
+            }}
+            className="rounded-md p-1.5 text-ink-300 hover:bg-ink-700 hover:text-ink-200"
+            title="Glance view: one screen, no scrolling"
+            aria-label="Glance view"
+          >
+            <LayoutGrid size={18} />
+          </button>
           <button
             type="button"
             onClick={toggle}
