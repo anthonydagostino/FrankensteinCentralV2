@@ -7,7 +7,8 @@ import { DynamicIcon } from "../lib/icons";
 import { usePrivacy } from "../lib/privacyContext";
 
 /** Sources whose titles and details carry dollar amounts, so the privacy blur must cover them. */
-const MONEY_SOURCES = new Set(["benefits", "recurring", "finance"]);
+// benefit credits are the card's terms, not a balance, so they stay readable with privacy on
+const MONEY_SOURCES = new Set(["recurring", "finance"]);
 
 function Item({ item, large }: { item: AttentionItem; large?: boolean }) {
   const { blurred } = usePrivacy();

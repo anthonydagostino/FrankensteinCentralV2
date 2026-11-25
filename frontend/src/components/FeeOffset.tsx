@@ -19,7 +19,7 @@ export function FeeOffset({
       <div className="flex justify-between text-[11px]">
         <span className="text-ink-400">Fee offset</span>
         <span className="text-ink-200">
-          <Money value={captured} /> of <Money value={fee} /> ({Math.round(ratio * 100)}%)
+          <Money open value={captured} /> of <Money open value={fee} /> ({Math.round(ratio * 100)}%)
         </span>
       </div>
       <ProgressBar value={ratio * 100} color={ratio >= 1 ? "bg-accent" : "bg-sky-400"} className="mt-1" label="Fee offset" />

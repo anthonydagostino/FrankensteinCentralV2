@@ -22,6 +22,16 @@ describe("privacy blur", () => {
     );
     expect(screen.getByText("$1,234.56").className).toContain("privacy-blur");
   });
+  it("never blurs an open amount and blurs a strong one harder", () => {
+    render(
+      <PrivacyProvider initial={true}>
+        <Money value="10" open />
+        <Money value="25310" whole strong />
+      </PrivacyProvider>,
+    );
+    expect(screen.getByText("$10.00").className).not.toContain("privacy-blur");
+    expect(screen.getByText("$25,310").className).toContain("privacy-blur-strong");
+  });
   it("renders plainly when privacy is off", () => {
     render(
       <PrivacyProvider initial={false}>

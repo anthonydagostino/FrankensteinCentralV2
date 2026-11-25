@@ -128,7 +128,7 @@ export function FinanceBody({ data, syncEnabled }: { data: FinanceSummary; syncE
         )}
       </div>
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
-        <Tile label="Net worth" value={<Money value={data.net_worth} whole />} href={data.links.accounts} />
+        <Tile label="Net worth" value={<Money value={data.net_worth} whole strong />} href={data.links.accounts} />
         <Tile
           label="Spent this month"
           value={<Money value={data.mtd_spend} whole />}

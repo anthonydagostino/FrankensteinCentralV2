@@ -267,7 +267,7 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
                 <div>
                   <div className="text-xs text-ink-400">Net worth</div>
                   <div className="text-5xl font-semibold text-ink-200 short:text-4xl">
-                    <Money value={money.net_worth} whole />
+                    <Money value={money.net_worth} whole strong />
                   </div>
                 </div>
                 {money.stale && <Chip tone="warn">stale</Chip>}
@@ -412,7 +412,7 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
                           {e.name} <span className="text-xs text-ink-500">{e.card}</span>
                         </span>
                         <span className="shrink-0 text-amber-300">
-                          <Money value={e.remaining} /> · {e.days_left}d
+                          <Money open value={e.remaining} /> · {e.days_left}d
                         </span>
                       </li>
                     ))}

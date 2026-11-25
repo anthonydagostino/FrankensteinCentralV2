@@ -25,7 +25,7 @@ function Row({ b, large }: { b: BenefitOut; large?: boolean }) {
               "used"
             ) : (
               <>
-                <Money value={c.remaining} className="text-ink-200" /> left, {c.days_left} days
+                <Money open value={c.remaining} className="text-ink-200" /> left, {c.days_left} days
               </>
             )}
           </span>
