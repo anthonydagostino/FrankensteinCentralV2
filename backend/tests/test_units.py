@@ -255,6 +255,18 @@ def test_log_redaction():
     assert "[redacted]" in msg
 
 
+def test_log_redaction_of_httpx_url_args():
+    """httpx logs the request URL as an httpx.URL object, not a str: the iCal secret must still go."""
+    import httpx
+
+    flt = RedactingFilter([])
+    url = httpx.URL("https://calendar.google.com/calendar/ical/me%40example.com/private-abc123/basic.ics")
+    record = logging.LogRecord("httpx", logging.INFO, "", 0, 'HTTP Request: %s %s "%s %d %s"', ("GET", url, "HTTP/1.1", 200, "OK"), None)
+    flt.filter(record)
+    msg = record.getMessage()
+    assert "private-abc123" not in msg and "[redacted]" in msg and msg.endswith('"HTTP/1.1 200 OK"')
+
+
 def test_log_redaction_keeps_positional_args_for_uvicorn_access_log():
     """uvicorn's access formatter unpacks five positional args; redaction must not drop them."""
     from uvicorn.logging import AccessFormatter

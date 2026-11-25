@@ -32,7 +32,15 @@ class RedactingFilter(logging.Filter):
         return text
 
     def _redact_value(self, value: Any) -> Any:
-        return self.redact(value) if isinstance(value, str) else value
+        if isinstance(value, str):
+            return self.redact(value)
+        if value is None or isinstance(value, (int, float, bool)):
+            return value
+        # objects such as httpx.URL render to a secret bearing string: swap in the redacted text only
+        # when something was redacted, so other args keep their type for the format string
+        text = str(value)
+        redacted = self.redact(text)
+        return redacted if redacted != text else value
 
     def filter(self, record: logging.LogRecord) -> bool:
         # args are redacted in place rather than folded into msg: uvicorn's access formatter unpacks them by position
