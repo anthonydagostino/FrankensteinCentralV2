@@ -15,6 +15,7 @@ Self-hosted personal life dashboard for Anthony. `SPEC.md` is the source of trut
 - Frontend checks: `cd frontend && npx prettier --check . && npx eslint . --max-warnings 0`.
 - Frontend build and tests: `cd frontend && npm run build && npm test`.
 - Everything (same as CI): `scripts/test.sh`. Keep ruff, mypy, and both test suites clean before every commit.
+- Browser integration test for the glance view: `scripts/e2e.sh` (builds nothing itself: run `npm run build` first; needs Playwright with Chromium).
 - Production: `docker compose build && docker compose up -d`.
 
 ## Rules

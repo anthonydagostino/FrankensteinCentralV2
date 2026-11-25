@@ -1,4 +1,4 @@
-"""Envelope routes for the simple modules: weather, calendar, plex, vault, containers, probes, attention."""
+"""Envelope routes for the simple modules: weather, calendar, plex, vault, containers, lockin, transit, probes, attention."""
 
 from __future__ import annotations
 
@@ -106,6 +106,11 @@ async def lockin(state: AppState = Depends(get_state)) -> dict[str, Any]:
     if isinstance(env.get("data"), dict):
         env["data"] = {k: v for k, v in env["data"].items() if not k.startswith("_")}  # the raw export stays server side
     return env
+
+
+@router.get("/transit")
+async def transit(state: AppState = Depends(get_state)) -> dict[str, Any]:
+    return state.cache.envelope("transit")
 
 
 @router.get("/probes")

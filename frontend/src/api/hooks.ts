@@ -21,6 +21,7 @@ import type {
   StatusRow,
   TrainingData,
   TransactionRow,
+  TransitData,
   UnclassifiedData,
   VaultData,
   WeatherData,
@@ -36,11 +37,16 @@ function invalidateFirefly(qc: ReturnType<typeof useQueryClient>) {
 }
 
 /** Polls one module envelope. Named use* because it wraps useQuery. */
+const WARMUP_INTERVAL = 5_000;
+
+/** Right after the backend starts, a module answers with an error envelope and no fetched_at until its first refresh lands. */
+export const awaitingFirstRefresh = (env: Envelope<unknown> | undefined): boolean => !!env && env.status === "error" && env.fetched_at === null;
+
 function useEnvelope<T>(key: unknown[], url: string, interval: number, enabled = true) {
   return useQuery<Envelope<T>>({
     queryKey: key,
     queryFn: () => getJson<Envelope<T>>(url),
-    refetchInterval: interval,
+    refetchInterval: (query) => (awaitingFirstRefresh(query.state.data) ? WARMUP_INTERVAL : interval),
     enabled,
     staleTime: Math.min(interval, 30_000),
   });
@@ -77,6 +83,7 @@ export const useFitnessSettings = () =>
 export const useMuscleMap = () => useQuery<MuscleMap>({ queryKey: ["muscle-map"], queryFn: () => getJson<MuscleMap>("/api/fitness/muscle-map") });
 export const useVault = () => useEnvelope<VaultData>(["vault"], "/api/vault", MIN);
 export const useContainers = () => useEnvelope<ContainersData>(["containers"], "/api/containers", 15_000);
+export const useTransit = () => useEnvelope<TransitData>(["transit"], "/api/transit", MIN);
 export const useProbes = () => useEnvelope<ProbesData>(["probes"], "/api/probes", MIN);
 export const useStatus = () =>
   useQuery<{ integrations: StatusRow[]; mock_mode: boolean }>({ queryKey: ["status"], queryFn: () => getJson("/api/status"), refetchInterval: 30_000 });

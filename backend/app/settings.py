@@ -47,6 +47,7 @@ class Settings(BaseSettings):
     mock_vault: bool | None = None
     mock_docker: bool | None = None
     mock_lockin: bool | None = None
+    mock_transit: bool | None = None
 
     # Weather
     nws_user_agent: str = "(FrankensteinCentral, your-email@example.com)"
@@ -83,6 +84,13 @@ class Settings(BaseSettings):
     lockin_url: str = ""
     lockin_token: str = ""
     lockin_public_url: str = ""
+
+    # NJ Transit rail (developer account at developer.njtransit.com; stations by name as njtransit.com spells them, or two letter code)
+    njt_username: str = ""
+    njt_password: str = ""
+    njt_from: str = "Union"
+    njt_to: str = "New York Penn Station"
+    njt_via: str = "Newark Penn Station"  # transfer station shown as "via" when a train does not run through; empty disables
 
     # Docker
     docker_host: str = "tcp://socket-proxy:2375"
@@ -142,6 +150,7 @@ class Settings(BaseSettings):
             self.firefly_importer_secret,
             self.plex_token,
             self.lockin_token,
+            self.njt_password,
             self.gcal_ics_primary,
             self.gcal_ics_second,
         ]

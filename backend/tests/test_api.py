@@ -58,6 +58,8 @@ def test_login_and_envelopes(client):
         "/api/plex",
         "/api/vault",
         "/api/containers",
+        "/api/lockin",
+        "/api/transit",
         "/api/probes",
         "/api/attention",
     ]:

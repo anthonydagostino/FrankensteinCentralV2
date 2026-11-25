@@ -339,6 +339,35 @@ export interface VaultData {
   admin_url: string | null;
 }
 
+// ---- transit (NJ Transit rail)
+export type TransitState = "on_time" | "delayed" | "boarding" | "cancelled" | "departed";
+export interface TransitDeparture {
+  train_id: string;
+  line: string;
+  destination: string;
+  scheduled: string;
+  departs: string;
+  delay_min: number;
+  status: string | null;
+  state: TransitState;
+  track: string | null;
+  direct: boolean;
+  via: string | null;
+}
+export interface TransitStation {
+  code: string;
+  name: string;
+}
+export interface TransitData {
+  from: TransitStation;
+  to: TransitStation;
+  via: TransitStation | null;
+  outbound: TransitDeparture[];
+  inbound: TransitDeparture[];
+  messages: string[];
+  generated_at: string;
+}
+
 // ---- containers
 export interface ContainerRow {
   id: string;
