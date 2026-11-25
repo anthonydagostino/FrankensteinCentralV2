@@ -1,5 +1,5 @@
 // Integration check for the glance view against a running dashboard (mock mode is fine).
-// Usage: BASE_URL=http://127.0.0.1:8766 PASSWORD=anything node e2e/glance.mjs
+// Usage: BASE_URL=http://127.0.0.1:8766 PASSWORD=anything [SHOT=/path/glance.png] node e2e/glance.mjs
 // Asserts: the view fits one screen at two monitor sizes with no page scroll, every section is present,
 // and the toggle round-trips between the full dashboard and the glance view, surviving a reload.
 import { createRequire } from "node:module";
@@ -58,7 +58,7 @@ for (const [width, height] of sizes) {
     await page.waitForURL(/\/$/);
     await page.reload({ waitUntil: "networkidle" });
     check(!page.url().endsWith("/glance"), "switching back keeps / on the full dashboard");
-    await page.screenshot({ path: process.env.SHOT ?? "glance.png" });
+    if (process.env.SHOT) await page.screenshot({ path: process.env.SHOT });
   }
   await ctx.close();
 }
