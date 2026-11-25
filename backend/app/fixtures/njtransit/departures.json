@@ -1,0 +1,25 @@
+{
+  "from": "Union",
+  "to": "New York Penn Station",
+  "via": "Newark Penn Station",
+  "stations": [
+    { "code": "UV", "name": "Union" },
+    { "code": "NY", "name": "New York Penn Station" },
+    { "code": "NP", "name": "Newark Penn Station" }
+  ],
+  "outbound": [
+    { "train_id": "5418", "line": "RVL", "destination": "New York Penn Station", "in_minutes": 9, "delay_min": 0, "track": "2", "direct": true },
+    { "train_id": "5420", "line": "RVL", "destination": "Newark Penn Station", "in_minutes": 31, "delay_min": 6, "track": "2", "direct": false },
+    { "train_id": "5422", "line": "RVL", "destination": "New York Penn Station", "in_minutes": 58, "delay_min": 0, "track": "2", "direct": true },
+    { "train_id": "5424", "line": "RVL", "destination": "Newark Penn Station", "in_minutes": 92, "delay_min": 0, "track": "2", "direct": false },
+    { "train_id": "5426", "line": "RVL", "destination": "Newark Penn Station", "in_minutes": 124, "delay_min": 0, "track": null, "direct": false }
+  ],
+  "inbound": [
+    { "train_id": "3845", "line": "NEC", "destination": "Trenton", "in_minutes": 4, "delay_min": 0, "track": "9", "direct": false, "state": "boarding", "status": "BOARDING" },
+    { "train_id": "5431", "line": "RVL", "destination": "Raritan", "in_minutes": 26, "delay_min": 0, "track": "12", "direct": true },
+    { "train_id": "3849", "line": "NEC", "destination": "Trenton", "in_minutes": 47, "delay_min": 11, "track": null, "direct": false },
+    { "train_id": "5435", "line": "RVL", "destination": "High Bridge", "in_minutes": 86, "delay_min": 0, "track": null, "direct": true },
+    { "train_id": "3857", "line": "NEC", "destination": "Trenton", "in_minutes": 110, "delay_min": 0, "track": null, "direct": false, "state": "cancelled", "status": "CANCELLED" }
+  ],
+  "messages": []
+}

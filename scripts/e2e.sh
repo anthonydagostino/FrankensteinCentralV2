@@ -18,7 +18,7 @@ COOKIES="$DATA/cookies"
 curl -sf -c "$COOKIES" -H 'content-type: application/json' -d '{"password":"anything"}' "http://127.0.0.1:$PORT/api/auth/login" >/dev/null
 for _ in $(seq 1 60); do
   ready=1
-  for m in weather calendar finance/summary lockin benefits plex vault containers; do
+  for m in weather calendar finance/summary lockin transit benefits plex vault containers; do
     curl -sf -b "$COOKIES" "http://127.0.0.1:$PORT/api/$m" | grep -q '"status":"ok"' || ready=0
   done
   [ "$ready" = 1 ] && break

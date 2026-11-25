@@ -21,6 +21,7 @@ import type {
   StatusRow,
   TrainingData,
   TransactionRow,
+  TransitData,
   UnclassifiedData,
   VaultData,
   WeatherData,
@@ -82,6 +83,7 @@ export const useFitnessSettings = () =>
 export const useMuscleMap = () => useQuery<MuscleMap>({ queryKey: ["muscle-map"], queryFn: () => getJson<MuscleMap>("/api/fitness/muscle-map") });
 export const useVault = () => useEnvelope<VaultData>(["vault"], "/api/vault", MIN);
 export const useContainers = () => useEnvelope<ContainersData>(["containers"], "/api/containers", 15_000);
+export const useTransit = () => useEnvelope<TransitData>(["transit"], "/api/transit", MIN);
 export const useProbes = () => useEnvelope<ProbesData>(["probes"], "/api/probes", MIN);
 export const useStatus = () =>
   useQuery<{ integrations: StatusRow[]; mock_mode: boolean }>({ queryKey: ["status"], queryFn: () => getJson("/api/status"), refetchInterval: 30_000 });

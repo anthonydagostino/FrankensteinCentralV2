@@ -1,4 +1,16 @@
-import type { BenefitsData, CalEvent, CalendarData, ContainersData, FinanceSummary, PlexData, TrainingData, VaultData, WeatherData } from "../api/types";
+import type {
+  BenefitsData,
+  CalEvent,
+  CalendarData,
+  ContainersData,
+  FinanceSummary,
+  PlexData,
+  TrainingData,
+  TransitData,
+  TransitDeparture,
+  VaultData,
+  WeatherData,
+} from "../api/types";
 
 /** The glance view: one fixed screen of the few numbers worth a look on the way out the door. Pure helpers live here. */
 
@@ -207,5 +219,49 @@ export function homeGlance(plex: PlexData | null | undefined, vault: VaultData |
     plex_ok: ok,
     vault: vault ? (vault.online ? "online" : "down") : "unknown",
     containers: containers ? { running: containers.summary.running, stopped: containers.summary.stopped, unhealthy: containers.summary.unhealthy } : null,
+  };
+}
+
+export interface TransitRow extends TransitDeparture {
+  /** Whole minutes until the train leaves, never negative. */
+  minutes: number;
+  /** Short status for the board: "on time", "6 min late", "boarding", "cancelled". */
+  label: string;
+  tone: "good" | "warn" | "bad" | "neutral";
+}
+
+export interface TransitGlance {
+  from: string;
+  to: string;
+  via: string | null;
+  outbound: TransitRow[];
+  inbound: TransitRow[];
+  messages: string[];
+}
+
+export const shortStation = (name: string): string => name.replace(/ Penn Station$/i, "").replace(/^New York$/i, "New York");
+
+function transitRow(d: TransitDeparture, now: Date): TransitRow {
+  const minutes = Math.max(0, Math.round((new Date(d.departs).getTime() - now.getTime()) / 60_000));
+  const label = d.state === "cancelled" ? "cancelled" : d.state === "boarding" ? "boarding" : d.state === "delayed" ? `${d.delay_min} min late` : "on time";
+  const tone = d.state === "cancelled" ? "bad" : d.state === "delayed" ? "warn" : d.state === "boarding" ? "good" : "neutral";
+  return { ...d, via: d.via ? shortStation(d.via) : null, minutes, label, tone };
+}
+
+/** Both directions of the train board with minutes until departure, up to `limit` each. */
+export function transitGlance(t: TransitData | null | undefined, now: Date, limit = 5): TransitGlance | null {
+  if (!t) return null;
+  const rows = (list: TransitDeparture[]) =>
+    list
+      .filter((d) => d.state !== "departed")
+      .map((d) => transitRow(d, now))
+      .slice(0, limit);
+  return {
+    from: shortStation(t.from.name),
+    to: shortStation(t.to.name),
+    via: t.via ? shortStation(t.via.name) : null,
+    outbound: rows(t.outbound),
+    inbound: rows(t.inbound),
+    messages: t.messages,
   };
 }

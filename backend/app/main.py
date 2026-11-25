@@ -20,6 +20,7 @@ from .integrations.calendar_ics import CalendarIntegration
 from .integrations.docker_proxy import DockerIntegration
 from .integrations.firefly import FireflyIntegration
 from .integrations.lockin import LockInIntegration
+from .integrations.njtransit import NJTransitIntegration
 from .integrations.plex import PlexIntegration
 from .integrations.probes import ProbesIntegration
 from .integrations.vaultwarden import VaultwardenIntegration
@@ -57,6 +58,7 @@ def build_state(settings: Settings | None = None, db_path: str | None = None) ->
         VaultwardenIntegration(settings, config),
         DockerIntegration(settings, config),
         LockInIntegration(settings, config),
+        NJTransitIntegration(settings, config),
         ProbesIntegration(settings, config),
     ]
     for integration in integrations:

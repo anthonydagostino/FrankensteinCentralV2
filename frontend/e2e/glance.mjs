@@ -29,7 +29,7 @@ for (const [width, height] of sizes) {
   await page.locator("section[aria-label='Calendar']").waitFor({ timeout: 15000 });
   // every module answers in mock mode, so wait until no panel is still showing its empty state
   await page
-    .waitForFunction(() => !/No (calendar|weather|finance|training|benefits) data/.test(document.body.innerText), null, { timeout: 15000 })
+    .waitForFunction(() => !/No (calendar|weather|finance|train|training|benefits) data/.test(document.body.innerText), null, { timeout: 15000 })
     .catch(() => {});
   await page.waitForTimeout(500);
   const empties = await page.evaluate(() => (document.body.innerText.match(/No \w+ data/g) ?? []).join(", "));
@@ -42,7 +42,7 @@ for (const [width, height] of sizes) {
   }));
   check(metrics.scroll <= metrics.inner, `no vertical scroll at ${width}x${height} (page ${metrics.scroll}px, window ${metrics.inner}px)`);
   check(metrics.wide <= metrics.innerW, `no horizontal scroll at ${width}x${height}`);
-  for (const name of ["Attention", "Calendar", "Weather", "Money", "Lock-In", "Amex benefits", "Home"]) {
+  for (const name of ["Attention", "Calendar", "Weather", "Money", "Trains", "Lock-In", "Amex benefits", "Home"]) {
     check((await page.locator(`[aria-label='${name}']`).count()) === 1, `section ${name} present at ${width}x${height}`);
   }
   check(errors.length === 0, `no page errors at ${width}x${height}: ${errors.join("; ")}`);

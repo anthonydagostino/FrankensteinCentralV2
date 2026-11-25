@@ -2,9 +2,30 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { BenefitsData, CalendarData, ContainersData, Envelope, FinanceSummary, PlexData, TrainingData, VaultData, WeatherData } from "../api/types";
+import type {
+  BenefitsData,
+  CalendarData,
+  ContainersData,
+  Envelope,
+  FinanceSummary,
+  PlexData,
+  TrainingData,
+  TransitData,
+  VaultData,
+  WeatherData,
+} from "../api/types";
 import { Header } from "../components/Header";
-import { benefitSummary, homeGlance, moneyGlance, readViewMode, trainingGlance, upcomingEvents, weatherGlance, writeViewMode } from "../lib/glance";
+import {
+  benefitSummary,
+  homeGlance,
+  moneyGlance,
+  readViewMode,
+  trainingGlance,
+  transitGlance,
+  upcomingEvents,
+  weatherGlance,
+  writeViewMode,
+} from "../lib/glance";
 import { PrivacyProvider } from "../lib/privacy";
 import { GlancePage } from "../pages/Glance";
 
@@ -322,6 +343,83 @@ const vault = {
   public_url: null,
   admin_url: null,
 } as VaultData;
+const transit: TransitData = {
+  from: { code: "UV", name: "Union" },
+  to: { code: "NY", name: "New York Penn Station" },
+  via: { code: "NP", name: "Newark Penn Station" },
+  outbound: [
+    {
+      train_id: "5418",
+      line: "RVL",
+      destination: "New York Penn Station",
+      scheduled: "2026-11-12T14:09:00Z",
+      departs: "2026-11-12T14:09:00Z",
+      delay_min: 0,
+      status: "ON TIME",
+      state: "on_time",
+      track: "2",
+      direct: true,
+      via: null,
+    },
+    {
+      train_id: "5420",
+      line: "RVL",
+      destination: "Newark Penn Station",
+      scheduled: "2026-11-12T14:31:00Z",
+      departs: "2026-11-12T14:37:00Z",
+      delay_min: 6,
+      status: "ON TIME",
+      state: "delayed",
+      track: "2",
+      direct: false,
+      via: "Newark Penn Station",
+    },
+    {
+      train_id: "5400",
+      line: "RVL",
+      destination: "New York Penn Station",
+      scheduled: "2026-11-12T13:50:00Z",
+      departs: "2026-11-12T13:50:00Z",
+      delay_min: 0,
+      status: "DEPARTED",
+      state: "departed",
+      track: null,
+      direct: true,
+      via: null,
+    },
+  ],
+  inbound: [
+    {
+      train_id: "3845",
+      line: "NEC",
+      destination: "Trenton",
+      scheduled: "2026-11-12T14:04:00Z",
+      departs: "2026-11-12T14:04:00Z",
+      delay_min: 0,
+      status: "BOARDING",
+      state: "boarding",
+      track: "9",
+      direct: false,
+      via: "Newark Penn Station",
+    },
+    {
+      train_id: "3857",
+      line: "NEC",
+      destination: "Trenton",
+      scheduled: "2026-11-12T15:50:00Z",
+      departs: "2026-11-12T15:50:00Z",
+      delay_min: 0,
+      status: "CANCELLED",
+      state: "cancelled",
+      track: null,
+      direct: false,
+      via: "Newark Penn Station",
+    },
+  ],
+  messages: [],
+  generated_at: NOW.toISOString(),
+};
+
 const containers = {
   summary: { total: 10, running: 9, stopped: 1, paused: 0, restarting: 0, unhealthy: 0, server_version: "29", engine_total: 10 },
   groups: [],
@@ -384,6 +482,20 @@ describe("glance helpers", () => {
       vault: "down",
     });
   });
+  it("turns the train board into minutes away with a short status", () => {
+    const t = transitGlance(transit, NOW)!;
+    expect(t).toMatchObject({ from: "Union", to: "New York", via: "Newark" });
+    expect(t.outbound.map((r) => [r.train_id, r.minutes, r.label, r.tone])).toEqual([
+      ["5418", 9, "on time", "neutral"],
+      ["5420", 37, "6 min late", "warn"],
+    ]);
+    expect(t.inbound.map((r) => [r.minutes, r.label, r.tone])).toEqual([
+      [4, "boarding", "good"],
+      [110, "cancelled", "bad"],
+    ]);
+    expect(transitGlance(transit, NOW, 1)!.outbound).toHaveLength(1);
+    expect(transitGlance(undefined, NOW)).toBeNull();
+  });
   it("remembers the chosen view in this browser", () => {
     writeViewMode("glance");
     expect(readViewMode()).toBe("glance");
@@ -424,6 +536,7 @@ const seedAll = (qc: QueryClient) => {
   qc.setQueryData(["plex"], env("plex", plex));
   qc.setQueryData(["vault"], env("vault", vault));
   qc.setQueryData(["containers"], env("containers", containers));
+  qc.setQueryData(["transit"], env("transit", transit));
 };
 
 describe("GlancePage", () => {
@@ -435,7 +548,7 @@ describe("GlancePage", () => {
 
   it("shows every section with the headline numbers", () => {
     renderGlance(seedAll);
-    for (const name of ["Calendar", "Weather", "Money", "Lock-In", "Amex benefits", "Home", "Attention"]) {
+    for (const name of ["Calendar", "Weather", "Money", "Trains", "Lock-In", "Amex benefits", "Home", "Attention"]) {
       expect(screen.getByLabelText(name)).toBeTruthy();
     }
     expect(screen.getByText("Standup")).toBeTruthy();
@@ -448,6 +561,11 @@ describe("GlancePage", () => {
     expect(screen.getByText("Heat for anthony")).toBeTruthy();
     expect(screen.getByText("Dunkin")).toBeTruthy();
     expect(screen.getByText(/of 3 used/)).toBeTruthy();
+    expect(screen.getByText("Union to New York")).toBeTruthy();
+    expect(screen.getByText("New York to Union")).toBeTruthy();
+    expect(screen.getByText("6 min late")).toBeTruthy();
+    expect(screen.getAllByText(/via Newark/).length).toBeGreaterThan(0);
+    expect(screen.getByText("cancelled")).toBeTruthy();
   });
 
   it("handles missing data per section without taking the page down", () => {
@@ -455,6 +573,7 @@ describe("GlancePage", () => {
     expect(screen.getByText("No finance data")).toBeTruthy();
     expect(screen.getByText("No calendar data")).toBeTruthy();
     expect(screen.getByText("No training data")).toBeTruthy();
+    expect(screen.getByText("No train data")).toBeTruthy();
     expect(screen.getByText("All clear")).toBeTruthy();
   });
 

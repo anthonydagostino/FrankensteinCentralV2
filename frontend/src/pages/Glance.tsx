@@ -1,12 +1,13 @@
-import { Activity, AlertTriangle, BadgeDollarSign, CalendarDays, CloudSun, Eye, EyeOff, LayoutDashboard, Wallet } from "lucide-react";
+import { Activity, AlertTriangle, BadgeDollarSign, CalendarDays, CloudSun, Eye, EyeOff, LayoutDashboard, TrainFront, Wallet } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAttention, useBenefits, useCalendar, useContainers, useFinance, usePlex, useTraining, useVault, useWeather } from "../api/hooks";
+import { useAttention, useBenefits, useCalendar, useContainers, useFinance, usePlex, useTraining, useTransit, useVault, useWeather } from "../api/hooks";
 import type { Envelope, PublicConfig } from "../api/types";
 import { Chip } from "../components/Bars";
 import { Money } from "../components/Money";
 import { formatDateOnly, formatHour, formatTime, greeting } from "../lib/format";
-import { benefitSummary, homeGlance, moneyGlance, trainingGlance, upcomingEvents, weatherGlance, writeViewMode } from "../lib/glance";
+import { benefitSummary, homeGlance, moneyGlance, trainingGlance, transitGlance, upcomingEvents, weatherGlance, writeViewMode } from "../lib/glance";
+import type { TransitRow } from "../lib/glance";
 import { DynamicIcon } from "../lib/icons";
 import { usePrivacy } from "../lib/privacyContext";
 import { PANEL_CLASS, SEVERITY_CLASS } from "../lib/ui";
@@ -51,6 +52,39 @@ function Panel({
 
 const Empty = ({ text }: { text: string }) => <p className="text-sm text-ink-500">{text}</p>;
 
+/** One direction of the train board: departure time, minutes away, status, and whether it runs through. */
+function TrainBoard({ heading, rows }: { heading: string; rows: TransitRow[] }) {
+  return (
+    <div className="flex min-h-0 flex-col">
+      <div className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-ink-500">{heading}</div>
+      {rows.length === 0 ? (
+        <Empty text="No trains in the next few hours" />
+      ) : (
+        <ul className="space-y-1.5">
+          {rows.map((r) => (
+            <li
+              key={r.train_id}
+              className={`rounded-lg px-3 py-1.5 short:py-1 short:[&:nth-child(n+4)]:hidden ${r.state === "cancelled" ? "bg-ink-800/30 text-ink-500" : "bg-ink-800/50"}`}
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className={`tabular whitespace-nowrap text-lg ${r.state === "cancelled" ? "line-through" : "text-ink-200"}`}>
+                  {formatTime(r.departs)}
+                </span>
+                <Chip tone={r.tone}>{r.label}</Chip>
+              </div>
+              <div className="truncate text-xs text-ink-400">
+                {r.state === "cancelled" ? "" : r.minutes === 0 ? "now · " : `in ${r.minutes} min · `}
+                {r.direct ? "Direct" : r.via ? `via ${r.via}` : r.destination}
+                {r.track ? ` · Track ${r.track}` : ""}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export function GlancePage({ config }: { config?: PublicConfig }) {
   const now = useNow(1000);
   const navigate = useNavigate();
@@ -61,16 +95,18 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
   const finance = useFinance();
   const training = useTraining();
   const benefits = useBenefits();
+  const transit = useTransit();
   const plex = usePlex();
   const vault = useVault();
   const containers = useContainers();
 
   const items = attention.data?.data?.items ?? [];
-  const events = upcomingEvents(calendar.data?.data, now, 9);
+  const events = upcomingEvents(calendar.data?.data, now, 6);
   const w = weatherGlance(weather.data?.data);
   const money = moneyGlance(finance.data?.data);
   const train = trainingGlance(training.data?.data);
   const cards = benefitSummary(benefits.data?.data);
+  const trains = transitGlance(transit.data?.data, now);
   const home = homeGlance(plex.data?.data, vault.data?.data, containers.data?.data);
   const [time, ampm, day] = formatInTimeZone(now, TZ, "h:mm|a|EEEE, MMMM d").split("|");
 
@@ -139,7 +175,7 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
       </div>
 
       <div className="grid min-h-0 flex-1 grid-cols-3 grid-rows-2 gap-3">
-        <Panel title="Calendar" icon={<CalendarDays size={14} />} envelope={calendar.data} className="row-span-2">
+        <Panel title="Calendar" icon={<CalendarDays size={14} />} envelope={calendar.data}>
           {!calendar.data?.data ? (
             <Empty text="No calendar data" />
           ) : events.length === 0 ? (
@@ -149,7 +185,7 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
               {events.map((ev, i) => {
                 const first = i === 0 || events[i - 1].day !== ev.day;
                 return (
-                  <li key={ev.id}>
+                  <li key={ev.id} className="short:[&:nth-child(n+4)]:hidden">
                     {first && (
                       <div className="mb-1 mt-3 text-xs font-semibold uppercase tracking-wide text-ink-500 first:mt-0">
                         {ev.day === "today" ? "Today" : ev.day === "tomorrow" ? "Tomorrow" : formatDateOnly(ev.date, "EEEE")}
@@ -268,6 +304,17 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
                   {money.bills_count > 0 && <div className="text-xs text-ink-400">{money.bills_count} due</div>}
                 </div>
               </div>
+            </div>
+          )}
+        </Panel>
+
+        <Panel title="Trains" icon={<TrainFront size={14} />} envelope={transit.data}>
+          {!trains ? (
+            <Empty text="No train data" />
+          ) : (
+            <div className="grid h-full grid-cols-2 gap-4">
+              <TrainBoard heading={`${trains.from} to ${trains.to}`} rows={trains.outbound} />
+              <TrainBoard heading={`${trains.to} to ${trains.from}`} rows={trains.inbound} />
             </div>
           )}
         </Panel>
