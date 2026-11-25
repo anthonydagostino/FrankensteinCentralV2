@@ -12,7 +12,7 @@ import { BenefitsPage } from "./pages/Benefits";
 import { Dashboard } from "./pages/Dashboard";
 import { GlancePage } from "./pages/Glance";
 import { FitnessPage } from "./pages/Fitness";
-import { Kiosk } from "./pages/Kiosk";
+import { KioskFrame } from "./pages/Kiosk";
 import { LoginPage } from "./pages/Login";
 import { SettingsPage } from "./pages/Settings";
 
@@ -36,7 +36,7 @@ const queryClient = new QueryClient({
 
 const KIOSK_RELOAD_MS = 6 * 60 * 60 * 1000;
 
-/** The kiosk route: locked until the kiosk cookie is present, then the full-screen page. */
+/** The kiosk route: locked until the kiosk cookie is present, then the glance view (one screen, no scrolling) with the cursor hidden when idle. */
 function KioskGate() {
   // Keep polling auth while locked so a backend restart at boot cannot strand the kiosk on the locked screen.
   const me = useMe({ refetchInterval: 30_000 });
@@ -59,7 +59,9 @@ function KioskGate() {
   }
   return (
     <PrivacyProvider initial={config.data?.privacy.kiosk_hide_amounts ?? true}>
-      <Kiosk config={config.data} />
+      <KioskFrame>
+        <GlancePage config={config.data} />
+      </KioskFrame>
     </PrivacyProvider>
   );
 }
