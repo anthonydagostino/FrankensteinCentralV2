@@ -1,0 +1,29 @@
+# Always-on monitor for the glance view, on a headless box with the HDMI plugged in.
+# cage is a tiny Wayland compositor that shows exactly one window; Chromium runs inside it in kiosk mode.
+# Install with deploy/kiosk/install.sh, which fills in the URL and the user.
+[Unit]
+Description=FrankensteinCentral glance monitor
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=__KIOSK_USER__
+PAMName=login
+UtmpIdentifier=tty7
+TTYPath=/dev/tty7
+TTYReset=yes
+TTYVHangup=yes
+TTYVTDisallocate=yes
+StandardInput=tty-fail
+StandardOutput=journal
+StandardError=journal
+# cage never blanks the output on its own; use the monitor's own sleep setting if you want it dark at night
+ExecStart=/usr/bin/cage -- __BROWSER__ --kiosk --noerrdialogs --disable-infobars --no-first-run --disable-session-crashed-bubble --ozone-platform=wayland --user-data-dir=/home/__KIOSK_USER__/.frankenstein-kiosk --check-for-update-interval=31536000 "__URL__"
+Restart=always
+RestartSec=5
+# a daily restart picks up new builds (the cookie lives in the profile directory, so no sign-in is needed)
+RuntimeMaxSec=1d
+
+[Install]
+WantedBy=graphical.target

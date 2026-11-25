@@ -53,7 +53,9 @@ docker compose build
 docker compose up -d
 ```
 
-Open `http://<host>:8088`. The kiosk view is `http://<host>:8088/kiosk?token=<KIOSK_TOKEN>` (open it once per device; it sets a read-only cookie and drops the token from the URL).
+Open `http://<host>:8088`. The kiosk view is `http://<host>:8088/kiosk?token=<KIOSK_TOKEN>` (open it once per device; it sets a read-only cookie and drops the token from the URL). `http://<host>:8088/glance?token=<KIOSK_TOKEN>` does the same for the glance view.
+
+**Always-on monitor on the box itself.** A headless server needs no desktop for this: `sudo deploy/kiosk/install.sh http://<host>:8088 <KIOSK_TOKEN>` installs cage (a one-window Wayland compositor) and Chromium, creates a `kiosk` user, and starts a systemd service on tty7 that shows the glance view full screen, restarts itself once a day to pick up new builds, and survives reboots without a sign-in. About 450 MB of disk and 300 to 500 MB of memory for the browser.
 
 ### Environment variables
 

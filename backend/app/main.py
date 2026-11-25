@@ -37,6 +37,9 @@ from .state import AppState
 
 log = logging.getLogger("frankenstein")
 
+# Pages a KIOSK_TOKEN may open directly: the kiosk page and the glance view (both read only under the kiosk cookie).
+KIOSK_PAGES = ("kiosk", "glance")
+
 
 def build_state(settings: Settings | None = None, db_path: str | None = None) -> AppState:
     """Load config, open the database, and register every integration with the scheduler (not started yet)."""
@@ -138,12 +141,14 @@ def mount_static(application: FastAPI) -> None:
         candidate = (static_dir / full_path).resolve()
         if full_path and candidate.is_relative_to(static_dir.resolve()) and candidate.is_file():
             return FileResponse(candidate)
-        if full_path.rstrip("/") == "kiosk" and "token" in request.query_params:
-            # /kiosk?token=... sets the read-only kiosk cookie and drops the token from the URL.
-            # This does not need the built frontend, so it runs before the index check.
+        page = full_path.rstrip("/")
+        if page in KIOSK_PAGES and "token" in request.query_params:
+            # /kiosk?token=... or /glance?token=... sets the read-only kiosk cookie and drops the token from
+            # the URL, so an always-on monitor needs one URL and no keyboard. This does not need the built
+            # frontend, so it runs before the index check.
             token = request.query_params.get("token")
             if authlib.kiosk_token_valid(token):
-                response = RedirectResponse("/kiosk", status_code=303)
+                response = RedirectResponse(f"/{page}", status_code=303)
                 authlib.set_kiosk_cookie(request, response)
                 return response
         if not index.exists():
