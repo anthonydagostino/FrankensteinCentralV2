@@ -1,17 +1,10 @@
 import { useEffect, useState } from "react";
-import type { PublicConfig } from "../api/types";
-import { Clock } from "../components/Clock";
-import { AttentionStrip } from "../widgets/Attention";
-import { BenefitsWidget } from "../widgets/Benefits";
-import { CalendarWidget } from "../widgets/Calendar";
-import { ContainersWidget } from "../widgets/Containers";
-import { PlexWidget } from "../widgets/Plex";
-import { TrainingWidget } from "../widgets/Training";
-import { WeatherWidget } from "../widgets/Weather";
+import type { ReactNode } from "react";
 
 const IDLE_MS = 5000;
 
-export function Kiosk({ config }: { config?: PublicConfig }) {
+/** Wraps the kiosk page: after five idle seconds the cursor is hidden (the .kiosk-idle rule) until the mouse, keyboard or touch wakes it. */
+export function KioskFrame({ children }: { children: ReactNode }) {
   const [idle, setIdle] = useState(false);
   // the periodic reload that picks up new builds lives in KioskGate (App.tsx) so it also runs while locked
   useEffect(() => {
@@ -31,35 +24,5 @@ export function Kiosk({ config }: { config?: PublicConfig }) {
       window.removeEventListener("touchstart", wake);
     };
   }, []);
-  return (
-    <main className={`min-h-screen bg-ink-950 p-6 text-lg ${idle ? "kiosk-idle" : ""}`}>
-      <div className="mb-5 flex items-start justify-between gap-6">
-        <div className="min-w-0 flex-1">
-          <div className="mb-3 text-3xl font-semibold text-ink-200">FrankensteinCentral</div>
-          <AttentionStrip location={config?.selected_location} large />
-        </div>
-        <Clock large />
-      </div>
-      <div className="grid grid-cols-12 gap-5">
-        <div className="col-span-7">
-          <CalendarWidget kiosk onlyToday />
-        </div>
-        <div className="col-span-5">
-          <WeatherWidget kiosk location={config?.selected_location} />
-        </div>
-        <div className="col-span-3">
-          <TrainingWidget kiosk />
-        </div>
-        <div className="col-span-4">
-          <BenefitsWidget kiosk />
-        </div>
-        <div className="col-span-3">
-          <PlexWidget kiosk onlyNowPlaying />
-        </div>
-        <div className="col-span-2">
-          <ContainersWidget readOnly kiosk summaryOnly />
-        </div>
-      </div>
-    </main>
-  );
+  return <div className={idle ? "kiosk-idle" : ""}>{children}</div>;
 }

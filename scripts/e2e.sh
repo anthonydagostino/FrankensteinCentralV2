@@ -25,4 +25,4 @@ for _ in $(seq 1 60); do
   sleep 1
 done
 cd "$ROOT/frontend"
-BASE_URL="http://127.0.0.1:$PORT" PASSWORD=anything node e2e/glance.mjs
+BASE_URL="http://127.0.0.1:$PORT" PASSWORD=anything KIOSK_TOKEN=e2e-not-a-real-token-aaaaaaaaaaaa node e2e/glance.mjs

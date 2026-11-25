@@ -62,6 +62,19 @@ for (const [width, height] of sizes) {
   }
   await ctx.close();
 }
+// the kiosk route, opened with the token, shows the same one-screen view and still fits
+if (process.env.KIOSK_TOKEN) {
+  const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
+  const page = await ctx.newPage();
+  await page.goto(`${base}/kiosk?token=${process.env.KIOSK_TOKEN}`, { waitUntil: "networkidle" });
+  check(page.url().endsWith("/kiosk"), "the kiosk token drops out of the URL");
+  await page.locator("section[aria-label='Trains']").waitFor({ timeout: 15000 });
+  await page.waitForTimeout(500);
+  const m = await page.evaluate(() => ({ scroll: document.documentElement.scrollHeight, inner: window.innerHeight }));
+  check(m.scroll <= m.inner, `kiosk route has no vertical scroll (page ${m.scroll}px, window ${m.inner}px)`);
+  for (const name of ["Calendar", "Trains", "Money"]) check((await page.locator(`[aria-label='${name}']`).count()) === 1, `kiosk route shows ${name}`);
+  await ctx.close();
+}
 await browser.close();
 if (failures.length) {
   console.error(`${failures.length} check(s) failed`);
