@@ -331,7 +331,15 @@ class PlexIntegration(BaseIntegration):
                 raise
             machine_id = identity.get("machineIdentifier") or self.server_meta().get("machine_id")
             version = identity.get("version")
-            sessions = parse_sessions(await self._get(client, base, token, "/status/sessions"))
+            # only the server owner (or an admin) may list sessions: a shared server answers 403, which
+            # is not a bad token, so report "now playing" as unavailable and keep the rest of the card
+            sessions: list[dict[str, Any]] | None
+            try:
+                sessions = parse_sessions(await self._get(client, base, token, "/status/sessions"))
+            except TokenRejected:
+                if self.server_meta().get("owned", True):
+                    raise
+                sessions = None
             rails = await self._fetch_rails(client, base, token)
         meta = self.server_meta()
         data = {
@@ -344,7 +352,8 @@ class PlexIntegration(BaseIntegration):
                 "shared_by": meta.get("shared_by"),
                 "via": meta.get("via", "direct"),
             },
-            "sessions": sessions,
+            "sessions": sessions or [],
+            "sessions_available": sessions is not None,
             "recently_added": rails["recently_added"],
             "on_deck": rails["on_deck"],
             "libraries": rails["libraries"],
@@ -374,6 +383,7 @@ class PlexIntegration(BaseIntegration):
                 "via": "direct",
             },
             "sessions": sessions,
+            "sessions_available": True,
             "recently_added": recently,
             "on_deck": on_deck,
             "libraries": libraries,
