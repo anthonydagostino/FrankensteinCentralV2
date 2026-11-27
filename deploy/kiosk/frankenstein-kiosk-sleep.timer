@@ -1,0 +1,9 @@
+[Unit]
+Description=Monitor off at __SLEEP__ (__TZ__)
+
+[Timer]
+OnCalendar=*-*-* __SLEEP__:00 __TZ__
+Persistent=false
+
+[Install]
+WantedBy=timers.target

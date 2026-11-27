@@ -16,10 +16,15 @@ body {
 .tabular {
   font-variant-numeric: tabular-nums;
 }
+/* Reveal with a mask: the blur fades over 200ms rather than snapping, so the eye toggle reads as "revealing" */
 .privacy-blur {
   filter: blur(7px);
   user-select: none;
-  transition: filter 150ms ease;
+}
+.money {
+  transition:
+    filter 200ms ease,
+    opacity 200ms ease;
 }
 /* net worth: a heavier blur and a dimmer rendering, so even the digit count is not readable */
 .privacy-blur-strong {
@@ -52,4 +57,53 @@ body {
 }
 .animate-pulse-soft {
   animation: pulse-soft 1.6s ease-in-out infinite;
+}
+
+/* Interaction rules (see CLAUDE.md): short, under 250ms, and off entirely when the user asks for reduced motion. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Pulse to confirm: one beat on a control the user just pressed */
+  @keyframes confirm-pulse {
+    0% {
+      transform: scale(1);
+    }
+    40% {
+      transform: scale(1.18);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  .confirm-pulse {
+    animation: confirm-pulse 220ms ease-out;
+  }
+  /* Crossfade icons with blur: a swapped icon arrives from a soft blur instead of popping */
+  @keyframes icon-in {
+    from {
+      opacity: 0;
+      filter: blur(4px);
+      transform: scale(0.85);
+    }
+    to {
+      opacity: 1;
+      filter: blur(0);
+      transform: scale(1);
+    }
+  }
+  .icon-in {
+    animation: icon-in 180ms ease-out;
+  }
+  /* Stage the focus: panels arrive one after another, top to bottom, on first paint */
+  @keyframes rise-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .rise-in {
+    animation: rise-in 240ms ease-out both;
+  }
 }

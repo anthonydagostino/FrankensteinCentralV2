@@ -1,0 +1,7 @@
+# Morning: restart the kiosk (which also picks up any new build) and make sure the screen is on.
+[Unit]
+Description=FrankensteinCentral monitor on for the day
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/systemctl restart frankenstein-kiosk.service

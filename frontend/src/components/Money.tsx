@@ -26,7 +26,7 @@ export function Money({
   const { blurred } = usePrivacy();
   const text = formatMoney(value, { whole, sign });
   const blur = blurred && !open ? (strong ? "privacy-blur privacy-blur-strong" : "privacy-blur") : "";
-  const inner = <span className={`tabular ${blur} ${className}`}>{text}</span>;
+  const inner = <span className={`tabular money ${blur} ${className}`}>{text}</span>;
   if (href) {
     return (
       <a href={href} target="_blank" rel="noreferrer" className="hover:underline">

@@ -27,3 +27,17 @@ Self-hosted personal life dashboard for Anthony. `SPEC.md` is the source of trut
 6. All backend time math uses aware datetimes. Store UTC, display `America/New_York`.
 7. UI copy, README and docs use American English. Never use em dashes or double hyphens as punctuation. Use commas, colons, or parentheses.
 8. Every module route returns the standard envelope: `module, status, configured, fetched_at, stale, error, data`.
+
+## Interaction rules (UI)
+Apply these to every screen; they come from Anthony and are not optional.
+1. Pulse to confirm: a control the user pressed gives one short beat (`.confirm-pulse`), never a spinner for a local change.
+2. Expand the same element: a detail opens in place from the thing that was clicked, not in a new box somewhere else.
+3. Crossfade icons with blur: an icon that swaps state arrives from a soft blur (`.icon-in`, keyed so it re-mounts).
+4. Rubber band past the edge: scrolling lists keep native overscroll; never `overscroll-behavior: none` on a list.
+5. Reveal with masks: showing hidden content (the privacy blur) transitions over about 200ms rather than snapping.
+6. Stage the focus: on first paint, panels arrive top to bottom with a 60ms stagger (`.rise-in` with `animationDelay`).
+7. Fitts: every click target is at least 40 by 40px; icon-only buttons use `h-10 w-10`.
+8. Hick: at most a handful of actions per view; the glance view keeps one toggle and one link.
+9. Doherty: every interaction responds within 400ms. Local state flips on the click, animations stay under 250ms, and data shows cached values first.
+10. All motion sits under `prefers-reduced-motion: no-preference` in `index.css`; with reduced motion the UI still works, just without the movement.
+

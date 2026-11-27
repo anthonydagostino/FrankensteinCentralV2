@@ -14,6 +14,8 @@
 # KIOSK_BACKEND=cage picks the Wayland compositor instead of X (lighter, but Chrome crashes on the cage that
 # Ubuntu 22.04 ships, so X is the default). A mouse works (the dashboard hides the pointer after five idle seconds,
 # so the privacy eye can be clicked); KIOSK_INPUT=off makes X ignore every mouse and keyboard instead.
+# KIOSK_SLEEP=23:00 and KIOSK_WAKE=07:00 (defaults, in KIOSK_TZ, default America/New_York) turn the monitor off
+# for the night and back on in the morning; KIOSK_SLEEP= (empty) disables the schedule.
 set -euo pipefail
 URL="${1:?usage: install.sh <dashboard url> <KIOSK_TOKEN>}"
 TOKEN="${2:?usage: install.sh <dashboard url> <KIOSK_TOKEN>}"
@@ -36,6 +38,10 @@ esac
 case "$URL" in http://*|https://*) ;; *) echo "dashboard url must start with http:// or https://" >&2; exit 1 ;; esac
 
 BACKEND="${KIOSK_BACKEND:-x11}"
+SLEEP="${KIOSK_SLEEP-23:00}"; WAKE="${KIOSK_WAKE-07:00}"; KTZ="${KIOSK_TZ:-America/New_York}"
+for t in "$SLEEP" "$WAKE"; do
+  case "$t" in ""|[0-2][0-9]:[0-5][0-9]) ;; *) echo "KIOSK_SLEEP and KIOSK_WAKE must look like 23:00" >&2; exit 1 ;; esac
+done
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -q
 if [ "$BACKEND" = cage ]; then
@@ -79,15 +85,31 @@ unit="$(cat "$template")"
 unit="${unit//__KIOSK_USER__/$USER_NAME}"
 unit="${unit//__BROWSER__/$BROWSER}"
 unit="${unit//__URL__/${URL%/}/kiosk?token=$TOKEN}"
+unit="${unit//__SLEEP__/$SLEEP}"; unit="${unit//__WAKE__/$WAKE}"; unit="${unit//__TZ__/$KTZ}"
+if [ -n "$SLEEP" ] && [ -n "$WAKE" ]; then unit="${unit//__RUNTIME_MAX__/infinity}"; else unit="${unit//__RUNTIME_MAX__/1d}"; fi
 printf '%s\n' "$unit" > /etc/systemd/system/frankenstein-kiosk.service
 session="$(cat "$HERE/frankenstein-kiosk-session")"
 printf '%s\n' "${session//__BROWSER__/$BROWSER}" > /usr/local/bin/frankenstein-kiosk-session
 chmod 755 /usr/local/bin/frankenstein-kiosk-session
+install -m 755 "$HERE/frankenstein-kiosk-screen" /usr/local/bin/frankenstein-kiosk-screen
+# night schedule: two timers in local time (the box itself may run on UTC)
+systemctl disable --now frankenstein-kiosk-sleep.timer frankenstein-kiosk-wake.timer >/dev/null 2>&1 || true
+if [ -n "$SLEEP" ] && [ -n "$WAKE" ]; then
+  for f in frankenstein-kiosk-sleep.service frankenstein-kiosk-sleep.timer frankenstein-kiosk-wake.service frankenstein-kiosk-wake.timer; do
+    body="$(cat "$HERE/$f")"
+    body="${body//__KIOSK_USER__/$USER_NAME}"; body="${body//__SLEEP__/$SLEEP}"; body="${body//__WAKE__/$WAKE}"; body="${body//__TZ__/$KTZ}"
+    printf '%s\n' "$body" > "/etc/systemd/system/$f"
+  done
+fi
 chmod 600 /etc/systemd/system/frankenstein-kiosk.service   # the unit carries the kiosk token
 systemctl daemon-reload
 systemctl set-default graphical.target >/dev/null
 systemctl enable frankenstein-kiosk.service >/dev/null
+if [ -n "$SLEEP" ] && [ -n "$WAKE" ]; then
+  systemctl enable --now frankenstein-kiosk-sleep.timer frankenstein-kiosk-wake.timer >/dev/null
+fi
 systemctl restart frankenstein-kiosk.service
 sleep 3
 systemctl --no-pager --lines=0 status frankenstein-kiosk.service || true
 echo "frankenstein-kiosk is on tty1 (Ctrl+Alt+F2 for a console). Logs: journalctl -u frankenstein-kiosk -f and journalctl _UID=$(id -u "$USER_NAME") -f"
+if [ -n "$SLEEP" ] && [ -n "$WAKE" ]; then echo "monitor off at $SLEEP and on at $WAKE ($KTZ); next: $(systemctl list-timers --no-pager 'frankenstein-kiosk-*' | sed -n 2,3p | awk '{print $1, $2, $3, $4}' | paste -sd ';')"; fi
