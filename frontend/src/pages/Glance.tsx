@@ -1,4 +1,5 @@
-import { Activity, AlertTriangle, BadgeDollarSign, CalendarDays, CloudSun, LayoutDashboard, TrainFront, Wallet } from "lucide-react";
+import { Activity, AlertTriangle, BadgeDollarSign, CalendarDays, CloudSun, LayoutDashboard, Moon, TrainFront, Wallet } from "lucide-react";
+import { useState } from "react";
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAttention, useBenefits, useCalendar, useContainers, useFinance, usePlex, useTraining, useTransit, useVault, useWeather } from "../api/hooks";
@@ -6,6 +7,7 @@ import type { Envelope, PublicConfig } from "../api/types";
 import { Chip } from "../components/Bars";
 import { Money } from "../components/Money";
 import { PrivacyToggle } from "../components/PrivacyToggle";
+import { useKiosk } from "../lib/kioskContext";
 import { formatDateOnly, formatHour, formatTime, greeting } from "../lib/format";
 import { benefitSummary, homeGlance, moneyGlance, trainingGlance, transitGlance, upcomingEvents, weatherGlance, writeViewMode } from "../lib/glance";
 import type { TransitRow } from "../lib/glance";
@@ -95,6 +97,8 @@ function TrainBoard({ heading, rows }: { heading: string; rows: TransitRow[] }) 
 export function GlancePage({ config }: { config?: PublicConfig }) {
   const now = useNow(1000);
   const navigate = useNavigate();
+  const kiosk = useKiosk();
+  const [moonPulse, setMoonPulse] = useState(0);
   const attention = useAttention(config?.selected_location);
   const calendar = useCalendar(3);
   const weather = useWeather(config?.selected_location);
@@ -141,6 +145,22 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
         )}
         <div className="ml-auto flex items-center gap-2">
           <PrivacyToggle />
+          {kiosk && (
+            <button
+              type="button"
+              onClick={() => {
+                setMoonPulse((n) => n + 1);
+                kiosk.screenOff();
+              }}
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-ink-300 hover:bg-ink-700 hover:text-ink-200"
+              title="Screen off: click or press a key to wake"
+              aria-label="Screen off"
+            >
+              <span key={moonPulse} className={`inline-flex ${moonPulse ? "confirm-pulse" : ""}`}>
+                <Moon size={20} />
+              </span>
+            </button>
+          )}
           <button
             type="button"
             onClick={() => {
