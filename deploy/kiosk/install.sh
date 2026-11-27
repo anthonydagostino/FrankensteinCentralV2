@@ -12,7 +12,8 @@
 # Disk: roughly 400 MB for the browser and 150 MB for X. Memory: a single tab, around 300 to 500 MB.
 #
 # KIOSK_BACKEND=cage picks the Wayland compositor instead of X (lighter, but Chrome crashes on the cage that
-# Ubuntu 22.04 ships, so X is the default).
+# Ubuntu 22.04 ships, so X is the default). KIOSK_INPUT=on lets a mouse and keyboard reach the dashboard; by
+# default X ignores them, so nothing can be scrolled or clicked by accident.
 set -euo pipefail
 URL="${1:?usage: install.sh <dashboard url> <KIOSK_TOKEN>}"
 TOKEN="${2:?usage: install.sh <dashboard url> <KIOSK_TOKEN>}"
@@ -44,6 +45,18 @@ else
   apt-get install -y -q xserver-xorg xserver-xorg-legacy xinit x11-xserver-utils
   # let the unprivileged kiosk user start X on its tty (the setuid wrapper then runs the server with root rights)
   printf 'allowed_users=anybody\nneeds_root_rights=yes\n' > /etc/X11/Xwrapper.config
+  mkdir -p /etc/X11/xorg.conf.d
+  if [ "${KIOSK_INPUT:-off}" = on ]; then
+    rm -f /etc/X11/xorg.conf.d/10-frankenstein-kiosk-no-input.conf
+  else
+    # a display nobody touches: X ignores every mouse and keyboard, so a nudge cannot scroll or click anything.
+    # Ctrl+Alt+F2 at the box stops working too; use SSH, or "sudo chvt 2", for a console. KIOSK_INPUT=on keeps input.
+    cat > /etc/X11/xorg.conf.d/10-frankenstein-kiosk-no-input.conf <<'XORG'
+Section "ServerFlags"
+    Option "AutoAddDevices" "false"
+EndSection
+XORG
+  fi
 fi
 if apt-cache show chromium 2>/dev/null | grep -q '^Version:' && ! grep -qi ubuntu /etc/os-release; then
   apt-get install -y -q chromium
