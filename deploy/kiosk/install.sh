@@ -34,7 +34,8 @@ case "$URL" in http://*|https://*) ;; *) echo "dashboard url must start with htt
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -q
-apt-get install -y -q cage
+# Ubuntu and Debian build cage with Xwayland support and it refuses to start without the binary, even for a Wayland-only client
+apt-get install -y -q cage xwayland
 if apt-cache show chromium 2>/dev/null | grep -q '^Version:' && ! grep -qi ubuntu /etc/os-release; then
   apt-get install -y -q chromium
   BROWSER=/usr/bin/chromium
