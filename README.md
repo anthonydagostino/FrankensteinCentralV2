@@ -55,7 +55,7 @@ docker compose up -d
 
 Open `http://<host>:8088`. For an always-on display open `http://<host>:8088/kiosk?token=<KIOSK_TOKEN>` once per device: it sets a read-only cookie, drops the token from the URL, and shows the glance view (one screen, no scrolling) with the cursor hidden when idle and a reload every six hours to pick up new builds. `/glance?token=<KIOSK_TOKEN>` sets the same cookie and opens the glance view without the kiosk extras.
 
-**Always-on monitor on the box itself.** A headless server needs no desktop for this: `sudo deploy/kiosk/install.sh http://<host>:8088 <KIOSK_TOKEN>` installs cage (a one-window Wayland compositor) and Chromium, creates a `kiosk` user, and starts a systemd service on tty1 (in place of the text login prompt; Ctrl+Alt+F2 still gives a console) that shows the glance view full screen, restarts itself once a day to pick up new builds, and survives reboots without a sign-in. About 450 MB of disk and 300 to 500 MB of memory for the browser.
+**Always-on monitor on the box itself.** A headless server needs no desktop for this: `sudo deploy/kiosk/install.sh http://<host>:8088 <KIOSK_TOKEN>` installs a plain X server and Chromium, creates a `kiosk` user, and starts a systemd service on tty1 (in place of the text login prompt; Ctrl+Alt+F2 still gives a console) that shows the glance view full screen, restarts itself once a day to pick up new builds, and survives reboots without a sign-in. About 550 MB of disk and 300 to 500 MB of memory for the browser. `KIOSK_BACKEND=cage` uses the cage Wayland compositor instead; it is lighter but current Chrome crashes on the cage build Ubuntu 22.04 ships.
 
 ### Environment variables
 

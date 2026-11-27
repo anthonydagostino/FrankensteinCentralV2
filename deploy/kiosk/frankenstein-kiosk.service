@@ -1,10 +1,9 @@
 # Always-on monitor for the glance view, on a headless box with the HDMI plugged in.
-# cage is a tiny Wayland compositor that shows exactly one window; Chromium runs inside it in kiosk mode.
-# Install with deploy/kiosk/install.sh, which fills in the URL and the user.
+# A plain X server (Xorg, started by xinit) with Chrome in kiosk mode on top: the oldest and most tested kiosk stack
+# on Linux. The browser is started by /usr/local/bin/frankenstein-kiosk-session, written by deploy/kiosk/install.sh.
 [Unit]
 Description=FrankensteinCentral glance monitor
-# tty1 is the terminal the monitor shows after boot, so the compositor takes over a screen that is already active.
-# A service on another tty would sit waiting for someone to switch to it (that is what tty7 did).
+# tty1 is the terminal the monitor shows after boot; this takes it over in place of the text login prompt
 Conflicts=getty@tty1.service
 After=getty@tty1.service systemd-user-sessions.service network-online.target docker.service
 Wants=network-online.target
@@ -21,17 +20,16 @@ TTYVTDisallocate=yes
 StandardInput=tty-fail
 StandardOutput=journal
 StandardError=journal
-# a headless box has no keyboard or mouse; without this wlroots refuses to start
-Environment=WLR_LIBINPUT_NO_DEVICES=1
+Environment=HOME=/home/__KIOSK_USER__
+Environment=KIOSK_URL=__URL__
 # Chrome moves itself into its own systemd scope under the user session, outside this unit's control group, so a
 # restart does not kill it; the next Chrome then finds the profile lock, hands its URL to the orphan and exits 0.
-# Kill any leftover and drop the lock before each start.
+# Kill any leftover and drop the lock before each start, and again on stop.
 ExecStartPre=-/usr/bin/pkill -u __KIOSK_USER__ -f chrome
 ExecStartPre=-/bin/rm -f /home/__KIOSK_USER__/.frankenstein-kiosk/SingletonLock /home/__KIOSK_USER__/.frankenstein-kiosk/SingletonSocket /home/__KIOSK_USER__/.frankenstein-kiosk/SingletonCookie
-# the leftover is also what to kill when the unit stops, so the monitor goes dark instead of keeping an orphan
+# -nocursor hides the pointer; -keeptty keeps X on the tty systemd handed it; -nolisten tcp keeps X off the network
+ExecStart=/usr/bin/xinit /usr/local/bin/frankenstein-kiosk-session -- /usr/bin/X :0 vt1 -nocursor -nolisten tcp -keeptty
 ExecStopPost=-/usr/bin/pkill -u __KIOSK_USER__ -f chrome
-# cage never blanks the output on its own; use the monitor's own sleep setting if you want it dark at night
-ExecStart=/usr/bin/cage -- __BROWSER__ --kiosk --noerrdialogs --disable-infobars --no-first-run --disable-session-crashed-bubble --ozone-platform=wayland --user-data-dir=/home/__KIOSK_USER__/.frankenstein-kiosk --check-for-update-interval=31536000 "__URL__"
 Restart=always
 RestartSec=5
 # a daily restart picks up new builds (the cookie lives in the profile directory, so no sign-in is needed)

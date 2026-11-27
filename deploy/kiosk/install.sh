@@ -3,14 +3,16 @@
 #
 #   sudo deploy/kiosk/install.sh http://192.168.1.185:8088 <KIOSK_TOKEN>
 #
-# What it does: installs cage (a one-window Wayland compositor, a few MB) and a Chromium build (Debian's
-# apt package, or Google's .deb on Ubuntu where the apt package is a snap that does not start under cage),
-# creates a "kiosk" user with no password, and starts a systemd service on tty1 (in place of the login prompt there;
-# a keyboard still gets a console on tty2 with Ctrl+Alt+F2) that opens
-# <url>/kiosk?token=<KIOSK_TOKEN>. The token sets a read-only cookie good for a year and drops out of
-# the URL; the cookie lives in the kiosk user's Chromium profile, so reboots never ask for a sign-in.
-# Disk: roughly 400 MB for the browser and 50 MB for cage and its libraries. Memory: a single tab,
-# around 300 to 500 MB.
+# What it does: installs a plain X server (Xorg with xinit) and a Chromium build (Debian's apt package, or Google's
+# .deb on Ubuntu where the apt package is a snap that does not start outside a desktop), creates a "kiosk" user
+# with no password, and starts a systemd service on tty1 (in place of the login prompt there; a keyboard still gets
+# a console on tty2 with Ctrl+Alt+F2) that opens <url>/kiosk?token=<KIOSK_TOKEN> full screen. The token sets a
+# read-only cookie good for a year and drops out of the URL; the cookie lives in the kiosk user's Chromium profile,
+# so reboots never ask for a sign-in.
+# Disk: roughly 400 MB for the browser and 150 MB for X. Memory: a single tab, around 300 to 500 MB.
+#
+# KIOSK_BACKEND=cage picks the Wayland compositor instead of X (lighter, but Chrome crashes on the cage that
+# Ubuntu 22.04 ships, so X is the default).
 set -euo pipefail
 URL="${1:?usage: install.sh <dashboard url> <KIOSK_TOKEN>}"
 TOKEN="${2:?usage: install.sh <dashboard url> <KIOSK_TOKEN>}"
@@ -32,10 +34,17 @@ case "$TOKEN" in
 esac
 case "$URL" in http://*|https://*) ;; *) echo "dashboard url must start with http:// or https://" >&2; exit 1 ;; esac
 
+BACKEND="${KIOSK_BACKEND:-x11}"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -q
-# Ubuntu and Debian build cage with Xwayland support and it refuses to start without the binary, even for a Wayland-only client
-apt-get install -y -q cage xwayland
+if [ "$BACKEND" = cage ]; then
+  # Ubuntu and Debian build cage with Xwayland support and it refuses to start without the binary, even for a Wayland-only client
+  apt-get install -y -q cage xwayland
+else
+  apt-get install -y -q xserver-xorg xserver-xorg-legacy xinit x11-xserver-utils
+  # let the unprivileged kiosk user start X on its tty (the setuid wrapper then runs the server with root rights)
+  printf 'allowed_users=anybody\nneeds_root_rights=yes\n' > /etc/X11/Xwrapper.config
+fi
 if apt-cache show chromium 2>/dev/null | grep -q '^Version:' && ! grep -qi ubuntu /etc/os-release; then
   apt-get install -y -q chromium
   BROWSER=/usr/bin/chromium
@@ -49,14 +58,18 @@ else
 fi
 
 id "$USER_NAME" >/dev/null 2>&1 || useradd -m -s /usr/sbin/nologin "$USER_NAME"
-usermod -aG video,input,render "$USER_NAME" 2>/dev/null || true
+usermod -aG video,input,render,tty "$USER_NAME" 2>/dev/null || true
 
 # /kiosk rather than /glance: same one-screen view, plus the hidden cursor, the locked screen and the daily reload
-unit="$(cat "$HERE/frankenstein-kiosk.service")"
+template="$HERE/frankenstein-kiosk.service"; [ "$BACKEND" = cage ] && template="$HERE/frankenstein-kiosk-cage.service"
+unit="$(cat "$template")"
 unit="${unit//__KIOSK_USER__/$USER_NAME}"
 unit="${unit//__BROWSER__/$BROWSER}"
 unit="${unit//__URL__/${URL%/}/kiosk?token=$TOKEN}"
 printf '%s\n' "$unit" > /etc/systemd/system/frankenstein-kiosk.service
+session="$(cat "$HERE/frankenstein-kiosk-session")"
+printf '%s\n' "${session//__BROWSER__/$BROWSER}" > /usr/local/bin/frankenstein-kiosk-session
+chmod 755 /usr/local/bin/frankenstein-kiosk-session
 chmod 600 /etc/systemd/system/frankenstein-kiosk.service   # the unit carries the kiosk token
 systemctl daemon-reload
 systemctl set-default graphical.target >/dev/null
@@ -64,4 +77,4 @@ systemctl enable frankenstein-kiosk.service >/dev/null
 systemctl restart frankenstein-kiosk.service
 sleep 3
 systemctl --no-pager --lines=0 status frankenstein-kiosk.service || true
-echo "frankenstein-kiosk is on tty1 (Ctrl+Alt+F2 for a console). Logs: journalctl -u frankenstein-kiosk -f"
+echo "frankenstein-kiosk is on tty1 (Ctrl+Alt+F2 for a console). Logs: journalctl -u frankenstein-kiosk -f and journalctl _UID=$(id -u "$USER_NAME") -f"
