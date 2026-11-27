@@ -28,6 +28,7 @@ import {
 } from "../lib/glance";
 import { PrivacyProvider } from "../lib/privacy";
 import { GlancePage } from "../pages/Glance";
+import { KioskFrame } from "../pages/Kiosk";
 
 const NOW = new Date("2026-11-12T14:00:00Z"); // 9:00 AM New York
 
@@ -583,6 +584,38 @@ describe("GlancePage", () => {
     fireEvent.click(screen.getByTitle("Switch to the full dashboard"));
     expect(readViewMode()).toBe("full");
     expect(screen.getByText("FULL DASHBOARD")).toBeTruthy();
+  });
+});
+
+describe("kiosk screen off", () => {
+  it("offers the moon only under the kiosk frame, blacks the screen on press, and wakes on a click or key", () => {
+    writeViewMode("full");
+    const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    seedAll(qc);
+    render(
+      <QueryClientProvider client={qc}>
+        <MemoryRouter initialEntries={["/kiosk"]}>
+          <PrivacyProvider initial={true}>
+            <KioskFrame>
+              <GlancePage />
+            </KioskFrame>
+          </PrivacyProvider>
+        </MemoryRouter>
+      </QueryClientProvider>,
+    );
+    expect(screen.queryByLabelText("Screen off, click to wake")).toBeNull();
+    fireEvent.click(screen.getByLabelText("Screen off"));
+    const cover = screen.getByLabelText("Screen off, click to wake");
+    expect(cover.className).toContain("bg-black");
+    fireEvent.click(cover);
+    expect(screen.queryByLabelText("Screen off, click to wake")).toBeNull();
+    fireEvent.click(screen.getByLabelText("Screen off"));
+    fireEvent.keyDown(window, { key: "a" });
+    expect(screen.queryByLabelText("Screen off, click to wake")).toBeNull();
+  });
+  it("has no moon on the plain glance route", () => {
+    renderGlance(seedAll);
+    expect(screen.queryByLabelText("Screen off")).toBeNull();
   });
 });
 
