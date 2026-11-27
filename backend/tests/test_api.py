@@ -7,7 +7,9 @@ import pytest
 from fastapi.testclient import TestClient
 
 from app.main import app, build_state
+from app.services.attention import build_attention
 from app.settings import get_settings
+from app.util import utcnow
 
 
 @pytest.fixture(scope="module")
@@ -147,7 +149,7 @@ def test_no_token_in_plex_response(client):
     assert "X-Plex-Token" not in body
 
 
-def test_recurring_route_and_ignore(client):
+def test_recurring_route_and_ignore(client, monkeypatch):
     client.post("/api/auth/login", json={"password": "x"})
     body = client.get("/api/finance/recurring").json()
     assert body["module"] == "recurring" and body["status"] == "ok"
@@ -161,8 +163,12 @@ def test_recurring_route_and_ignore(client):
     assert after["totals"]["active_count"] == before - 1
     assert next(i for i in after["items"] if i["key"] == netflix["key"])["ignored"] is True
     client.post("/api/finance/recurring/ignore", json={"key": netflix["key"], "ignore": False})
-    attention = client.get("/api/attention").json()["data"]["items"]
-    assert any(a["source"] == "recurring" for a in attention)
+    # The strip is capped at six items, critical first, and late in a month the benefits and Lock-In warnings
+    # alone can fill it, so lift the cap and check the rule output rather than today's top six.
+    monkeypatch.setattr("app.services.attention.MAX_ITEMS", 100)
+    state = app.state.fc
+    items = build_attention(state.cache, state.benefits_public(), state.finance_summary(), utcnow(), None, state.recurring())
+    assert any(a["source"] == "recurring" and "NETFLIX" in a["title"].upper() for a in items)
 
 
 def test_lockin_route(client):
