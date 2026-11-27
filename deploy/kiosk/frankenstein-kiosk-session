@@ -1,0 +1,6 @@
+#!/bin/sh
+# X session for the always-on monitor: no screen blanking, then Chrome full screen on the dashboard.
+# Started by xinit from frankenstein-kiosk.service; the URL (with the kiosk token) comes from the unit's environment.
+xset s off -dpms s noblank 2>/dev/null || true
+exec __BROWSER__ --kiosk --noerrdialogs --disable-infobars --no-first-run --disable-session-crashed-bubble \
+  --ozone-platform=x11 --user-data-dir="$HOME/.frankenstein-kiosk" --check-for-update-interval=31536000 "$KIOSK_URL"
