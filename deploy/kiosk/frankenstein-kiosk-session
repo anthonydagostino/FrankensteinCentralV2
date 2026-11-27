@@ -2,5 +2,9 @@
 # X session for the always-on monitor: no screen blanking, then Chrome full screen on the dashboard.
 # Started by xinit from frankenstein-kiosk.service; the URL (with the kiosk token) comes from the unit's environment.
 xset s off -dpms s noblank 2>/dev/null || true
+# There is no window manager, so --kiosk alone cannot make the window fullscreen: give Chrome the screen size itself.
+SIZE="$(xrandr 2>/dev/null | sed -n 's/.*current \([0-9]*\) x \([0-9]*\).*/\1,\2/p' | head -1)"
+[ -n "$SIZE" ] || SIZE=1920,1080
 exec __BROWSER__ --kiosk --noerrdialogs --disable-infobars --no-first-run --disable-session-crashed-bubble \
-  --ozone-platform=x11 --user-data-dir="$HOME/.frankenstein-kiosk" --check-for-update-interval=31536000 "$KIOSK_URL"
+  --ozone-platform=x11 --window-position=0,0 --window-size="$SIZE" \
+  --user-data-dir="$HOME/.frankenstein-kiosk" --check-for-update-interval=31536000 "$KIOSK_URL"
