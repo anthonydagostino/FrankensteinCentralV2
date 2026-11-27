@@ -23,6 +23,13 @@ StandardOutput=journal
 StandardError=journal
 # a headless box has no keyboard or mouse; without this wlroots refuses to start
 Environment=WLR_LIBINPUT_NO_DEVICES=1
+# Chrome moves itself into its own systemd scope under the user session, outside this unit's control group, so a
+# restart does not kill it; the next Chrome then finds the profile lock, hands its URL to the orphan and exits 0.
+# Kill any leftover and drop the lock before each start.
+ExecStartPre=-/usr/bin/pkill -u __KIOSK_USER__ -f chrome
+ExecStartPre=-/bin/rm -f /home/__KIOSK_USER__/.frankenstein-kiosk/SingletonLock /home/__KIOSK_USER__/.frankenstein-kiosk/SingletonSocket /home/__KIOSK_USER__/.frankenstein-kiosk/SingletonCookie
+# the leftover is also what to kill when the unit stops, so the monitor goes dark instead of keeping an orphan
+ExecStopPost=-/usr/bin/pkill -u __KIOSK_USER__ -f chrome
 # cage never blanks the output on its own; use the monitor's own sleep setting if you want it dark at night
 ExecStart=/usr/bin/cage -- __BROWSER__ --kiosk --noerrdialogs --disable-infobars --no-first-run --disable-session-crashed-bubble --ozone-platform=wayland --user-data-dir=/home/__KIOSK_USER__/.frankenstein-kiosk --check-for-update-interval=31536000 "__URL__"
 Restart=always
