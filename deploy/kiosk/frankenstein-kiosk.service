@@ -27,8 +27,9 @@ Environment=KIOSK_URL=__URL__
 # Kill any leftover and drop the lock before each start, and again on stop.
 ExecStartPre=-/usr/bin/pkill -u __KIOSK_USER__ -f chrome
 ExecStartPre=-/bin/rm -f /home/__KIOSK_USER__/.frankenstein-kiosk/SingletonLock /home/__KIOSK_USER__/.frankenstein-kiosk/SingletonSocket /home/__KIOSK_USER__/.frankenstein-kiosk/SingletonCookie
-# -nocursor hides the pointer; -keeptty keeps X on the tty systemd handed it; -nolisten tcp keeps X off the network
-ExecStart=/usr/bin/xinit /usr/local/bin/frankenstein-kiosk-session -- /usr/bin/X :0 vt1 -nocursor -nolisten tcp -keeptty
+# the dashboard hides the pointer itself after five idle seconds; -keeptty keeps X on the tty systemd handed it;
+# -nolisten tcp keeps X off the network
+ExecStart=/usr/bin/xinit /usr/local/bin/frankenstein-kiosk-session -- /usr/bin/X :0 vt1 -nolisten tcp -keeptty
 ExecStopPost=-/usr/bin/pkill -u __KIOSK_USER__ -f chrome
 Restart=always
 RestartSec=5
