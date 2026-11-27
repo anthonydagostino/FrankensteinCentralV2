@@ -1,0 +1,8 @@
+#!/bin/sh
+# frankenstein-kiosk-screen off|on: DPMS the monitor off for the night, or back on for the day.
+# "off" also arms a one minute DPMS timeout, so a nudged mouse lights the screen briefly and it goes dark again.
+case "$1" in
+  off) xset +dpms; xset dpms 60 60 60; xset dpms force off ;;
+  on) xset dpms force on; xset s off -dpms s noblank ;;
+  *) echo "usage: frankenstein-kiosk-screen off|on" >&2; exit 2 ;;
+esac

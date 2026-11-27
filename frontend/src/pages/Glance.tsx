@@ -1,15 +1,15 @@
-import { Activity, AlertTriangle, BadgeDollarSign, CalendarDays, CloudSun, Eye, EyeOff, LayoutDashboard, TrainFront, Wallet } from "lucide-react";
+import { Activity, AlertTriangle, BadgeDollarSign, CalendarDays, CloudSun, LayoutDashboard, TrainFront, Wallet } from "lucide-react";
 import type { ReactNode } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAttention, useBenefits, useCalendar, useContainers, useFinance, usePlex, useTraining, useTransit, useVault, useWeather } from "../api/hooks";
 import type { Envelope, PublicConfig } from "../api/types";
 import { Chip } from "../components/Bars";
 import { Money } from "../components/Money";
+import { PrivacyToggle } from "../components/PrivacyToggle";
 import { formatDateOnly, formatHour, formatTime, greeting } from "../lib/format";
 import { benefitSummary, homeGlance, moneyGlance, trainingGlance, transitGlance, upcomingEvents, weatherGlance, writeViewMode } from "../lib/glance";
 import type { TransitRow } from "../lib/glance";
 import { DynamicIcon } from "../lib/icons";
-import { usePrivacy } from "../lib/privacyContext";
 import { PANEL_CLASS, SEVERITY_CLASS } from "../lib/ui";
 import { useNow } from "../lib/useNow";
 import { TZ } from "../lib/format";
@@ -24,12 +24,15 @@ function Panel({
   envelope,
   children,
   className = "",
+  order = 0,
 }: {
   title: string;
   icon: ReactNode;
   envelope?: Envelope<unknown>;
   children: ReactNode;
   className?: string;
+  /** Position in the entrance sequence: each panel arrives 60ms after the one before (stage the focus). */
+  order?: number;
 }) {
   const dot = !envelope
     ? "bg-ink-500"
@@ -39,7 +42,11 @@ function Panel({
         ? "bg-accent"
         : "bg-red-500";
   return (
-    <section aria-label={title} className={`flex min-h-0 flex-col overflow-hidden ${PANEL_CLASS} p-4 ${className}`}>
+    <section
+      aria-label={title}
+      className={`rise-in flex min-h-0 flex-col overflow-hidden ${PANEL_CLASS} p-4 ${className}`}
+      style={{ animationDelay: `${order * 60}ms` }}
+    >
       <div className="mb-3 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-ink-400">
         <span className={`h-2 w-2 rounded-full ${dot}`} />
         {icon}
@@ -88,7 +95,6 @@ function TrainBoard({ heading, rows }: { heading: string; rows: TransitRow[] }) 
 export function GlancePage({ config }: { config?: PublicConfig }) {
   const now = useNow(1000);
   const navigate = useNavigate();
-  const { blurred, toggle } = usePrivacy();
   const attention = useAttention(config?.selected_location);
   const calendar = useCalendar(3);
   const weather = useWeather(config?.selected_location);
@@ -134,25 +140,17 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
           </div>
         )}
         <div className="ml-auto flex items-center gap-2">
-          <button
-            type="button"
-            onClick={toggle}
-            className="rounded-md p-1.5 text-ink-300 hover:bg-ink-700"
-            title={blurred ? "Show amounts" : "Hide amounts"}
-            aria-label={blurred ? "Show amounts" : "Hide amounts"}
-          >
-            {blurred ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
+          <PrivacyToggle />
           <button
             type="button"
             onClick={() => {
               writeViewMode("full");
               navigate("/");
             }}
-            className="inline-flex items-center gap-1 rounded-md border border-ink-700 px-2 py-1 text-xs text-ink-300 hover:border-accent/50 hover:text-ink-200"
+            className="inline-flex h-10 items-center gap-2 rounded-lg border border-ink-700 px-3 text-sm text-ink-300 hover:border-accent/50 hover:text-ink-200"
             title="Switch to the full dashboard"
           >
-            <LayoutDashboard size={14} /> Full dashboard
+            <LayoutDashboard size={16} /> Full dashboard
           </button>
         </div>
       </div>
@@ -175,7 +173,7 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
       </div>
 
       <div className="grid min-h-0 flex-1 grid-cols-3 grid-rows-2 gap-3">
-        <Panel title="Calendar" icon={<CalendarDays size={14} />} envelope={calendar.data}>
+        <Panel title="Calendar" order={1} icon={<CalendarDays size={14} />} envelope={calendar.data}>
           {!calendar.data?.data ? (
             <Empty text="No calendar data" />
           ) : events.length === 0 ? (
@@ -207,7 +205,7 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
           )}
         </Panel>
 
-        <Panel title="Weather" icon={<CloudSun size={14} />} envelope={weather.data}>
+        <Panel title="Weather" order={2} icon={<CloudSun size={14} />} envelope={weather.data}>
           {!w ? (
             <Empty text="No weather data" />
           ) : (
@@ -258,7 +256,7 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
           )}
         </Panel>
 
-        <Panel title="Money" icon={<Wallet size={14} />} envelope={finance.data}>
+        <Panel title="Money" order={3} icon={<Wallet size={14} />} envelope={finance.data}>
           {!money ? (
             <Empty text="No finance data" />
           ) : (
@@ -308,7 +306,7 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
           )}
         </Panel>
 
-        <Panel title="Trains" icon={<TrainFront size={14} />} envelope={transit.data}>
+        <Panel title="Trains" order={4} icon={<TrainFront size={14} />} envelope={transit.data}>
           {!trains ? (
             <Empty text="No train data" />
           ) : (
@@ -319,7 +317,7 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
           )}
         </Panel>
 
-        <Panel title="Lock-In" icon={<Activity size={14} />} envelope={training.data}>
+        <Panel title="Lock-In" order={5} icon={<Activity size={14} />} envelope={training.data}>
           {!train ? (
             <Empty text="No training data" />
           ) : (
@@ -377,7 +375,7 @@ export function GlancePage({ config }: { config?: PublicConfig }) {
           )}
         </Panel>
 
-        <Panel title="Amex benefits" icon={<BadgeDollarSign size={14} />} envelope={benefits.data}>
+        <Panel title="Amex benefits" order={6} icon={<BadgeDollarSign size={14} />} envelope={benefits.data}>
           {cards.length === 0 ? (
             <Empty text="No benefits data" />
           ) : (

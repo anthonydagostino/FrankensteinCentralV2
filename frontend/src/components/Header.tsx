@@ -1,8 +1,8 @@
-import { Activity, Eye, EyeOff, LayoutGrid, LogOut, Settings as SettingsIcon, BadgeDollarSign, MonitorPlay } from "lucide-react";
+import { Activity, LayoutGrid, LogOut, Settings as SettingsIcon, BadgeDollarSign, MonitorPlay } from "lucide-react";
+import { PrivacyToggle } from "./PrivacyToggle";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useLogout } from "../api/hooks";
 import type { PublicConfig } from "../api/types";
-import { usePrivacy } from "../lib/privacyContext";
 import { greeting } from "../lib/format";
 import { useNow } from "../lib/useNow";
 import { writeViewMode } from "../lib/glance";
@@ -10,7 +10,6 @@ import { Clock } from "./Clock";
 import { DynamicIcon } from "../lib/icons";
 
 export function Header({ config, readOnly }: { config?: PublicConfig; readOnly: boolean }) {
-  const { blurred, toggle } = usePrivacy();
   const logout = useLogout();
   const now = useNow(60_000);
   const navigate = useNavigate();
@@ -78,27 +77,18 @@ export function Header({ config, readOnly }: { config?: PublicConfig; readOnly: 
               writeViewMode("glance");
               navigate("/glance");
             }}
-            className="rounded-md p-1.5 text-ink-300 hover:bg-ink-700 hover:text-ink-200"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-ink-300 hover:bg-ink-700 hover:text-ink-200"
             title="Glance view: one screen, no scrolling"
             aria-label="Glance view"
           >
             <LayoutGrid size={18} />
           </button>
-          <button
-            type="button"
-            onClick={toggle}
-            className="rounded-md p-1.5 text-ink-300 hover:bg-ink-700 hover:text-ink-200"
-            title={blurred ? "Show amounts" : "Hide amounts"}
-            aria-label={blurred ? "Show amounts" : "Hide amounts"}
-            aria-pressed={blurred}
-          >
-            {blurred ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
+          <PrivacyToggle size={18} />
           {!readOnly && (
             <button
               type="button"
               onClick={() => logout.mutate()}
-              className="rounded-md p-1.5 text-ink-300 hover:bg-ink-700 hover:text-ink-200"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-ink-300 hover:bg-ink-700 hover:text-ink-200"
               title="Log out"
               aria-label="Log out"
             >

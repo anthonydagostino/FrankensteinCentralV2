@@ -22,6 +22,8 @@ StandardOutput=journal
 StandardError=journal
 Environment=HOME=/home/__KIOSK_USER__
 Environment=KIOSK_URL=__URL__
+# sleep window for the session script (the timers of the same names do the scheduled off and on)
+Environment=KIOSK_SLEEP=__SLEEP__ KIOSK_WAKE=__WAKE__ KIOSK_TZ=__TZ__
 # Chrome moves itself into its own systemd scope under the user session, outside this unit's control group, so a
 # restart does not kill it; the next Chrome then finds the profile lock, hands its URL to the orphan and exits 0.
 # Kill any leftover and drop the lock before each start, and again on stop.
@@ -33,8 +35,9 @@ ExecStart=/usr/bin/xinit /usr/local/bin/frankenstein-kiosk-session -- /usr/bin/X
 ExecStopPost=-/usr/bin/pkill -u __KIOSK_USER__ -f chrome
 Restart=always
 RestartSec=5
-# a daily restart picks up new builds (the cookie lives in the profile directory, so no sign-in is needed)
-RuntimeMaxSec=1d
+# the morning wake timer restarts the service, which also picks up new builds (the cookie lives in the profile
+# directory, so no sign-in is needed); without a sleep window, fall back to a restart once a day
+RuntimeMaxSec=__RUNTIME_MAX__
 
 [Install]
 WantedBy=graphical.target

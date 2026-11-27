@@ -2,6 +2,19 @@
 # X session for the always-on monitor: no screen blanking, then Chrome full screen on the dashboard.
 # Started by xinit from frankenstein-kiosk.service; the URL (with the kiosk token) comes from the unit's environment.
 xset s off -dpms s noblank 2>/dev/null || true
+# Inside the sleep window (KIOSK_SLEEP to KIOSK_WAKE, hours in KIOSK_TZ) the screen goes dark again once Chrome is up,
+# so a restart at night does not light the room; the wake timer restarts the service in the morning.
+if [ -n "$KIOSK_SLEEP" ] && [ -n "$KIOSK_WAKE" ]; then
+  hour="$(TZ="${KIOSK_TZ:-UTC}" date +%H)"; hour=${hour#0}
+  sleep_h=${KIOSK_SLEEP%%:*}; sleep_h=${sleep_h#0}; wake_h=${KIOSK_WAKE%%:*}; wake_h=${wake_h#0}
+  night=0
+  if [ "$sleep_h" -gt "$wake_h" ]; then
+    { [ "$hour" -ge "$sleep_h" ] || [ "$hour" -lt "$wake_h" ]; } && night=1
+  else
+    [ "$hour" -ge "$sleep_h" ] && [ "$hour" -lt "$wake_h" ] && night=1
+  fi
+  [ "$night" = 1 ] && ( sleep 10; /usr/local/bin/frankenstein-kiosk-screen off ) &
+fi
 # There is no window manager, so --kiosk alone cannot make the window fullscreen: give Chrome the screen size itself.
 SIZE="$(xrandr 2>/dev/null | sed -n 's/.*current \([0-9]*\) x \([0-9]*\).*/\1,\2/p' | head -1)"
 [ -n "$SIZE" ] || SIZE=1920,1080
