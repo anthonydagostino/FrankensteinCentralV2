@@ -5,7 +5,8 @@
 #
 # What it does: installs cage (a one-window Wayland compositor, a few MB) and a Chromium build (Debian's
 # apt package, or Google's .deb on Ubuntu where the apt package is a snap that does not start under cage),
-# creates a "kiosk" user with no password, and starts a systemd service on tty7 that opens
+# creates a "kiosk" user with no password, and starts a systemd service on tty1 (in place of the login prompt there;
+# a keyboard still gets a console on tty2 with Ctrl+Alt+F2) that opens
 # <url>/kiosk?token=<KIOSK_TOKEN>. The token sets a read-only cookie good for a year and drops out of
 # the URL; the cookie lives in the kiosk user's Chromium profile, so reboots never ask for a sign-in.
 # Disk: roughly 400 MB for the browser and 50 MB for cage and its libraries. Memory: a single tab,
@@ -62,4 +63,4 @@ systemctl enable frankenstein-kiosk.service >/dev/null
 systemctl restart frankenstein-kiosk.service
 sleep 3
 systemctl --no-pager --lines=0 status frankenstein-kiosk.service || true
-echo "frankenstein-kiosk is on tty7. Logs: journalctl -u frankenstein-kiosk -f"
+echo "frankenstein-kiosk is on tty1 (Ctrl+Alt+F2 for a console). Logs: journalctl -u frankenstein-kiosk -f"

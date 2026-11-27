@@ -3,21 +3,26 @@
 # Install with deploy/kiosk/install.sh, which fills in the URL and the user.
 [Unit]
 Description=FrankensteinCentral glance monitor
-After=network-online.target docker.service
+# tty1 is the terminal the monitor shows after boot, so the compositor takes over a screen that is already active.
+# A service on another tty would sit waiting for someone to switch to it (that is what tty7 did).
+Conflicts=getty@tty1.service
+After=getty@tty1.service systemd-user-sessions.service network-online.target docker.service
 Wants=network-online.target
 
 [Service]
 Type=simple
 User=__KIOSK_USER__
 PAMName=login
-UtmpIdentifier=tty7
-TTYPath=/dev/tty7
+UtmpIdentifier=tty1
+TTYPath=/dev/tty1
 TTYReset=yes
 TTYVHangup=yes
 TTYVTDisallocate=yes
 StandardInput=tty-fail
 StandardOutput=journal
 StandardError=journal
+# a headless box has no keyboard or mouse; without this wlroots refuses to start
+Environment=WLR_LIBINPUT_NO_DEVICES=1
 # cage never blanks the output on its own; use the monitor's own sleep setting if you want it dark at night
 ExecStart=/usr/bin/cage -- __BROWSER__ --kiosk --noerrdialogs --disable-infobars --no-first-run --disable-session-crashed-bubble --ozone-platform=wayland --user-data-dir=/home/__KIOSK_USER__/.frankenstein-kiosk --check-for-update-interval=31536000 "__URL__"
 Restart=always
